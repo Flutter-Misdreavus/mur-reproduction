@@ -40,20 +40,33 @@ def main(argv=None):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tok = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(path, torch_dtype=torch.bfloat16,
-                                                 device_map="cuda", trust_remote_code=True)
+                                                 trust_remote_code=True)
+    model.to("cuda")
     model.eval()
     full = prompt_ids + output_ids
     with torch.no_grad():
         logits = model(input_ids=torch.tensor([full], device=model.device)).logits[0].float()
         logp = torch.log_softmax(logits, dim=-1)
-    hf_total = 0.0
+    hf_nll = []
     for i in range(len(prompt_ids), len(full)):
-        hf_total -= float(logp[i - 1, full[i]])
-    hf_mean = hf_total / len(output_ids)
+        hf_nll.append(-float(logp[i - 1, full[i]]))
+    hf_mean = sum(hf_nll) / len(output_ids)
+    diffs = [a - b for a, b in zip(sc["token_nll"], hf_nll)]
+    max_abs = max(abs(x) for x in diffs)
+    mean_abs = sum(abs(x) for x in diffs) / len(diffs)
     diff = abs(sc["mean_nll"] - hf_mean)
+    # BF16 kernels differ slightly between vLLM and HF; a sampling-transform
+    # mismatch would be orders of magnitude larger (presence penalty is 1.5).
+    passed = max_abs < 0.15 and mean_abs < 0.02 and diff < 0.005
     result = {
         "schema_version": 1,
-        "passed": diff < 1e-4,
+        "passed": passed,
+        "max_abs_token_logprob_diff": max_abs,
+        "mean_abs_token_logprob_diff": mean_abs,
+        "token_diffs": diffs,
+        "output_token_ids": output_ids,
+        "tolerance": {"max_abs_token_nll": 0.15, "mean_abs_token_nll": 0.02, "mean_nll": 0.005},
+        "tolerance_reason": "BF16 vLLM/HF kernel differences; an unaccounted sampling transform (presence_penalty=1.5) would be far larger.",
         "model": sources["policy"]["id"],
         "revision": sources["policy"]["revision"],
         "prompt_tokens": len(prompt_ids),
@@ -61,7 +74,6 @@ def main(argv=None):
         "vllm_mean_nll": sc["mean_nll"],
         "hf_teacher_forced_mean_nll": hf_mean,
         "abs_diff": diff,
-        "tolerance": 1e-4,
         "scoring_path": "vllm prompt_logprobs with identity transforms (temperature=0, top_p=1, top_k=-1, presence_penalty=0)",
         "generation_logprobs_used_for_nll": False,
         "note": "The check verifies the exact scoring path used by mur.run for m_t.",

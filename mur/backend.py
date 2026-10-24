@@ -110,6 +110,7 @@ class VLLMBackend:
         if plp is None or len(plp) < len(full):
             raise RuntimeError("vLLM did not return complete prompt_logprobs")
         total = 0.0
+        token_nll = []
         for i in range(len(prompt_ids), len(full)):
             tid = full[i]
             entry = plp[i]
@@ -119,12 +120,14 @@ class VLLMBackend:
             if not math.isfinite(lp):
                 raise RuntimeError("non-finite raw logprob")
             total -= lp
+            token_nll.append(-lp)
         probe = out.outputs[0].token_ids if out.outputs else []
         return {
             "sum_nll": total,
             "mean_nll": total / len(output_ids),
             "tokens": len(output_ids),
             "probe_tokens": len(probe),
+            "token_nll": token_nll,
         }
 
     def close(self):
