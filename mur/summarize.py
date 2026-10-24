@@ -102,6 +102,8 @@ def main(argv=None):
     manifest = load(rd / "source-manifest.json", {})
     prep_problems = load(rd / "prepare-problems.json", [])
     forced = load(rd / "forced-trigger.json", {})
+    driver = load(rd / "stage-driver.json", {})
+    eval_status = load(rd / "evaluation" / "run-status.json", {})
     rows = metrics.get("rows", [])
     summary = metrics.get("summary", {})
     traces = []
@@ -122,6 +124,14 @@ def main(argv=None):
     forced_ok = bool(forced.get("passed")) and bool(forced.get("engineering_only")) \
         and bool(forced.get("excluded_from_scientific_smoke"))
     gpu = probe_gpu()
+    gpu_seconds = driver.get("gpu_allocated_seconds")
+    total_tokens = driver.get("total_generated_tokens")
+    wall_seconds = driver.get("wall_seconds")
+    stage_budget_ok = (
+        isinstance(gpu_seconds, (int, float)) and gpu_seconds <= 3600
+        and isinstance(total_tokens, int) and total_tokens <= 1_000_000
+        and isinstance(wall_seconds, (int, float)) and wall_seconds <= 7200
+    )
     gate_checks = {
         "gpu_available": bool(gpu.get("available")),
         "source_manifest": bool(manifest) and not prep_problems,
@@ -134,6 +144,10 @@ def main(argv=None):
         "no_test_generation": bool(traces) and all(t.get("split") == "dev" for t in traces),
         "no_runtime_errors": bool(traces) and all(t.get("error") is None for t in traces),
         "no_invalid_judgments": bool(rows) and all(not r.get("ambiguous") and not r.get("malformed") for r in rows),
+        "no_budget_or_context_truncation": bool(traces) and all(
+            t.get("finish") not in ("budget_stopped", "context_limit", "error")
+            for t in traces),
+        "stage_budget_observed": stage_budget_ok,
         "mur_triggered_branch": mur_triggers > 0 or forced_ok,
     }
     passed = all(gate_checks.values())
@@ -143,6 +157,8 @@ def main(argv=None):
         blocker = "raw generation-logprob validation is missing or failed"
     elif not complete:
         blocker = "the 20x3 development smoke is incomplete"
+    elif not gate_checks["stage_budget_observed"]:
+        blocker = "cumulative GPU/token/wall budget evidence is missing or over limit"
     elif not passed:
         blocker = "one or more prep gate checks failed"
     else:
@@ -159,11 +175,17 @@ def main(argv=None):
         "projected_1500_trajectories_seconds": (per_traj_s * 1500 if per_traj_s else None),
         "projected_1500_trajectories_gpu_hours": (per_traj_s * 1500 / 3600 if per_traj_s else None),
         "projected_1500_trajectories_tokens": (gen_tokens / n_traj * 1500 if n_traj else None),
-        "prep_gpu_hours": wall / 3600.0,
+        "prep_gpu_hours": (gpu_seconds / 3600.0 if isinstance(gpu_seconds, (int, float))
+                           else None),
+        "prep_gpu_allocated_seconds": gpu_seconds,
+        "prep_wall_seconds": wall_seconds,
+        "prep_generated_tokens": total_tokens,
         "budget_limits": {"gpu_hours": 1, "wall_seconds": 7200,
                           "generated_tokens": 1_000_000, "trajectories": 60},
-        "interpretation": "GPU time is conservatively the measured smoke wall interval; no allocation was made in this blocked run."
-        if n_traj == 0 else "GPU time is conservatively the measured smoke wall interval.",
+        "interpretation": ("GPU time is the driver-measured cumulative model "
+                           "allocation interval; smoke throughput drives the 1500 "
+                           "projection." if gpu_seconds is not None else
+                           "No driver-measured GPU allocation was recorded."),
     }
     smoke = {
         "schema_version": 1,
@@ -177,6 +199,10 @@ def main(argv=None):
         "metrics": summary,
         "generated_tokens_total": gen_tokens,
         "run_status": run_status,
+        "evaluation_status": eval_status,
+        "driver": {k: driver.get(k) for k in
+                   ("gpu_allocated_seconds", "total_generated_tokens", "wall_seconds",
+                    "peak_new_usage_mib", "min_free_mib", "phases")},
         "limitations": [
             "Development questions only; no MATH-500 test generation.",
             "Smoke evidence is not a scientific success claim.",
@@ -236,8 +262,10 @@ def main(argv=None):
         json.dump(env, f, indent=2)
 
     failures = []
-    if run_status.get("failures"):
-        failures.extend(run_status["failures"])
+    if run_status.get("failure"):
+        failures.append(run_status["failure"])
+    if eval_status.get("failure"):
+        failures.append("evaluation: " + eval_status["failure"])
     if blocker:
         failures.append(blocker + (": " + gpu["error"] if gpu.get("error") else ""))
     review = f"""# Implementation review — {run_id}
@@ -259,12 +287,17 @@ Gate status: **{smoke['gate_status']}**.
   versioned hash cache including model revision, prompt and sampling settings.
 - Model manifests verify pinned SHA256 for weight, config and tokenizer files as well as the MATH-500
   and development data.
+- One foreground driver (`scripts/stage_driver.py`) runs validation, smoke and verifier in fresh
+  child processes, samples `nvidia-smi`, and enforces cumulative GPU/token/wall budgets.
 
 ## Verified
 - Source/test/dev manifest: {gate_checks['source_manifest'] and gate_checks['test_rows_500'] and gate_checks['dev_rows_20']}
 - Raw generation-logprob validation: {gate_checks['raw_logprob_validation']}
 - Complete 20x3 smoke and verifier: {gate_checks['three_methods_20x3'] and gate_checks['verifier_judgments']}
+- No budget/context-truncated trajectory: {gate_checks['no_budget_or_context_truncation']}
 - Token-ledger closure: {gate_checks['complete_token_ledger']}
+- Cumulative GPU/token/wall budget evidence: {gate_checks['stage_budget_observed']}
+  (GPU {gpu_seconds}s, tokens {total_tokens}, wall {wall_seconds}s)
 - At least one MUR triggered branch inspected or a marked engineering forced-trigger case: {gate_checks['mur_triggered_branch']}
 
 ## Blocking condition

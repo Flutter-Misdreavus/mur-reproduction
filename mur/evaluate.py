@@ -8,9 +8,11 @@ import os
 import statistics
 import sys
 import time
+import traceback
 from pathlib import Path
 
 from .backend import VLLMBackend
+from .limits import ContextLimit, StageBudget, StageBudgetExceeded
 from .prompts import parse_decision, request_seed, verifier_prompt
 
 
@@ -20,12 +22,23 @@ def model_path(repo: str) -> Path:
     return root / repo.split("/")[-1]
 
 
+def write_json_atomic(path: Path, payload):
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    os.replace(tmp, path)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", required=True)
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--sources", default="configs/sources.json")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--max-generated-tokens", type=int, default=250_000)
+    ap.add_argument("--max-wall-seconds", type=float, default=900)
+    ap.add_argument("--max-model-len", type=int, default=4096)
+    ap.add_argument("--batch-size", type=int, default=8)
     args = ap.parse_args(argv)
     inp, out = Path(args.input_dir), Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -59,25 +72,61 @@ def main(argv=None):
         if key not in cache:
             todo.append(t)
 
-    if todo:
-        backend = VLLMBackend(str(model_path(sources["verifier"]["id"])),
-                              gpu_memory_utilization=0.45, max_model_len=12288, seed=seed)
-        from vllm import SamplingParams
-        params = [SamplingParams(max_tokens=4096, temperature=0.7, n=1,
-                                 seed=request_seed(seed, t["qid"], 0, "verifier", 0))
-                  for t in todo]
-        gens = backend.generate_many([t["_prompt"] for t in todo], params)
-        with open(cache_path, "a", encoding="utf-8") as cf:
-            for t, g in zip(todo, gens):
-                rec = {"key": t["_key"], "text": g.text, "finish": g.finish_reason,
-                       "tokens": len(g.token_ids), "prompt_tokens": g.prompt_tokens}
-                cache[t["_key"]] = rec
-                cf.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        backend.close()
+    budget = StageBudget(max_generated=args.max_generated_tokens,
+                         max_wall_seconds=args.max_wall_seconds,
+                         max_model_len=args.max_model_len)
+    failure = None
+    exit_code = 0
+    verified_now = 0
+    backend = None
+    try:
+        if todo:
+            backend = VLLMBackend(str(model_path(sources["verifier"]["id"])),
+                                  gpu_memory_utilization=0.35,
+                                  max_model_len=args.max_model_len, seed=seed)
+            from vllm import SamplingParams
+            for start in range(0, len(todo), args.batch_size):
+                chunk = todo[start:start + args.batch_size]
+                caps = []
+                for t in chunk:
+                    prompt_ids = backend.encode(t["_prompt"])
+                    caps.append(budget.fit(len(prompt_ids), 4096, "verifier"))
+                budget.reserve(caps, "verifier")
+                params = [SamplingParams(max_tokens=cap, temperature=0.7, n=1,
+                                         seed=request_seed(seed, t["qid"], 0, "verifier", 0))
+                          for t, cap in zip(chunk, caps)]
+                gens = backend.generate_many([t["_prompt"] for t in chunk], params)
+                with open(cache_path, "a", encoding="utf-8") as cf:
+                    for t, g, cap in zip(chunk, gens, caps):
+                        budget.account("verifier", len(g.token_ids))
+                        rec = {"key": t["_key"], "text": g.text, "finish": g.finish_reason,
+                               "tokens": len(g.token_ids), "prompt_tokens": g.prompt_tokens,
+                               "max_tokens_effective": cap}
+                        cache[t["_key"]] = rec
+                        cf.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                verified_now += len(chunk)
+                print(f"verified {verified_now}/{len(todo)}", flush=True)
+    except (StageBudgetExceeded, ContextLimit) as e:
+        failure = f"{type(e).__name__}: {e}"
+        exit_code = 3
+    except Exception as e:
+        failure = f"{type(e).__name__}: {e}"
+        exit_code = 2
+        traceback.print_exc()
+    finally:
+        if backend is not None:
+            try:
+                backend.close()
+            except Exception:
+                pass
 
     rows = []
+    missing = []
     for t in traces:
-        c = cache[t["_key"]]
+        c = cache.get(t["_key"])
+        if c is None:
+            missing.append(t["qid"])
+            continue
         label, ambiguous = parse_decision(c["text"])
         rows.append({
             "qid": t["qid"], "method": t["method"], "finish": t["finish"],
@@ -93,6 +142,7 @@ def main(argv=None):
                              if c2["verify"]["judgment"]["label"] is None),
             "wall_seconds": t["wall_seconds"],
             "verifier_tokens": c["tokens"],
+            "verifier_cached": t["_key"] in cache and t not in todo,
         })
     summary = {}
     for m in sorted({r["method"] for r in rows}):
@@ -116,12 +166,29 @@ def main(argv=None):
         summary["mur"]["token_savings_vs_per_step"] = 1 - summary["mur"]["mean_total_tokens"] / base
         summary["mur"]["accuracy_delta_vs_per_step"] = (summary["mur"]["accuracy"] -
                                                         summary["per_step"]["accuracy"])
-    with open(out / "metrics.json", "w", encoding="utf-8") as f:
-        json.dump({"rows": rows, "summary": summary, "verifier": sources["verifier"]}, f, indent=2)
-    with open(out / "verifier-summary.json", "w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2)
+    metrics = {"rows": rows, "summary": summary, "verifier": sources["verifier"],
+               "missing_verifications": missing}
+    write_json_atomic(out / "metrics.json", metrics)
+    write_json_atomic(out / "verifier-summary.json", summary)
+    status = {
+        "schema_version": 1,
+        "generated_tokens": budget.generated,
+        "wall_seconds": budget.elapsed,
+        "max_generated_tokens": budget.max_generated,
+        "max_wall_seconds": budget.max_wall_seconds,
+        "max_model_len": budget.max_model_len,
+        "trajectories": len(traces),
+        "verified_rows": len(rows),
+        "missing_verifications": missing,
+        "verified_now": verified_now,
+        "failure": failure,
+        "exit_code": exit_code,
+        "partial": len(rows) != len(traces),
+    }
+    write_json_atomic(out / "run-status.json", status)
     print(json.dumps(summary, indent=2))
-    return 0
+    print(json.dumps(status), flush=True)
+    return exit_code
 
 
 if __name__ == "__main__":

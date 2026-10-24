@@ -1,6 +1,7 @@
 """Thin vLLM backend with explicit token-level and raw prompt-logprob access."""
 from __future__ import annotations
 
+import gc
 import math
 import os
 import re
@@ -31,6 +32,7 @@ class VLLMBackend:
             raise RuntimeError("Revalidate raw-generation logprob semantics before changing vLLM")
 
         self.model_path = model_path
+        self.max_model_len = int(max_model_len)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -141,8 +143,29 @@ class VLLMBackend:
         }
 
     def close(self):
+        """Shut down the V1 engine-core child, then drop model references.
+
+        vLLM 0.8.5 V1 uses a separate EngineCore process by default.  Setting
+        ``self.llm = None`` alone leaves that process alive, so explicitly
+        request client shutdown and wait for the child to disappear.
+        """
+        llm = getattr(self, "llm", None)
+        engine = getattr(llm, "llm_engine", None)
+        core = getattr(engine, "engine_core", None)
+        if core is not None:
+            try:
+                core.shutdown()
+            except Exception:
+                pass
         self.llm = None
         self.tokenizer = None
+        gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
 
 
 def generation_nll(gen: Generation) -> dict:
