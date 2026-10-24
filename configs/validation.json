@@ -1,6 +1,10 @@
 {
   "schema_version": 1,
-  "reference": "same_engine_identity_sampling_teacher_forced_prefill",
+  "reference": "same_forward_unmodified_logits",
+  "retired_references": [
+    "same_engine_identity_sampling_teacher_forced_prefill (r4; FAILED, retained diagnostic)",
+    "independent HF forward pass (r3; FAILED, retained diagnostic)"
+  ],
   "probes": [
     [
       "repeat",

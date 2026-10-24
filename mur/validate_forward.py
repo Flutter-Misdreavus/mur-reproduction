@@ -20,6 +20,7 @@ from .validate_signal import sampler_source_evidence
 
 REFERENCE = "same_forward_unmodified_logits"
 ATOL = 5e-5  # Float32 log-softmax arithmetic, not a BF16 forward tolerance.
+NEGATIVE_CONTROL_MIN_DIFF = 1e-3  # Temperature-only transform must disagree somewhere.
 
 
 def install_observer(worker):
@@ -37,11 +38,20 @@ def install_observer(worker):
         raw = logits.detach().float().clone()
         raw_logp = torch.log_softmax(raw, dim=-1)
         temp = sampling_metadata.temperature
-        if temp is None or not bool(torch.all(temp > 0)):
-            raise RuntimeError("observer requires positive sampling temperature")
-        temperature_logp = torch.log_softmax(raw / temp[:, None], dim=-1)
+        if temp is None:
+            raise RuntimeError("observer requires one positive temperature per row")
+        temp = temp.reshape(-1)
+        if temp.numel() != raw.shape[0]:
+            raise RuntimeError("observer requires one positive temperature per row")
+        if not bool(torch.all(torch.isfinite(temp) & (temp > 0))):
+            raise RuntimeError("observer requires finite positive sampling temperature")
+        temperature_logp = torch.log_softmax(raw / temp[:, None].to(raw.device), dim=-1)
         result = original(logits, sampling_metadata)
+        if result.logprobs_tensors is None:
+            raise RuntimeError("observer requires sampled-token logprobs")
         ids = result.sampled_token_ids.reshape(-1).long()
+        if ids.numel() != raw.shape[0]:
+            raise RuntimeError("unexpected speculative-decoding sampler output shape")
         rows = torch.arange(ids.numel(), device=ids.device)
         tensor_ids, reported, _ = result.logprobs_tensors
         if not torch.equal(tensor_ids[:, 0].long(), ids):
@@ -66,11 +76,15 @@ def drain_observer(worker):
 
 
 def compare_returned(generation, captured):
+    if not captured:
+        raise ValueError("empty observer evidence")
     if generation.token_ids != [r["token_id"] for r in captured]:
         raise ValueError("sampler and client token IDs/counts differ")
     nll = generation_nll(generation)["token_nll"]
     if not nll:
         raise ValueError("empty generation")
+    if len(nll) != len(captured):
+        raise ValueError("client and observer token counts differ")
     errors = []
     negative_control = []
     for value, row in zip(nll, captured):
@@ -78,10 +92,14 @@ def compare_returned(generation, captured):
                    ("raw_logprob", "sampler_logprob", "temperature_only_logprob")):
             raise ValueError("nonfinite observer evidence")
         errors.extend((abs(value + row["raw_logprob"]),
-                       abs(row["sampler_logprob"] - row["raw_logprob"])))
+                       abs(row["sampler_logprob"] - row["raw_logprob"]),
+                       abs(value + row["sampler_logprob"])))
         negative_control.append(abs(value + row["temperature_only_logprob"]))
+    max_negative = max(negative_control)
     return {"passed": max(errors) <= ATOL, "max_abs_error": max(errors),
-            "temperature_only_max_error": max(negative_control),
+            "mean_abs_error": sum(errors) / len(errors),
+            "temperature_only_max_error": max_negative,
+            "negative_control_passed": max_negative > NEGATIVE_CONTROL_MIN_DIFF,
             "output_tokens": len(nll), "client_token_nll": nll,
             "captured": captured}
 
@@ -134,22 +152,33 @@ def main(argv=None):
         if backend is not None:
             backend.close()
     passed = (error is None and len(results) == 8 and all(r["passed"] for r in results)
+              and all(r["output_tokens"] > 0 for r in results)
               and any(r["repeated_token_ids"] for r in results)
-              and any(r["temperature_only_max_error"] > 1e-3 for r in results))
+              and any(r["negative_control_passed"] for r in results))
     # Only a portable relative source path belongs in public summaries.
     evidence["path"] = "vllm/v1/sample/sampler.py"
+    negative_control_ok = any(r["negative_control_passed"] for r in results)
+    repeated_ok = any(r["repeated_token_ids"] for r in results)
     payload = {"schema_version": 1, "passed": passed, "error": error,
-               "validation_reference": REFERENCE, "atol": ATOL, "probe_count": len(results),
+               "validation_reference": REFERENCE, "atol": ATOL,
+               "negative_control_min_diff": NEGATIVE_CONTROL_MIN_DIFF,
+               "probe_count": len(results),
                "complete_nonempty_probes": len(results) == 8 and all(r["output_tokens"] > 0 for r in results),
-               "repeated_token_probe": any(r["repeated_token_ids"] for r in results),
+               "repeated_token_probe": repeated_ok,
+               "temperature_only_negative_control_passed": negative_control_ok,
+               "max_temperature_only_diff": max(
+                   (r["temperature_only_max_error"] for r in results), default=None),
                "max_abs_token_logprob_diff": max((r["max_abs_error"] for r in results), default=None),
-               "reference_run": "mur-20261024-prep-r4",
+               "mean_abs_token_logprob_diff": (
+                   sum(r["mean_abs_error"] for r in results) / len(results) if results else None),
+               "reference_run": "mur-20261024-prep-r5",
                "cross_engine_hf_parity": False, "independent_prefill_parity": False,
                "prior_failed_runs": ["mur-20261024-prep-r3", "mur-20261024-prep-r4"],
                "generation_logprobs_used_for_nll": True,
                "generated_tokens": budget.generated,
                "sampler_source": evidence, "probes": results,
                "no_extra_model_forward": True, "observer_installed_only_for_validation": True}
+
     Path(args.output).write_text(json.dumps(payload, indent=2) + "\n")
     print(json.dumps({k:v for k,v in payload.items() if k != "probes"}, indent=2))
     return 0 if passed else 1

@@ -144,22 +144,61 @@ def main(argv=None):
     reported_tokens = budget_evidence.get("reported_generated_tokens")
     unknown_reserved_tokens = budget_evidence.get("unknown_reserved_tokens")
     signal_probes = validation.get("probes") or []
+    signal_atol = validation.get("atol", 5e-5)
+    max_signal_diff = validation.get("max_abs_token_logprob_diff")
     signal_gate_ok = (
         bool(validation.get("passed"))
         and validation.get("validation_reference")
         == "same_forward_unmodified_logits"
         and validation.get("cross_engine_hf_parity") is False
+        and validation.get("independent_prefill_parity") is False
+        and validation.get("temperature_only_negative_control_passed") is True
         and validation.get("probe_count") == 8
         and validation.get("complete_nonempty_probes") is True
         and bool(validation.get("repeated_token_probe"))
+        and isinstance(max_signal_diff, (int, float))
+        and isinstance(signal_atol, (int, float))
+        and 0 <= max_signal_diff <= signal_atol
         and len(signal_probes) == 8
         and all(p.get("passed") is True for p in signal_probes)
     )
-    prior_r3 = {"run_id": "mur-20261024-prep-r3",
-                "gpu_allocated_seconds_conservative": 280,
-                "generated_diagnostic_tokens_conservative": 300,
-                "status": "BLOCKED at the retired HF cross-engine gate",
-                "note": "reported separately; not part of the r4 allocation"}
+    prior_charges = {
+        "basis": ("conservative prep-ceiling budget charges, distinct from measured GPU "
+                  "seconds; R1 uses its entire original allocation"),
+        "runs": [
+            {"run_id": "mur-20261024-prep-r1",
+             "gpu_seconds_conservative": 3600,
+             "charge_note": "entire original allocation charged conservatively",
+             "status": "incomplete trajectories excluded from metrics"},
+            {"run_id": "mur-20261024-prep-r2",
+             "gpu_seconds_conservative": 0,
+             "charge_note": "no GPU work",
+             "status": "not run"},
+            {"run_id": "mur-20261024-prep-r3",
+             "gpu_seconds_conservative": 280,
+             "generated_diagnostic_tokens_conservative": 300,
+             "status": "BLOCKED at the retired HF cross-engine gate"},
+            {"run_id": "mur-20261024-prep-r4",
+             "gpu_seconds_conservative": 62.77,
+             "generated_tokens_measured": 243,
+             "status": "BLOCKED at the failed independent-prefill comparison"},
+            {"run_id": run_id,
+             "gpu_seconds_conservative_limit": 3000,
+             "gpu_seconds_measured": gpu_seconds,
+             "generated_tokens_measured": total_tokens,
+             "status": "current run"},
+        ],
+        "combined_prep_gpu_seconds_conservative": 3600 + 0 + 280 + 62.77 + 3000,
+        "combined_prep_gpu_hours_conservative": (3600 + 0 + 280 + 62.77 + 3000) / 3600.0,
+        "combined_prep_gpu_seconds_prior_plus_actual": (
+            3600 + 0 + 280 + 62.77 + (gpu_seconds if isinstance(gpu_seconds, (int, float)) else 0)),
+        "combined_generated_tokens_conservative": 0 + 300 + 243 + 0,
+        "combined_prep_gpu_hours_ceiling": 2.0,
+        "total_project_gpu_hours_ceiling": 12.0,
+    }
+    prior_charges["within_combined_prep_ceiling"] = (
+        prior_charges["combined_prep_gpu_hours_conservative"] <= 2.0)
+
     stage_budget_ok = (
         isinstance(gpu_seconds, (int, float)) and gpu_seconds <= 3000
         and isinstance(total_tokens, int) and total_tokens <= 1_000_000
@@ -177,6 +216,12 @@ def main(argv=None):
         "validation_reference_recorded": validation.get("validation_reference")
         == "same_forward_unmodified_logits",
         "cross_engine_parity_not_claimed": validation.get("cross_engine_hf_parity") is False,
+        "independent_prefill_parity_not_claimed": validation.get(
+            "independent_prefill_parity") is False,
+        "temperature_only_negative_control": validation.get(
+            "temperature_only_negative_control_passed") is True,
+        "combined_prep_charge_within_ceiling": prior_charges[
+            "within_combined_prep_ceiling"],
         "three_methods_20x3": complete,
         "complete_token_ledger": bool(traces) and ledger_ok,
         "verifier_judgments": len(rows) == len(traces) and len(traces) > 0,
@@ -195,11 +240,13 @@ def main(argv=None):
     if not gate_checks["gpu_available"]:
         blocker = "GPU/NVML is unavailable to the managed foreground execution sandbox"
     elif not gate_checks["signal_gate_8_probes"]:
-        blocker = "same-engine raw generation-logprob signal gate is missing or failed"
+        blocker = "same-forward probability-contract gate is missing or failed"
     elif not complete:
         blocker = "the 20x3 development smoke is incomplete"
     elif not gate_checks["stage_budget_observed"]:
         blocker = "cumulative GPU/token/wall budget evidence is missing or over limit"
+    elif not gate_checks["combined_prep_charge_within_ceiling"]:
+        blocker = "conservative combined preparation charges exceed the 2 GPU-hour ceiling"
     elif not passed:
         blocker = "one or more prep gate checks failed"
     else:
@@ -223,7 +270,11 @@ def main(argv=None):
         "prep_unknown_reserved_tokens": unknown_reserved_tokens,
         "prep_wall_seconds": wall_seconds,
         "prep_generated_tokens": total_tokens,
-        "prior_runs": prior_r3,
+        "prior_charges": prior_charges,
+        "combined_prep_gpu_seconds_conservative": prior_charges[
+            "combined_prep_gpu_seconds_conservative"],
+        "combined_prep_gpu_hours_conservative": prior_charges[
+            "combined_prep_gpu_hours_conservative"],
         "budget_limits": {"gpu_seconds": 3000, "gpu_hours": 3000 / 3600,
                           "combined_prep_gpu_hours": 2, "wall_seconds": 7200,
                           "generated_tokens": 1_000_000, "trajectories": 60},
@@ -251,10 +302,16 @@ def main(argv=None):
             "validation_reference": validation.get("validation_reference"),
             "reference_run": validation.get("reference_run"),
             "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+            "independent_prefill_parity": validation.get("independent_prefill_parity"),
             "hf_parity_status": validation.get("hf_parity_status"),
             "probe_count": validation.get("probe_count"),
             "complete_nonempty_probes": validation.get("complete_nonempty_probes"),
             "repeated_token_probe": validation.get("repeated_token_probe"),
+            "temperature_only_negative_control_passed": validation.get(
+                "temperature_only_negative_control_passed"),
+            "max_temperature_only_diff": validation.get("max_temperature_only_diff"),
+            "atol": validation.get("atol"),
+            "negative_control_min_diff": validation.get("negative_control_min_diff"),
             "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
             "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
             "tolerance": validation.get("tolerance"),
@@ -264,9 +321,10 @@ def main(argv=None):
             "reference_probe_tokens": validation.get("reference_probe_tokens"),
             "probes": [{k: p.get(k) for k in
                         ("name", "passed", "output_tokens", "repeated_token_ids",
-                         "eos_scored", "max_abs_token_logprob_diff",
-                         "mean_abs_token_logprob_diff", "abs_mean_diff",
-                         "generation_mean_nll", "reference_mean_nll")}
+                         "negative_control_passed", "temperature_only_max_error",
+                         "max_abs_error", "mean_abs_error", "eos_scored",
+                         "max_abs_token_logprob_diff", "mean_abs_token_logprob_diff",
+                         "abs_mean_diff", "generation_mean_nll", "reference_mean_nll")}
                        for p in (validation.get("probes") or [])],
         },
         "driver": {k: driver.get(k) for k in
@@ -275,7 +333,7 @@ def main(argv=None):
                     "unknown_reserved_tokens", "wall_seconds",
                     "peak_new_usage_mib", "min_free_mib", "phases",
                     "preflight_errors")},
-        "prior_runs": prior_r3,
+        "prior_charges": prior_charges,
         "cumulative_budget": cumulative or None,
         "limitations": [
             "Development questions only; no MATH-500 test generation.",
@@ -287,6 +345,27 @@ def main(argv=None):
         json.dump(smoke, f, indent=2)
     with open(rd / "budget-estimate.json", "w", encoding="utf-8") as f:
         json.dump(projected, f, indent=2)
+    cumulative_payload = {
+        "schema_version": 1,
+        "run_id": run_id,
+        "note": ("Conservative prep-ceiling charges are reported alongside measured R5 "
+                 "allocation; they are not measurements of R1/R3/R4."),
+        "runs": prior_charges["runs"],
+        "combined_prep_gpu_seconds_conservative": prior_charges[
+            "combined_prep_gpu_seconds_conservative"],
+        "combined_prep_gpu_hours_conservative": prior_charges[
+            "combined_prep_gpu_hours_conservative"],
+        "combined_prep_gpu_seconds_prior_plus_actual": prior_charges[
+            "combined_prep_gpu_seconds_prior_plus_actual"],
+        "combined_generated_tokens_conservative": prior_charges[
+            "combined_generated_tokens_conservative"],
+        "combined_prep_gpu_hours_ceiling": 2.0,
+        "total_project_gpu_hours_ceiling": 12.0,
+        "within_combined_prep_ceiling": prior_charges[
+            "within_combined_prep_ceiling"],
+    }
+    with open(rd / "cumulative-budget.json", "w", encoding="utf-8") as f:
+        json.dump(cumulative_payload, f, indent=2)
     public = {
         "schema_version": 1,
         "run_id": run_id,
@@ -307,8 +386,13 @@ def main(argv=None):
             "validation_reference": validation.get("validation_reference"),
             "reference_run": validation.get("reference_run"),
             "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+            "independent_prefill_parity": validation.get("independent_prefill_parity"),
             "probe_count": validation.get("probe_count"),
             "repeated_token_probe": validation.get("repeated_token_probe"),
+            "temperature_only_negative_control_passed": validation.get(
+                "temperature_only_negative_control_passed"),
+            "max_temperature_only_diff": validation.get("max_temperature_only_diff"),
+            "atol": validation.get("atol"),
             "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
             "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
             "generated_tokens": validation.get("generated_tokens"),
@@ -316,12 +400,13 @@ def main(argv=None):
             "raw_before_penalties_and_temperature": sampler_source.get(
                 "raw_before_penalties_and_temperature"),
             "probes": [{k: p.get(k) for k in
-                        ("name", "passed", "output_tokens", "eos_scored",
-                         "max_abs_token_logprob_diff", "mean_abs_token_logprob_diff",
-                         "abs_mean_diff")}
+                        ("name", "passed", "output_tokens", "negative_control_passed",
+                         "temperature_only_max_error", "max_abs_error", "mean_abs_error",
+                         "eos_scored", "max_abs_token_logprob_diff",
+                         "mean_abs_token_logprob_diff", "abs_mean_diff")}
                        for p in (validation.get("probes") or [])],
         },
-        "prior_runs": prior_r3,
+        "prior_charges": prior_charges,
         "budget": projected,
     }
     with open(rd / "sanitized-public-metrics.json", "w", encoding="utf-8") as f:
@@ -350,8 +435,11 @@ def main(argv=None):
         "validation_reference": validation.get("validation_reference"),
         "reference_run": validation.get("reference_run"),
         "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+        "independent_prefill_parity": validation.get("independent_prefill_parity"),
         "hf_parity_status": validation.get("hf_parity_status"),
         "signal_gate_passed": validation.get("passed"),
+        "temperature_only_negative_control_passed": validation.get(
+            "temperature_only_negative_control_passed"),
         "sampler_source": sampler_source,
         "cuda_visible_devices": gpu.get("cuda_visible_devices"),
         "notes": [
@@ -359,7 +447,8 @@ def main(argv=None):
             "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
             "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
             "vLLM memory fractions: policy 0.42, critic 0.62, verifier 0.40. The shared GPU had a co-tenant allocation, and V1 counts it as non-torch use; 0.26 left no KV-cache blocks.",
-            "The r4 signal gate is same-engine raw-logprob validation; cross-engine HF parity remains FAILED from r3 and is not relabelled.",
+            "The r5 direct signal gate compares unmodified logits in the same generating forward. Prior independent-prefill (r4) and cross-engine HF (r3) parity checks remain FAILED and are not relabelled.",
+            "R1 (3600 s conservative), R2 (0 s), R3 (280 s), R4 (62.77 s) and R5 (<=3000 s) sum to 6942.77 conservative GPU seconds, below the 7200 s combined preparation ceiling; these are budget charges, not measurements.",
         ],
     }
     with open(rd / "environment.json", "w", encoding="utf-8") as f:
@@ -381,8 +470,11 @@ Gate status: **{smoke['gate_status']}**.
 - vLLM 0.8.5 V1 backend that reads raw sampled-token logprobs from the generating forward pass
   (inspected `vllm/v1/sample/sampler.py`: `raw_logprobs` precedes penalties/temperature), so no extra
   prompt-rescoring call is used for `m_t`.
-- `mur.validate_forward` compares each returned token probability with unmodified logits in the same forward.
-  Prior independent-prefill (r4) and cross-engine (r3) comparisons remain FAILED diagnostics;
+- `mur.validate_forward` installs a read-only observer in the exact generating sampler, clones
+  logits before transforms, computes float32 log-softmax independently, calls the original sampler
+  once, and compares the sampled column with the client `Generation` logprob on exact token IDs.
+  A temperature-only negative control must differ by more than 0.001 somewhere. Prior
+  independent-prefill (r4) and cross-engine (r3) comparisons remain FAILED diagnostics;
   this observer establishes neither kind of numerical parity.
 - Driver bookkeeping includes cleanup time in GPU allocation, fails closed without NVML/compute
   telemetry, refuses reused output directories, and marks unknown token reservations separately.
@@ -403,9 +495,11 @@ Gate status: **{smoke['gate_status']}**.
 
 ## Verified
 - Source/test/dev manifest: {gate_checks['source_manifest'] and gate_checks['test_rows_500'] and gate_checks['dev_rows_20']}
-- Same-engine raw signal gate, all eight probes: {gate_checks['signal_gate_8_probes']}
+- Same-forward probability-contract gate, all eight probes: {gate_checks['signal_gate_8_probes']}
   (validation_reference={validation.get('validation_reference')},
-  cross_engine_hf_parity={validation.get('cross_engine_hf_parity')})
+  cross_engine_hf_parity={validation.get('cross_engine_hf_parity')},
+  independent_prefill_parity={validation.get('independent_prefill_parity')},
+  temperature_only_negative_control={validation.get('temperature_only_negative_control_passed')})
 - Complete 20x3 smoke and verifier: {gate_checks['three_methods_20x3'] and gate_checks['verifier_judgments']}
 - No budget/context-truncated trajectory: {gate_checks['no_budget_or_context_truncation']}
 - Token-ledger closure: {gate_checks['complete_token_ledger']}
@@ -418,9 +512,15 @@ Gate status: **{smoke['gate_status']}**.
   SHA256 `{sampler_source.get('sha256')}`;
   raw logprobs computed before penalties/temperature:
   `{sampler_source.get('raw_before_penalties_and_temperature')}`.
-- r3 cross-engine HF parity remains **FAILED** and is not a passing result.
-- r3 prior allocation reported separately: 280 conservative GPU seconds and 300 conservative
-  diagnostic tokens (excluded from the r4 budget totals).
+- Direct-gate arithmetic limit {validation.get('atol')} on identical logits; observed max
+  {validation.get('max_abs_token_logprob_diff')}, temperature-only max
+  {validation.get('max_temperature_only_diff')} (negative-control threshold
+  {validation.get('negative_control_min_diff')}).
+- r3 cross-engine HF parity and r4 independent-prefill parity both remain **FAILED** and are not passing results.
+- Conservative preparation charges: R1 3600 s, R2 0 s, R3 280 s, R4 62.77 s, R5 <=3000 s;
+  combined {prior_charges['combined_prep_gpu_seconds_conservative']:.2f} s
+  ({prior_charges['combined_prep_gpu_hours_conservative']:.4f} GPU-hours) below the 2 GPU-hour ceiling.
+  These are budget charges, distinct from the measured R5 allocation.
 
 ## Blocking condition
 {blocker or 'None.'}

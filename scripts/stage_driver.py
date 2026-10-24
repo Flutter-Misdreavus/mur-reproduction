@@ -527,12 +527,21 @@ def validation_passed(run_dir: Path, result: dict) -> bool:
     if not fresh_file(path, result.get("started_epoch", 0)):
         return False
     payload = read_json(path, {}) or {}
+    max_diff = payload.get("max_abs_token_logprob_diff")
+    atol = payload.get("atol")
+    arithmetic_ok = (isinstance(max_diff, (int, float))
+                     and isinstance(atol, (int, float))
+                     and 0 <= max_diff <= atol)
     return (payload.get("passed") is True
             and payload.get("validation_reference")
             == "same_forward_unmodified_logits"
             and payload.get("cross_engine_hf_parity") is False
+            and payload.get("independent_prefill_parity") is False
+            and payload.get("temperature_only_negative_control_passed") is True
+            and payload.get("repeated_token_probe") is True
             and payload.get("probe_count") == 8
-            and payload.get("complete_nonempty_probes") is True)
+            and payload.get("complete_nonempty_probes") is True
+            and arithmetic_ok)
 
 
 def smoke_complete(run_dir: Path, result: dict) -> bool:

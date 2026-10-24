@@ -14,9 +14,28 @@ class ForwardObserverContracts(unittest.TestCase):
 
     def test_raw_values_pass_and_temperature_only_values_fail(self):
         gen, observed = self.fixture()
-        self.assertTrue(compare_returned(gen, observed)["passed"])
+        result = compare_returned(gen, observed)
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["negative_control_passed"])
+        self.assertAlmostEqual(result["temperature_only_max_error"], 0.1)
         gen, observed = self.fixture(-0.2)
         self.assertFalse(compare_returned(gen, observed)["passed"])
+
+    def test_missing_temperature_only_difference_fails_negative_control(self):
+        gen, observed = self.fixture()
+        observed[0]["temperature_only_logprob"] = -0.3
+        result = compare_returned(gen, observed)
+        self.assertTrue(result["passed"])
+        self.assertFalse(result["negative_control_passed"])
+
+    def test_raw_client_mismatch_but_sampler_match_fails(self):
+        gen, observed = self.fixture(-0.4)
+        self.assertFalse(compare_returned(gen, observed)["passed"])
+
+    def test_empty_observer_evidence_is_rejected(self):
+        gen, _ = self.fixture()
+        with self.assertRaises(ValueError):
+            compare_returned(gen, [])
 
     def test_token_alignment_is_required(self):
         gen, observed = self.fixture()

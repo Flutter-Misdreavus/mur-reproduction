@@ -65,17 +65,30 @@ class FreshnessAndOutputContracts(unittest.TestCase):
                 "passed": True,
                 "validation_reference": "same_forward_unmodified_logits",
                 "cross_engine_hf_parity": False,
+                "independent_prefill_parity": False,
+                "temperature_only_negative_control_passed": True,
+                "repeated_token_probe": True,
                 "probe_count": 8,
                 "complete_nonempty_probes": True,
+                "max_abs_token_logprob_diff": 1e-6,
+                "atol": 5e-5,
             }
             (rd / "logprob-validation.json").write_text(json.dumps(payload), encoding="utf-8")
             good = {"phase_ok": True, "started_epoch": 0}
             bad = {"phase_ok": False, "started_epoch": 0}
             self.assertTrue(stage_driver.validation_passed(rd, good))
             self.assertFalse(stage_driver.validation_passed(rd, bad))
-            payload["cross_engine_hf_parity"] = None
-            (rd / "logprob-validation.json").write_text(json.dumps(payload), encoding="utf-8")
-            self.assertFalse(stage_driver.validation_passed(rd, good))
+            for key, value in (
+                    ("cross_engine_hf_parity", None),
+                    ("independent_prefill_parity", True),
+                    ("temperature_only_negative_control_passed", False),
+                    ("repeated_token_probe", False),
+                    ("max_abs_token_logprob_diff", 6e-5)):
+                payload = dict(payload)
+                payload[key] = value
+                (rd / "logprob-validation.json").write_text(
+                    json.dumps(payload), encoding="utf-8")
+                self.assertFalse(stage_driver.validation_passed(rd, good), key)
 
     def test_smoke_requires_complete_clean_status_and_traces(self):
         with tempfile.TemporaryDirectory() as td:
