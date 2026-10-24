@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r5",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "same-forward probability-contract gate is missing or failed",
+  "gate_checks": {
+    "gpu_available": true,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "signal_gate_8_probes": false,
+    "validation_reference_recorded": true,
+    "cross_engine_parity_not_claimed": true,
+    "independent_prefill_parity_not_claimed": true,
+    "temperature_only_negative_control": true,
+    "combined_prep_charge_within_ceiling": true,
+    "three_methods_20x3": false,
+    "complete_token_ledger": false,
+    "verifier_judgments": false,
+    "no_test_generation": true,
+    "test_generation_absent": true,
+    "no_runtime_errors": true,
+    "verifier_no_ambiguous": false,
+    "critic_malformed_rate_reported": true,
+    "no_budget_or_context_truncation": true,
+    "stage_budget_observed": true,
+    "mur_triggered_branch": false
+  },
+  "methods": {
+    "cot": {},
+    "per_step": {},
+    "mur": {}
+  },
+  "per_question": [],
+  "signal_validation": {
+    "passed": false,
+    "validation_reference": "same_forward_unmodified_logits",
+    "reference_run": "mur-20261024-prep-r5",
+    "cross_engine_hf_parity": false,
+    "independent_prefill_parity": false,
+    "probe_count": 5,
+    "repeated_token_probe": true,
+    "temperature_only_negative_control_passed": true,
+    "max_temperature_only_diff": 0.26924046874046326,
+    "atol": 5e-05,
+    "max_abs_token_logprob_diff": 0.0,
+    "mean_abs_token_logprob_diff": 0.0,
+    "generated_tokens": 172,
+    "sampler_source_sha256": "9d1c04c6f44adbaabb96388ca0766791351a6c84fa95672be70a1116498972b1",
+    "raw_before_penalties_and_temperature": true,
+    "probes": [
+      {
+        "name": "repeat",
+        "passed": true,
+        "output_tokens": 15,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.26924046874046326,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null
+      },
+      {
+        "name": "count",
+        "passed": true,
+        "output_tokens": 29,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.13530626893043518,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null
+      },
+      {
+        "name": "ones",
+        "passed": true,
+        "output_tokens": 63,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.1405668742954731,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null
+      },
+      {
+        "name": "sum",
+        "passed": true,
+        "output_tokens": 15,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.04535131389275193,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null
+      },
+      {
+        "name": "double",
+        "passed": true,
+        "output_tokens": 21,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.14027462899684906,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null
+      }
+    ]
+  },
+  "prior_charges": {
+    "basis": "conservative prep-ceiling budget charges, distinct from measured GPU seconds; R1 uses its entire original allocation",
+    "runs": [
+      {
+        "run_id": "mur-20261024-prep-r1",
+        "gpu_seconds_conservative": 3600,
+        "charge_note": "entire original allocation charged conservatively",
+        "status": "incomplete trajectories excluded from metrics"
+      },
+      {
+        "run_id": "mur-20261024-prep-r2",
+        "gpu_seconds_conservative": 0,
+        "charge_note": "no GPU work",
+        "status": "not run"
+      },
+      {
+        "run_id": "mur-20261024-prep-r3",
+        "gpu_seconds_conservative": 280,
+        "generated_diagnostic_tokens_conservative": 300,
+        "status": "BLOCKED at the retired HF cross-engine gate"
+      },
+      {
+        "run_id": "mur-20261024-prep-r4",
+        "gpu_seconds_conservative": 62.77,
+        "generated_tokens_measured": 243,
+        "status": "BLOCKED at the failed independent-prefill comparison"
+      },
+      {
+        "run_id": "mur-20261024-prep-r5",
+        "gpu_seconds_conservative_limit": 3000,
+        "gpu_seconds_measured": 32.06,
+        "generated_tokens_measured": 172,
+        "status": "current run"
+      }
+    ],
+    "combined_prep_gpu_seconds_conservative": 6942.77,
+    "combined_prep_gpu_hours_conservative": 1.9285472222222224,
+    "combined_prep_gpu_seconds_prior_plus_actual": 3974.83,
+    "combined_generated_tokens_conservative": 543,
+    "combined_prep_gpu_hours_ceiling": 2.0,
+    "total_project_gpu_hours_ceiling": 12.0,
+    "within_combined_prep_ceiling": true
+  },
+  "budget": {
+    "measured_trajectories": 0,
+    "measured_generated_tokens": 0,
+    "measured_wall_seconds": 0,
+    "seconds_per_trajectory": null,
+    "projected_1500_trajectories_seconds": null,
+    "projected_1500_trajectories_gpu_hours": null,
+    "projected_1500_trajectories_tokens": null,
+    "prep_gpu_hours": 0.008905555555555555,
+    "prep_gpu_allocated_seconds": 32.06,
+    "prep_reported_generated_tokens": 172,
+    "prep_unknown_reserved_tokens": 0,
+    "prep_wall_seconds": 32.26,
+    "prep_generated_tokens": 172,
+    "prior_charges": {
+      "basis": "conservative prep-ceiling budget charges, distinct from measured GPU seconds; R1 uses its entire original allocation",
+      "runs": [
+        {
+          "run_id": "mur-20261024-prep-r1",
+          "gpu_seconds_conservative": 3600,
+          "charge_note": "entire original allocation charged conservatively",
+          "status": "incomplete trajectories excluded from metrics"
+        },
+        {
+          "run_id": "mur-20261024-prep-r2",
+          "gpu_seconds_conservative": 0,
+          "charge_note": "no GPU work",
+          "status": "not run"
+        },
+        {
+          "run_id": "mur-20261024-prep-r3",
+          "gpu_seconds_conservative": 280,
+          "generated_diagnostic_tokens_conservative": 300,
+          "status": "BLOCKED at the retired HF cross-engine gate"
+        },
+        {
+          "run_id": "mur-20261024-prep-r4",
+          "gpu_seconds_conservative": 62.77,
+          "generated_tokens_measured": 243,
+          "status": "BLOCKED at the failed independent-prefill comparison"
+        },
+        {
+          "run_id": "mur-20261024-prep-r5",
+          "gpu_seconds_conservative_limit": 3000,
+          "gpu_seconds_measured": 32.06,
+          "generated_tokens_measured": 172,
+          "status": "current run"
+        }
+      ],
+      "combined_prep_gpu_seconds_conservative": 6942.77,
+      "combined_prep_gpu_hours_conservative": 1.9285472222222224,
+      "combined_prep_gpu_seconds_prior_plus_actual": 3974.83,
+      "combined_generated_tokens_conservative": 543,
+      "combined_prep_gpu_hours_ceiling": 2.0,
+      "total_project_gpu_hours_ceiling": 12.0,
+      "within_combined_prep_ceiling": true
+    },
+    "combined_prep_gpu_seconds_conservative": 6942.77,
+    "combined_prep_gpu_hours_conservative": 1.9285472222222224,
+    "budget_limits": {
+      "gpu_seconds": 3000,
+      "gpu_hours": 0.8333333333333334,
+      "combined_prep_gpu_hours": 2,
+      "wall_seconds": 7200,
+      "generated_tokens": 1000000,
+      "trajectories": 60
+    },
+    "interpretation": "No 1500-trajectory estimate is reported because the gate stopped before a complete 20x3 smoke; GPU time is the measured model-allocation interval including cleanup."
+  }
+}

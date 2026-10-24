@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r5",
+  "run_commit": "e931a6d7e2cc235b4a6e26f60f1ebf5faa8c20c3",
+  "gpu_index": 2,
+  "observed_at": "2026-10-24T08:13:50.012875+00:00",
+  "baseline": {
+    "available": true,
+    "error": null,
+    "devices": [
+      {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 8416.0,
+        "free_mib": 15720.0,
+        "util_pct": 98.0
+      },
+      {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 13893.0,
+        "free_mib": 10242.0,
+        "util_pct": 59.0
+      },
+      {
+        "index": 2,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 3257.0,
+        "free_mib": 20878.0,
+        "util_pct": 20.0
+      },
+      {
+        "index": 3,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 3700.0,
+        "free_mib": 20435.0,
+        "util_pct": 36.0
+      }
+    ],
+    "query_ok": true,
+    "index": 2,
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mib": 24576.0,
+    "used_mib": 3257.0,
+    "free_mib": 20878.0,
+    "util_pct": 20.0
+  },
+  "final": {
+    "available": true,
+    "error": null,
+    "devices": [
+      {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 8456.0,
+        "free_mib": 15680.0,
+        "util_pct": 63.0
+      },
+      {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 13893.0,
+        "free_mib": 10242.0,
+        "util_pct": 81.0
+      },
+      {
+        "index": 2,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 3257.0,
+        "free_mib": 20878.0,
+        "util_pct": 33.0
+      },
+      {
+        "index": 3,
+        "name": "NVIDIA GeForce RTX 3090",
+        "total_mib": 24576.0,
+        "used_mib": 3700.0,
+        "free_mib": 20435.0,
+        "util_pct": 20.0
+      }
+    ],
+    "query_ok": true,
+    "index": 2,
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mib": 24576.0,
+    "used_mib": 3257.0,
+    "free_mib": 20878.0,
+    "util_pct": 33.0
+  },
+  "peak_new_usage_mib": 6851.0,
+  "min_free_mib": 14027.0,
+  "max_new_usage_limit_mib": 14336.0,
+  "min_free_limit_mib": 4096.0,
+  "telemetry_ok": true,
+  "phases": [
+    {
+      "name": "validate",
+      "max_new_usage_mib": 6851.0,
+      "min_free_mib": 14027.0,
+      "status": "ok",
+      "phase_ok": false,
+      "cleanup": "clean"
+    }
+  ],
+  "preflight_errors": []
+}
