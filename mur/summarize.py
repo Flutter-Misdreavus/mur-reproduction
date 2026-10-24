@@ -247,7 +247,7 @@ def main(argv=None):
         "python": platform.python_version(),
         "platform": platform.platform(),
         "packages": {name: pkg_version(name)
-                     for name in ("torch", "transformers", "vllm", "tokenizers", "pyarrow")},
+                     for name in ("torch", "transformers", "vllm", "tokenizers", "pyarrow", "setuptools")},
         "gpu": gpu,
         "host_memory": host_memory(),
         "git_head": git_head,
@@ -256,6 +256,7 @@ def main(argv=None):
         "notes": [
             "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
             "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
+            "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
         ],
     }
     with open(rd / "environment.json", "w", encoding="utf-8") as f:
