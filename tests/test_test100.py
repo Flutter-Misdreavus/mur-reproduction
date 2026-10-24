@@ -8,7 +8,7 @@ from unittest import mock
 
 from mur import run as runner
 from mur import testdata
-from mur.aggregate import decision_from, paired_bootstrap
+from mur.aggregate import decision_from, paired_bootstrap, verifier_cost
 from mur.engineering import compare_pair
 from mur.evaluate import trigger_stats
 
@@ -203,6 +203,26 @@ class BootstrapContracts(unittest.TestCase):
         dec = decision_from(out)
         self.assertTrue(dec["point_target_met"])
         self.assertTrue(dec["evidence_supported_non_inferiority"])
+
+
+class VerifierCostContracts(unittest.TestCase):
+    def test_actual_and_attributed_verifier_tokens_are_separate(self):
+        chunk_status = [
+            {"evaluation": {"generated_tokens": 10, "verified_now": 3,
+                            "unique_pending_prompts": 4, "wall_seconds": 1.0}},
+            {"evaluation": {"generated_tokens": 5, "verified_now": 2,
+                            "unique_pending_prompts": 3, "wall_seconds": 1.5}},
+        ]
+        summary = {m: {"verifier_tokens_attributed_total": t} for m, t in
+                   (("cot", 2), ("per_step", 4), ("mur", 6))}
+        out = verifier_cost(chunk_status, summary)
+        self.assertEqual(out["output_tokens_total"], 15)
+        self.assertEqual(out["attributed_output_tokens_total"], 12)
+        self.assertEqual(out["calls"], 5)
+        self.assertEqual(out["unique_pending_prompts"], 7)
+        self.assertEqual(out["wall_seconds"], 2.5)
+        self.assertEqual(out["per_method_output_tokens"],
+                         {"cot": 2, "per_step": 4, "mur": 6})
 
 
 if __name__ == "__main__":

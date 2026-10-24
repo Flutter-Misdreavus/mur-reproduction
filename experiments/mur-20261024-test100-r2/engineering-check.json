@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-test100-r2",
+  "stage": "engineering_identity_check",
+  "passed": true,
+  "failure": null,
+  "dev_indices": [
+    0,
+    3
+  ],
+  "dev_ids": [
+    "dev-1329ed353664",
+    "dev-2733fbeb603b"
+  ],
+  "pairs": [
+    {
+      "qid": "dev-1329ed353664",
+      "passed": true,
+      "problems": [],
+      "first_trigger_step": null,
+      "triggered_steps": [],
+      "compared_steps_before_trigger": 5,
+      "cot_steps": 5,
+      "mur_steps": 5,
+      "first_proposal_sha256": "ce3a7b9d41e5e93b020ebe96cfe287075191c6cf42476eb17628d6f1d0439d71",
+      "first_proposal_tokens_sha256": "935d4d225f2ebafc18795d66c25f80c9f40c1d4acf09f49a0296d7df076715cc"
+    },
+    {
+      "qid": "dev-2733fbeb603b",
+      "passed": true,
+      "problems": [],
+      "first_trigger_step": null,
+      "triggered_steps": [],
+      "compared_steps_before_trigger": 1,
+      "cot_steps": 1,
+      "mur_steps": 1,
+      "first_proposal_sha256": "a613933c4819e05b69fffed05b8cf85c13339eb10894dabd73f8f2a59b2b48c7",
+      "first_proposal_tokens_sha256": "6de103ca83714b475d8d0c31802babb394adf3295c544f57675d9b4c94200546"
+    }
+  ],
+  "trajectories": 4,
+  "generated_tokens": 1306,
+  "wall_seconds": 75.13945364952087,
+  "budget": {
+    "max_generated_tokens": 30000,
+    "max_wall_seconds": 280.0,
+    "max_model_len": 16384
+  },
+  "prefix_caching": false,
+  "criteria": "First proposals must match in text and token IDs; every accepted step before the first genuine MUR trigger must match in text and token IDs. No trigger was suppressed and no numerical variant was retried.",
+  "raw_trace": "raw-engineering-traces.jsonl",
+  "raw_trace_sha256": "72ae9a1657f6faa4cb2ebc2d6cde470b253cd52a9354bcaf574a329b5f7cbfd3"
+}

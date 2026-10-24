@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-24T11:36:21Z",
+  "run_id": "mur-20261024-test100-r2",
+  "stage": "fixed100_exploratory_test_partial50",
+  "partial": true,
+  "python": "3.10.12",
+  "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+  "packages": {
+    "torch": "2.6.0",
+    "transformers": "4.51.3",
+    "vllm": "0.8.5",
+    "tokenizers": "0.21.4",
+    "pyarrow": "25.0.1",
+    "setuptools": "82.0.1"
+  },
+  "gpu": {
+    "selected_index": 2,
+    "cuda_visible_devices": "2",
+    "driver": "nvidia-smi",
+    "preflight_device": {
+      "index": 2,
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mib": 24576.0,
+      "used_mib": 3257.0,
+      "free_mib": 20878.0,
+      "util_pct": 32.0
+    },
+    "final_device": {
+      "index": 2,
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mib": 24576.0,
+      "used_mib": 3257.0,
+      "free_mib": 20878.0,
+      "util_pct": 16.0
+    }
+  },
+  "peak_new_usage_mib": 12109.0,
+  "min_free_mib": 8770.0,
+  "host_memory": {
+    "MemTotal": "196677288 kB",
+    "MemAvailable": "103805052 kB"
+  },
+  "git_head": "5c91a8a178e2c39ba6aa50c3d116524eae8ecf6e",
+  "git_branch": "exp/mur-20261024",
+  "actual_run_commit": "5c91a8a178e2c39ba6aa50c3d116524eae8ecf6e",
+  "prefix_caching": false,
+  "test_manifest_sha256": "694c2fa324d3ecfd6f46902b6bf481016c082795278cefc67c3655ad364ea24f",
+  "source_sha256": "35dc41080a3680858b27fa7e0533d2d547825316fc5dafe5d316f4ccc5a06132",
+  "models": {
+    "policy": {
+      "id": "Qwen/Qwen3-1.7B",
+      "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+    },
+    "critic": {
+      "id": "GenPRM/GenPRM-1.5B",
+      "revision": "a0fa69768f4524257e1730fec639aa7781c7fa82"
+    },
+    "verifier": {
+      "id": "TIGER-Lab/general-verifier",
+      "revision": "dc59c0c82360170cab0be91c91ae545ff32ea896"
+    }
+  },
+  "limits": {
+    "gpu_seconds": 14400,
+    "generated_tokens": 2500000,
+    "wall_seconds": 21600,
+    "one_gpu": true,
+    "max_new_mib": 14336,
+    "min_free_mib": 4096,
+    "chunk_allocation_seconds": 3300,
+    "grading_reserve_seconds": 300
+  },
+  "notes": [
+    "No downloads and no shared-environment mutation.",
+    "GPU state is an observed nvidia-smi snapshot; index 2 is pinned and shared with unrelated co-tenants.",
+    "Latency on a shared GPU is descriptive.",
+    "Prefix caching was disabled for policy, critic and verifier.",
+    "Chunk 2 was stopped by the frozen 2940 s phase cap; no model work was restarted.",
+    "API-returned output tokens are a compute proxy, not exact GPU FLOPs."
+  ]
+}

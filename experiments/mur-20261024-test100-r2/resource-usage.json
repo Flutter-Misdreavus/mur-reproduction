@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-test100-r2",
+  "partial": true,
+  "resource": {
+    "driver_gpu_allocated_seconds": 7868.17,
+    "driver_gpu_hours": 2.185604,
+    "driver_wall_seconds": 7868.93,
+    "driver_conservative_total_tokens": 633569,
+    "driver_unknown_reserved_tokens": 300000,
+    "engineering_generated_tokens": 1306,
+    "completed_chunks_generation_tokens": 316493,
+    "chunk2_actual_generated_tokens_from_traces": 179940,
+    "actual_generation_tokens_total": 497739,
+    "verifier_actual_tokens_total": 15770,
+    "actual_total_tokens_including_verifier": 513509,
+    "verifier_attributed_tokens_total": 27263
+  },
+  "chunks": [
+    {
+      "chunk": 0,
+      "generation": {
+        "trajectories": 75,
+        "method_counts": {
+          "cot": 25,
+          "per_step": 25,
+          "mur": 25
+        },
+        "generated_tokens": 145790,
+        "wall_seconds": 2155.384659525007,
+        "setup_seconds": 2155.384659051895,
+        "budget_max_generated": 300000,
+        "budget_max_wall": 2970.0,
+        "budget_max_model_len": 16384,
+        "context_capped_calls": 0,
+        "context_limits": 0,
+        "budget_stops": 0,
+        "errors": 0,
+        "partial": false,
+        "complete": true,
+        "methods": [
+          "cot",
+          "per_step",
+          "mur"
+        ],
+        "questions": 25,
+        "failure": null,
+        "exit_code": 0
+      },
+      "evaluation": {
+        "schema_version": 1,
+        "generated_tokens": 9162,
+        "wall_seconds": 128.08312879502773,
+        "max_generated_tokens": 2352904,
+        "max_wall_seconds": 280.0,
+        "max_model_len": 4096,
+        "split": "test",
+        "prefix_caching": false,
+        "trajectories": 75,
+        "verified_rows": 75,
+        "unique_pending_prompts": 38,
+        "missing_verifications": [],
+        "verified_now": 38,
+        "failure": null,
+        "exit_code": 0,
+        "partial": false
+      },
+      "rows": 75,
+      "trajectories": 75,
+      "generation_commit": null,
+      "evaluation_commit": null
+    },
+    {
+      "chunk": 1,
+      "generation": {
+        "trajectories": 75,
+        "method_counts": {
+          "cot": 25,
+          "per_step": 25,
+          "mur": 25
+        },
+        "generated_tokens": 170703,
+        "wall_seconds": 2470.1708584092557,
+        "setup_seconds": 2470.170857191086,
+        "budget_max_generated": 300000,
+        "budget_max_wall": 2970.0,
+        "budget_max_model_len": 16384,
+        "context_capped_calls": 0,
+        "context_limits": 0,
+        "budget_stops": 0,
+        "errors": 0,
+        "partial": false,
+        "complete": true,
+        "methods": [
+          "cot",
+          "per_step",
+          "mur"
+        ],
+        "questions": 25,
+        "failure": null,
+        "exit_code": 0
+      },
+      "evaluation": {
+        "schema_version": 1,
+        "generated_tokens": 6608,
+        "wall_seconds": 80.5414306409657,
+        "max_generated_tokens": 2173039,
+        "max_wall_seconds": 280.0,
+        "max_model_len": 4096,
+        "split": "test",
+        "prefix_caching": false,
+        "trajectories": 75,
+        "verified_rows": 75,
+        "unique_pending_prompts": 43,
+        "missing_verifications": [],
+        "verified_now": 43,
+        "failure": null,
+        "exit_code": 0,
+        "partial": false
+      },
+      "rows": 75,
+      "trajectories": 75,
+      "generation_commit": null,
+      "evaluation_commit": null
+    },
+    {
+      "chunk": 2,
+      "generation": null,
+      "evaluation": null,
+      "rows": 0,
+      "trajectories": 46,
+      "generation_commit": null,
+      "evaluation_commit": null
+    },
+    {
+      "chunk": 3,
+      "generation": null,
+      "evaluation": null,
+      "rows": 0,
+      "trajectories": 0,
+      "generation_commit": null,
+      "evaluation_commit": null
+    }
+  ]
+}

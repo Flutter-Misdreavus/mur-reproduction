@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "seed": 20261024,
+  "n_method_discordant_questions": 9,
+  "audit_ids": [
+    "audit-d04e92ee40f4",
+    "audit-ccb1641dcd21",
+    "audit-c289631a3077",
+    "audit-683bf918f1cc",
+    "audit-7a21740a5bb0",
+    "audit-27ea51899b14",
+    "audit-b6daba1f784f",
+    "audit-8d93b3e74b6e",
+    "audit-c695ce42b2e0"
+  ],
+  "status": "pending_supervisor",
+  "note": "Labels were assigned by a seeded random permutation per question. The mapping file is separate; no verifier label was changed.",
+  "method_discordant_qids_sha256": "56f107ece8b618918dcf49a49692fb85b8cb1d65d449204ef0c5bfe2fa7b0c59"
+}

@@ -29,3 +29,24 @@ temporary runtime root and asserts that `load_questions` returns the same 100 ID
 No manifest, question, split, seed, prompt, sampling parameter, token limit,
 verifier, metric or budget was changed. The rerun uses a new commit, not the failed
 run commit.
+
+## Attempt run-02 — PARTIAL (fixed100 not completed)
+
+- Run commit: `5c91a8a178e2c39ba6aa50c3d116524eae8ecf6e` (clean tree; loader fix).
+- Engineering identity check: **PASSED** again (77.19 s, 1306 tokens).
+- Chunk 0: generation 2157.9 s, grading 133.8 s, 75/75 trajectories, 145790
+  generation tokens and 9162 verifier tokens; complete.
+- Chunk 1: generation 2472.4 s, grading 85.7 s, 75/75 trajectories, 170703
+  generation tokens and 6608 verifier tokens; complete.
+- Chunk 2: generation killed by the frozen combined-phase cap at 2941.2 s after
+  46/75 trajectories (15 complete questions plus one CoT-only question); no
+  grading, no restart. Its 179940 generated tokens are preserved in raw traces.
+- Chunk 3: never started.
+- Driver allocation: 7868.17 s (2.1856 GPU-hours); wall 7868.93 s.
+- Conservative driver ledger: 633569 tokens because the killed chunk reserved its
+  full 300000-token grant; actual trace-derived total is 513509 tokens including
+  verifier.
+- No OOM, NaN, leak, context limit, budget stop or unowned process was observed.
+- Result: 50 complete paired questions only, exploratory. Point target not met
+  (MUR accuracy 0.74 versus per-step 0.80); token savings 0.8320. This is not a
+  fixed100 or MATH-500 result.
