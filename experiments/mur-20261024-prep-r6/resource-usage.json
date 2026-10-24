@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r6",
+  "run_commit": "ae8c5a2be16aa52181171019e02817af3938d3a6",
+  "wall_seconds": 2116.65,
+  "gpu_allocated_seconds": 2115.96,
+  "gpu_work_seconds": 2115.82,
+  "generated_tokens_total": 140863,
+  "reported_generated_tokens": 140863,
+  "unknown_reserved_tokens": 0,
+  "gpu_budget_seconds": 3000.0,
+  "token_budget": 1000000,
+  "wall_budget_seconds": 7000.0,
+  "peak_new_usage_mib": 11885.0,
+  "peak_our_processes_mib": 11878.0,
+  "min_free_mib": 8994.0,
+  "per_phase": {
+    "validate": {
+      "seconds": 32.01,
+      "work_seconds": 31.96,
+      "cleanup_seconds": 0.0,
+      "tokens": 237,
+      "token_source": "reported",
+      "status": "ok",
+      "phase_ok": true,
+      "cleanup": "clean",
+      "max_new_usage_mib": 6851.0,
+      "min_free_mib": 14027.0
+    },
+    "smoke": {
+      "seconds": 2014.57,
+      "work_seconds": 2014.53,
+      "cleanup_seconds": 0.0,
+      "tokens": 133168,
+      "token_source": "reported",
+      "status": "ok",
+      "phase_ok": true,
+      "cleanup": "clean",
+      "max_new_usage_mib": 11885.0,
+      "min_free_mib": 8994.0
+    },
+    "evaluate": {
+      "seconds": 69.38,
+      "work_seconds": 69.33,
+      "cleanup_seconds": 0.0,
+      "tokens": 7458,
+      "token_source": "reported",
+      "status": "ok",
+      "phase_ok": true,
+      "cleanup": "clean",
+      "max_new_usage_mib": 6373.0,
+      "min_free_mib": 14505.0
+    }
+  },
+  "cleanup": {
+    "validate": "clean",
+    "smoke": "clean",
+    "evaluate": "clean"
+  },
+  "preflight_errors": []
+}

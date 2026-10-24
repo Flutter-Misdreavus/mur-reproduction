@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r6",
+  "note": "Conservative prep-ceiling charges are reported alongside measured R6 allocation; they are not measurements of R1/R3/R4.",
+  "runs": [
+    {
+      "run_id": "mur-20261024-prep-r1",
+      "gpu_seconds_conservative": 3600,
+      "charge_note": "entire original allocation charged conservatively",
+      "status": "incomplete trajectories excluded from metrics"
+    },
+    {
+      "run_id": "mur-20261024-prep-r2",
+      "gpu_seconds_conservative": 0,
+      "charge_note": "no GPU work",
+      "status": "not run"
+    },
+    {
+      "run_id": "mur-20261024-prep-r3",
+      "gpu_seconds_conservative": 280,
+      "generated_diagnostic_tokens_conservative": 300,
+      "status": "BLOCKED at the retired HF cross-engine gate"
+    },
+    {
+      "run_id": "mur-20261024-prep-r4",
+      "gpu_seconds_conservative": 62.77,
+      "generated_tokens_measured": 243,
+      "status": "BLOCKED at the failed independent-prefill comparison"
+    },
+    {
+      "run_id": "mur-20261024-prep-r5",
+      "gpu_seconds_conservative": 32.06,
+      "gpu_seconds_measured": 32.06,
+      "generated_tokens_measured": 172,
+      "status": "BLOCKED at the direct-gate alignment failure; corrected in r6"
+    },
+    {
+      "run_id": "mur-20261024-prep-r6",
+      "gpu_seconds_conservative_limit": 3000,
+      "gpu_seconds_measured": 2115.96,
+      "generated_tokens_measured": 140863,
+      "status": "current run"
+    }
+  ],
+  "combined_prep_gpu_seconds_conservative": 6974.83,
+  "combined_prep_gpu_hours_conservative": 1.9374527777777777,
+  "combined_prep_gpu_seconds_prior_plus_actual": 6090.79,
+  "combined_generated_tokens_conservative": 141578,
+  "combined_prep_gpu_hours_ceiling": 2.0,
+  "total_project_gpu_hours_ceiling": 12.0,
+  "within_combined_prep_ceiling": true
+}

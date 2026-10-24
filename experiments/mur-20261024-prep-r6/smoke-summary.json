@@ -1,0 +1,2419 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-24T09:00:24.637809+00:00",
+  "run_id": "mur-20261024-prep-r6",
+  "stage": "prep_smoke",
+  "gate_status": "PASS",
+  "blocked_reason": null,
+  "gate_checks": {
+    "gpu_available": true,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": true,
+    "signal_gate_8_probes": true,
+    "validation_reference_recorded": true,
+    "cross_engine_parity_not_claimed": true,
+    "independent_prefill_parity_not_claimed": true,
+    "temperature_only_negative_control": true,
+    "combined_prep_charge_within_ceiling": true,
+    "three_methods_20x3": true,
+    "complete_token_ledger": true,
+    "verifier_judgments": true,
+    "no_test_generation": true,
+    "test_generation_absent": true,
+    "no_runtime_errors": true,
+    "verifier_no_ambiguous": true,
+    "critic_malformed_rate_reported": true,
+    "no_budget_or_context_truncation": true,
+    "stage_budget_observed": true,
+    "mur_triggered_branch": true
+  },
+  "trajectories": {
+    "cot": 20,
+    "per_step": 20,
+    "mur": 20
+  },
+  "metrics": {
+    "cot": {
+      "n": 20,
+      "accuracy": 0.8,
+      "mean_total_tokens": 528.75,
+      "mean_policy_tokens": 528.75,
+      "mean_critic_tokens": 0,
+      "mean_steps": 2.7,
+      "trigger_rate": 0.0,
+      "malformed": 0,
+      "finish_counts": {
+        "answer": 20
+      },
+      "ambiguous": 0
+    },
+    "mur": {
+      "n": 20,
+      "accuracy": 0.75,
+      "mean_total_tokens": 1092.75,
+      "mean_policy_tokens": 830,
+      "mean_critic_tokens": 262.75,
+      "mean_steps": 2.7,
+      "trigger_rate": 0.11627906976744186,
+      "malformed": 0,
+      "finish_counts": {
+        "answer": 20
+      },
+      "ambiguous": 0,
+      "token_savings_vs_per_step": 0.7830510830074053,
+      "accuracy_delta_vs_per_step": -0.050000000000000044
+    },
+    "per_step": {
+      "n": 20,
+      "accuracy": 0.8,
+      "mean_total_tokens": 5036.9,
+      "mean_policy_tokens": 2604.65,
+      "mean_critic_tokens": 2432.25,
+      "mean_steps": 2.7,
+      "trigger_rate": 1.255813953488372,
+      "malformed": 0,
+      "finish_counts": {
+        "answer": 20
+      },
+      "ambiguous": 0
+    }
+  },
+  "generated_tokens_total": 133168,
+  "run_status": {
+    "trajectories": 60,
+    "method_counts": {
+      "cot": 20,
+      "per_step": 20,
+      "mur": 20
+    },
+    "generated_tokens": 133168,
+    "wall_seconds": 2011.8237146101892,
+    "setup_seconds": 2011.8237142562866,
+    "budget_max_generated": 929763,
+    "budget_max_wall": 2567.991342101246,
+    "budget_max_model_len": 16384,
+    "context_capped_calls": 0,
+    "context_limits": 0,
+    "budget_stops": 0,
+    "errors": 0,
+    "partial": false,
+    "complete": true,
+    "methods": [
+      "cot",
+      "per_step",
+      "mur"
+    ],
+    "questions": 20,
+    "failure": null,
+    "exit_code": 0
+  },
+  "evaluation_status": {
+    "schema_version": 1,
+    "generated_tokens": 7458,
+    "wall_seconds": 66.73350071907043,
+    "max_generated_tokens": 866595,
+    "max_wall_seconds": 953.4189717881382,
+    "max_model_len": 4096,
+    "trajectories": 60,
+    "verified_rows": 60,
+    "missing_verifications": [],
+    "verified_now": 60,
+    "failure": null,
+    "exit_code": 0,
+    "partial": false
+  },
+  "validation": {
+    "passed": true,
+    "validation_reference": "same_forward_unmodified_logits",
+    "reference_run": "mur-20261024-prep-r5",
+    "cross_engine_hf_parity": false,
+    "independent_prefill_parity": false,
+    "hf_parity_status": null,
+    "probe_count": 8,
+    "complete_nonempty_probes": true,
+    "repeated_token_probe": true,
+    "temperature_only_negative_control_passed": true,
+    "max_temperature_only_diff": 0.26924046874046326,
+    "atol": 5e-05,
+    "negative_control_min_diff": 0.001,
+    "max_abs_token_logprob_diff": 0.0,
+    "mean_abs_token_logprob_diff": 0.0,
+    "tolerance": null,
+    "sampler_source": {
+      "available": true,
+      "relative_path": "runtime/venv/lib/python3.10/site-packages/vllm/v1/sample/sampler.py",
+      "sha256": "9d1c04c6f44adbaabb96388ca0766791351a6c84fa95672be70a1116498972b1",
+      "raw_logprobs_line": 36,
+      "apply_penalties_line": 47,
+      "apply_temperature_line": 108,
+      "sample_line": 49,
+      "raw_before_penalties_and_temperature": true,
+      "comment": "raw logits are used for top-k/sampled-token logprobs; sampling penalties and temperature are applied afterwards"
+    },
+    "generated_tokens": 237,
+    "generation_generated_tokens": null,
+    "reference_probe_tokens": null,
+    "probes": [
+      {
+        "name": "repeat",
+        "passed": true,
+        "output_tokens": 15,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.26924046874046326,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "count",
+        "passed": true,
+        "output_tokens": 29,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.13530626893043518,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "ones",
+        "passed": true,
+        "output_tokens": 63,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.1405668742954731,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "sum",
+        "passed": true,
+        "output_tokens": 15,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.04535131389275193,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "double",
+        "passed": true,
+        "output_tokens": 21,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.14027462899684906,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "fraction",
+        "passed": true,
+        "output_tokens": 29,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.14200296998023987,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "product",
+        "passed": true,
+        "output_tokens": 50,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.21950235962867737,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      },
+      {
+        "name": "repeat_sequence",
+        "passed": true,
+        "output_tokens": 13,
+        "repeated_token_ids": true,
+        "negative_control_passed": true,
+        "temperature_only_max_error": 0.16680032014846802,
+        "max_abs_error": 0.0,
+        "mean_abs_error": 0.0,
+        "eos_scored": null,
+        "max_abs_token_logprob_diff": null,
+        "mean_abs_token_logprob_diff": null,
+        "abs_mean_diff": null,
+        "generation_mean_nll": null,
+        "reference_mean_nll": null
+      }
+    ]
+  },
+  "driver": {
+    "run_commit": "ae8c5a2be16aa52181171019e02817af3938d3a6",
+    "gpu_allocated_seconds": 2115.96,
+    "gpu_work_seconds": 2115.82,
+    "total_generated_tokens": 140863,
+    "reported_generated_tokens": 140863,
+    "unknown_reserved_tokens": 0,
+    "wall_seconds": 2116.64,
+    "peak_new_usage_mib": null,
+    "min_free_mib": null,
+    "phases": [
+      {
+        "name": "validate",
+        "status": "ok",
+        "exit_code": 0,
+        "phase_ok": true,
+        "started_at": "2026-10-24T08:24:05.284248+00:00",
+        "started_epoch": 1792830245.2842426,
+        "ended_at": "2026-10-24T08:24:37.294034+00:00",
+        "work_seconds": 31.96,
+        "cleanup_seconds": 0.0,
+        "duration_seconds": 32.01,
+        "tokens": 237,
+        "token_source": "reported",
+        "unknown_reservation": false,
+        "token_grant": 10000,
+        "gpu_allocated_after_seconds": 32.01,
+        "max_new_usage_mib": 6851.0,
+        "min_free_mib": 14027.0,
+        "samples": [
+          {
+            "t": 0.0,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013
+            ]
+          },
+          {
+            "t": 2.2,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013
+            ]
+          },
+          {
+            "t": 4.4,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013
+            ]
+          },
+          {
+            "t": 6.6,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013
+            ]
+          },
+          {
+            "t": 8.8,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013,
+              2433120
+            ]
+          },
+          {
+            "t": 11.0,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013,
+              2433120
+            ]
+          },
+          {
+            "t": 13.2,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013,
+              2433120
+            ]
+          },
+          {
+            "t": 15.4,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013,
+              2433120
+            ]
+          },
+          {
+            "t": 17.6,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013,
+              2433120
+            ]
+          },
+          {
+            "t": 19.7,
+            "used_mib": 3514.0,
+            "free_mib": 20621.0,
+            "our_apps_mib": 298.0,
+            "new_usage_mib": 298.0,
+            "pids": [
+              2433013,
+              2433229,
+              2433261
+            ]
+          },
+          {
+            "t": 21.9,
+            "used_mib": 6978.0,
+            "free_mib": 17157.0,
+            "our_apps_mib": 3754.0,
+            "new_usage_mib": 3754.0,
+            "pids": [
+              2433013,
+              2433229
+            ]
+          },
+          {
+            "t": 24.1,
+            "used_mib": 10108.0,
+            "free_mib": 14027.0,
+            "our_apps_mib": 6848.0,
+            "new_usage_mib": 6851.0,
+            "pids": [
+              2433013,
+              2433229
+            ]
+          },
+          {
+            "t": 26.3,
+            "used_mib": 10108.0,
+            "free_mib": 14027.0,
+            "our_apps_mib": 6848.0,
+            "new_usage_mib": 6851.0,
+            "pids": [
+              2433013,
+              2433229
+            ]
+          },
+          {
+            "t": 28.5,
+            "used_mib": 10108.0,
+            "free_mib": 14027.0,
+            "our_apps_mib": 6848.0,
+            "new_usage_mib": 6851.0,
+            "pids": [
+              2433013,
+              2433229
+            ]
+          },
+          {
+            "t": 30.7,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433013
+            ]
+          }
+        ],
+        "cleanup": "clean",
+        "telemetry_failed": false,
+        "log": "logs/validate.log"
+      },
+      {
+        "name": "smoke",
+        "status": "ok",
+        "exit_code": 0,
+        "phase_ok": true,
+        "started_at": "2026-10-24T08:24:37.362896+00:00",
+        "started_epoch": 1792830277.362893,
+        "ended_at": "2026-10-24T08:58:11.935421+00:00",
+        "work_seconds": 2014.53,
+        "cleanup_seconds": 0.0,
+        "duration_seconds": 2014.57,
+        "tokens": 133168,
+        "token_source": "reported",
+        "unknown_reservation": false,
+        "token_grant": 929763,
+        "gpu_allocated_after_seconds": 2046.58,
+        "max_new_usage_mib": 11885.0,
+        "min_free_mib": 8994.0,
+        "samples": [
+          {
+            "t": 1751.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1753.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1755.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1757.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1760.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1762.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1764.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1766.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1768.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1771.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1773.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1775.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1777.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1779.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1782.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1784.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1786.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1788.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1790.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1793.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1795.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1797.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1799.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1802.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1804.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1806.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1808.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1810.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1813.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1815.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1817.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1819.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1821.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1824.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1826.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1828.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1830.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1832.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1835.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1837.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1839.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1841.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1843.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1846.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1848.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1850.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1852.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1854.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1857.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1859.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1861.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1863.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1865.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1868.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1870.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1872.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1874.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1876.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1879.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1881.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1883.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1885.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1887.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1890.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1892.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1894.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1896.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1898.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1901.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1903.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1905.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1907.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1909.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1912.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1914.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1916.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1918.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1920.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1923.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1925.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1927.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1929.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1931.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1934.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1936.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1938.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1940.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1942.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1945.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1947.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1949.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1951.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1953.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1956.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1958.3,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1960.5,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1962.7,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1964.9,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1967.1,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1969.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1971.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1973.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1976.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1978.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1980.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1982.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1984.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1987.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1989.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1991.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1993.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1995.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 1998.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2000.2,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2002.4,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2004.6,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2006.8,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2009.0,
+            "used_mib": 15142.0,
+            "free_mib": 8994.0,
+            "our_apps_mib": 11878.0,
+            "new_usage_mib": 11885.0,
+            "pids": [
+              2433313,
+              2433529,
+              2433727
+            ]
+          },
+          {
+            "t": 2011.1,
+            "used_mib": 8194.0,
+            "free_mib": 15941.0,
+            "our_apps_mib": 4934.0,
+            "new_usage_mib": 4937.0,
+            "pids": [
+              2433313,
+              2433727
+            ]
+          },
+          {
+            "t": 2013.3,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2433313
+            ]
+          }
+        ],
+        "cleanup": "clean",
+        "telemetry_failed": false,
+        "log": "logs/smoke.log"
+      },
+      {
+        "name": "evaluate",
+        "status": "ok",
+        "exit_code": 0,
+        "phase_ok": true,
+        "started_at": "2026-10-24T08:58:12.025965+00:00",
+        "started_epoch": 1792832292.025961,
+        "ended_at": "2026-10-24T08:59:21.402011+00:00",
+        "work_seconds": 69.33,
+        "cleanup_seconds": 0.0,
+        "duration_seconds": 69.38,
+        "tokens": 7458,
+        "token_source": "reported",
+        "unknown_reservation": false,
+        "token_grant": 866595,
+        "gpu_allocated_after_seconds": 2115.96,
+        "max_new_usage_mib": 6373.0,
+        "min_free_mib": 14505.0,
+        "samples": [
+          {
+            "t": 0.0,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          },
+          {
+            "t": 2.2,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          },
+          {
+            "t": 4.4,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          },
+          {
+            "t": 6.6,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          },
+          {
+            "t": 8.8,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          },
+          {
+            "t": 11.0,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867,
+              2438971
+            ]
+          },
+          {
+            "t": 13.2,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867,
+              2438971
+            ]
+          },
+          {
+            "t": 15.4,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867,
+              2438971
+            ]
+          },
+          {
+            "t": 17.6,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867,
+              2438971
+            ]
+          },
+          {
+            "t": 19.8,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 22.0,
+            "used_mib": 6662.0,
+            "free_mib": 17473.0,
+            "our_apps_mib": 3402.0,
+            "new_usage_mib": 3405.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 24.2,
+            "used_mib": 9596.0,
+            "free_mib": 14539.0,
+            "our_apps_mib": 6336.0,
+            "new_usage_mib": 6339.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 26.4,
+            "used_mib": 9596.0,
+            "free_mib": 14539.0,
+            "our_apps_mib": 6336.0,
+            "new_usage_mib": 6339.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 28.6,
+            "used_mib": 9596.0,
+            "free_mib": 14539.0,
+            "our_apps_mib": 6368.0,
+            "new_usage_mib": 6368.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 30.8,
+            "used_mib": 9628.0,
+            "free_mib": 14507.0,
+            "our_apps_mib": 6368.0,
+            "new_usage_mib": 6371.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 33.0,
+            "used_mib": 9628.0,
+            "free_mib": 14507.0,
+            "our_apps_mib": 6368.0,
+            "new_usage_mib": 6371.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 35.2,
+            "used_mib": 9628.0,
+            "free_mib": 14507.0,
+            "our_apps_mib": 6368.0,
+            "new_usage_mib": 6371.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 37.4,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 39.6,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 41.8,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 44.0,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 46.2,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 48.4,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 50.6,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 52.8,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 55.0,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 57.1,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 59.3,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 61.5,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 63.7,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 65.9,
+            "used_mib": 9630.0,
+            "free_mib": 14505.0,
+            "our_apps_mib": 6370.0,
+            "new_usage_mib": 6373.0,
+            "pids": [
+              2438867,
+              2439074
+            ]
+          },
+          {
+            "t": 68.1,
+            "used_mib": 3257.0,
+            "free_mib": 20878.0,
+            "our_apps_mib": 0,
+            "new_usage_mib": 0.0,
+            "pids": [
+              2438867
+            ]
+          }
+        ],
+        "cleanup": "clean",
+        "telemetry_failed": false,
+        "log": "logs/evaluate.log"
+      }
+    ],
+    "preflight_errors": []
+  },
+  "prior_charges": {
+    "basis": "conservative prep-ceiling budget charges, distinct from measured GPU seconds; R1 uses its entire original allocation",
+    "runs": [
+      {
+        "run_id": "mur-20261024-prep-r1",
+        "gpu_seconds_conservative": 3600,
+        "charge_note": "entire original allocation charged conservatively",
+        "status": "incomplete trajectories excluded from metrics"
+      },
+      {
+        "run_id": "mur-20261024-prep-r2",
+        "gpu_seconds_conservative": 0,
+        "charge_note": "no GPU work",
+        "status": "not run"
+      },
+      {
+        "run_id": "mur-20261024-prep-r3",
+        "gpu_seconds_conservative": 280,
+        "generated_diagnostic_tokens_conservative": 300,
+        "status": "BLOCKED at the retired HF cross-engine gate"
+      },
+      {
+        "run_id": "mur-20261024-prep-r4",
+        "gpu_seconds_conservative": 62.77,
+        "generated_tokens_measured": 243,
+        "status": "BLOCKED at the failed independent-prefill comparison"
+      },
+      {
+        "run_id": "mur-20261024-prep-r5",
+        "gpu_seconds_conservative": 32.06,
+        "gpu_seconds_measured": 32.06,
+        "generated_tokens_measured": 172,
+        "status": "BLOCKED at the direct-gate alignment failure; corrected in r6"
+      },
+      {
+        "run_id": "mur-20261024-prep-r6",
+        "gpu_seconds_conservative_limit": 3000,
+        "gpu_seconds_measured": 2115.96,
+        "generated_tokens_measured": 140863,
+        "status": "current run"
+      }
+    ],
+    "combined_prep_gpu_seconds_conservative": 6974.83,
+    "combined_prep_gpu_hours_conservative": 1.9374527777777777,
+    "combined_prep_gpu_seconds_prior_plus_actual": 6090.79,
+    "combined_generated_tokens_conservative": 141578,
+    "combined_prep_gpu_hours_ceiling": 2.0,
+    "total_project_gpu_hours_ceiling": 12.0,
+    "within_combined_prep_ceiling": true
+  },
+  "cumulative_budget": {
+    "schema_version": 1,
+    "run_id": "mur-20261024-prep-r6",
+    "note": "Conservative prep-ceiling charges are reported alongside measured R5 allocation; they are not measurements of R1/R3/R4.",
+    "runs": [
+      {
+        "run_id": "mur-20261024-prep-r1",
+        "gpu_seconds_conservative": 3600,
+        "charge_note": "entire original allocation charged conservatively",
+        "status": "incomplete trajectories excluded from metrics"
+      },
+      {
+        "run_id": "mur-20261024-prep-r2",
+        "gpu_seconds_conservative": 0,
+        "charge_note": "no GPU work",
+        "status": "not run"
+      },
+      {
+        "run_id": "mur-20261024-prep-r3",
+        "gpu_seconds_conservative": 280,
+        "generated_diagnostic_tokens_conservative": 300,
+        "status": "BLOCKED at the retired HF cross-engine gate"
+      },
+      {
+        "run_id": "mur-20261024-prep-r4",
+        "gpu_seconds_conservative": 62.77,
+        "generated_tokens_measured": 243,
+        "status": "BLOCKED at the failed independent-prefill comparison"
+      },
+      {
+        "run_id": "mur-20261024-prep-r6",
+        "gpu_seconds_conservative_limit": 3000,
+        "gpu_seconds_measured": 2115.96,
+        "generated_tokens_measured": 140863,
+        "status": "current run"
+      }
+    ],
+    "combined_prep_gpu_seconds_conservative": 6942.77,
+    "combined_prep_gpu_hours_conservative": 1.9285472222222224,
+    "combined_prep_gpu_seconds_prior_plus_actual": 6058.73,
+    "combined_generated_tokens_conservative": 543,
+    "combined_prep_gpu_hours_ceiling": 2.0,
+    "total_project_gpu_hours_ceiling": 12.0,
+    "within_combined_prep_ceiling": true
+  },
+  "limitations": [
+    "Development questions only; no MATH-500 test generation.",
+    "Smoke evidence is not a scientific success claim.",
+    "Latency is descriptive on a shared GPU."
+  ]
+}

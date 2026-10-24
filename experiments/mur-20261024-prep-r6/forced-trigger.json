@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r6",
+  "engineering_only": true,
+  "excluded_from_scientific_smoke": true,
+  "passed": true,
+  "genuine_triggers": 5,
+  "note": "Genuine MUR triggers observed; no forced case needed."
+}

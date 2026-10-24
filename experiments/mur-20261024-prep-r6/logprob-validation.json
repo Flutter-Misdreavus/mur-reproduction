@@ -1,0 +1,1844 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "error": null,
+  "validation_reference": "same_forward_unmodified_logits",
+  "atol": 5e-05,
+  "negative_control_min_diff": 0.001,
+  "probe_count": 8,
+  "complete_nonempty_probes": true,
+  "repeated_token_probe": true,
+  "temperature_only_negative_control_passed": true,
+  "max_temperature_only_diff": 0.26924046874046326,
+  "max_abs_token_logprob_diff": 0.0,
+  "mean_abs_token_logprob_diff": 0.0,
+  "reference_run": "mur-20261024-prep-r5",
+  "cross_engine_hf_parity": false,
+  "independent_prefill_parity": false,
+  "prior_failed_runs": [
+    "mur-20261024-prep-r3",
+    "mur-20261024-prep-r4"
+  ],
+  "generation_logprobs_used_for_nll": true,
+  "generated_tokens": 237,
+  "client_output_tokens": 235,
+  "sampler_extra_tokens": 2,
+  "failed_probe": null,
+  "sampler_source": {
+    "available": true,
+    "path": "vllm/v1/sample/sampler.py",
+    "relative_path": "runtime/venv/lib/python3.10/site-packages/vllm/v1/sample/sampler.py",
+    "sha256": "9d1c04c6f44adbaabb96388ca0766791351a6c84fa95672be70a1116498972b1",
+    "raw_logprobs_line": 36,
+    "apply_penalties_line": 47,
+    "apply_temperature_line": 108,
+    "sample_line": 49,
+    "raw_before_penalties_and_temperature": true,
+    "comment": "raw logits are used for top-k/sampled-token logprobs; sampling penalties and temperature are applied afterwards"
+  },
+  "probes": [
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.26924046874046326,
+      "negative_control_passed": true,
+      "output_tokens": 15,
+      "client_token_nll": [
+        7.152555099310121e-07,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0004068977141287178,
+        -0.0,
+        -0.0,
+        0.038059547543525696,
+        1.0728830375228426e-06,
+        1.1920928244535389e-07,
+        -0.0,
+        7.867782187531702e-06,
+        -0.0,
+        -0.0,
+        0.536616325378418
+      ],
+      "sampler_output_tokens": 15,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 1687,
+          "raw_logprob": -7.152555099310121e-07,
+          "sampler_logprob": -7.152555099310121e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -0.0004068977141287178,
+          "sampler_logprob": -0.0004068977141287178,
+          "temperature_only_logprob": -1.4305104514278355e-06
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": -0.038059547543525696,
+          "sampler_logprob": -0.038059547543525696,
+          "temperature_only_logprob": -0.004432139918208122
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": -1.0728830375228426e-06,
+          "sampler_logprob": -1.0728830375228426e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1687,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -7.867782187531702e-06,
+          "sampler_logprob": -7.867782187531702e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -0.536616325378418,
+          "sampler_logprob": -0.536616325378418,
+          "temperature_only_logprob": -0.2673758566379547
+        }
+      ],
+      "name": "repeat",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.13530626893043518,
+      "negative_control_passed": true,
+      "output_tokens": 29,
+      "client_token_nll": [
+        0.0006922471220605075,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.3872370719909668,
+        1.1920928244535389e-07,
+        -0.0,
+        -0.0,
+        4.768370445162873e-07,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        5.245195097813848e-06
+      ],
+      "sampler_output_tokens": 29,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 220,
+          "raw_logprob": -0.0006922471220605075,
+          "sampler_logprob": -0.0006922471220605075,
+          "temperature_only_logprob": -3.576272320060525e-06
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.3872370719909668,
+          "sampler_logprob": -0.3872370719909668,
+          "temperature_only_logprob": -0.2519308030605316
+        },
+        {
+          "token_id": 1782,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": -4.768370445162873e-07,
+          "sampler_logprob": -4.768370445162873e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -5.245195097813848e-06,
+          "sampler_logprob": -5.245195097813848e-06,
+          "temperature_only_logprob": 0.0
+        }
+      ],
+      "name": "count",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.1405668742954731,
+      "negative_control_passed": true,
+      "output_tokens": 63,
+      "client_token_nll": [
+        0.1790652722120285,
+        0.00022027450904715806,
+        1.01398503780365,
+        1.1920922133867862e-06,
+        0.0012696071062237024,
+        -0.0,
+        -0.0,
+        -0.0,
+        5.960462772236497e-07,
+        -0.0,
+        0.0015184074873104692,
+        -0.0,
+        -0.0,
+        0.06249498948454857,
+        0.08096027374267578,
+        0.00014172980445437133,
+        -0.0,
+        0.0031777145341038704,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        1.1920928244535389e-07,
+        2.753696753643453e-05,
+        -0.0,
+        -0.0,
+        1.0132738680113107e-05,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        3.814689989667386e-06
+      ],
+      "sampler_output_tokens": 63,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 358,
+          "raw_logprob": -0.1790652722120285,
+          "sampler_logprob": -0.1790652722120285,
+          "temperature_only_logprob": -0.038498397916555405
+        },
+        {
+          "token_id": 686,
+          "raw_logprob": -0.00022027450904715806,
+          "sampler_logprob": -0.00022027450904715806,
+          "temperature_only_logprob": -7.152555099310121e-07
+        },
+        {
+          "token_id": 1855,
+          "raw_logprob": -1.01398503780365,
+          "sampler_logprob": -1.01398503780365,
+          "temperature_only_logprob": -1.0308364629745483
+        },
+        {
+          "token_id": 5779,
+          "raw_logprob": -1.1920922133867862e-06,
+          "sampler_logprob": -1.1920922133867862e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 10993,
+          "raw_logprob": -0.0012696071062237024,
+          "sampler_logprob": -0.0012696071062237024,
+          "temperature_only_logprob": -1.3112935448589269e-05
+        },
+        {
+          "token_id": 315,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 15723,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": -5.960462772236497e-07,
+          "sampler_logprob": -5.960462772236497e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18663,
+          "raw_logprob": -0.0015184074873104692,
+          "sampler_logprob": -0.0015184074873104692,
+          "temperature_only_logprob": -1.4662635294371285e-05
+        },
+        {
+          "token_id": 553,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 12621,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 624,
+          "raw_logprob": -0.06249498948454857,
+          "sampler_logprob": -0.06249498948454857,
+          "temperature_only_logprob": -0.010172544978559017
+        },
+        {
+          "token_id": 785,
+          "raw_logprob": -0.08096027374267578,
+          "sampler_logprob": -0.08096027374267578,
+          "temperature_only_logprob": -0.015409929677844048
+        },
+        {
+          "token_id": 18509,
+          "raw_logprob": -0.00014172980445437133,
+          "sampler_logprob": -0.00014172980445437133,
+          "temperature_only_logprob": -2.3841855067985307e-07
+        },
+        {
+          "token_id": 525,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 25,
+          "raw_logprob": -0.0031777145341038704,
+          "sampler_logprob": -0.0031777145341038704,
+          "temperature_only_logprob": -6.890059739816934e-05
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 198,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 1782,
+          "raw_logprob": -2.753696753643453e-05,
+          "sampler_logprob": -2.753696753643453e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": -1.0132738680113107e-05,
+          "sampler_logprob": -1.0132738680113107e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -3.814689989667386e-06,
+          "sampler_logprob": -3.814689989667386e-06,
+          "temperature_only_logprob": 0.0
+        }
+      ],
+      "name": "ones",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.04535131389275193,
+      "negative_control_passed": true,
+      "output_tokens": 15,
+      "client_token_nll": [
+        0.05212468281388283,
+        -0.0,
+        7.486063259420916e-05,
+        -0.0,
+        -0.0,
+        0.0011788808042183518,
+        -0.0,
+        -0.0,
+        0.006802140735089779,
+        1.4305104514278355e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.00020561488054227084
+      ],
+      "sampler_output_tokens": 15,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 220,
+          "raw_logprob": -0.05212468281388283,
+          "sampler_logprob": -0.05212468281388283,
+          "temperature_only_logprob": -0.006773368921130896
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 488,
+          "raw_logprob": -7.486063259420916e-05,
+          "sampler_logprob": -7.486063259420916e-05,
+          "temperature_only_logprob": -1.1920928244535389e-07
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 284,
+          "raw_logprob": -0.0011788808042183518,
+          "sampler_logprob": -0.0011788808042183518,
+          "temperature_only_logprob": -1.2993727978027891e-05
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 19,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.006802140735089779,
+          "sampler_logprob": -0.006802140735089779,
+          "temperature_only_logprob": -0.00024041623692028224
+        },
+        {
+          "token_id": 1782,
+          "raw_logprob": -1.4305104514278355e-06,
+          "sampler_logprob": -1.4305104514278355e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 19,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -0.00020561488054227084,
+          "sampler_logprob": -0.00020561488054227084,
+          "temperature_only_logprob": -7.152555099310121e-07
+        }
+      ],
+      "name": "sum",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.14027462899684906,
+      "negative_control_passed": true,
+      "output_tokens": 21,
+      "client_token_nll": [
+        0.0008305437513627112,
+        -0.0,
+        2.3841855067985307e-07,
+        0.0025178655050694942,
+        0.0001234931987710297,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.06343524158000946,
+        0.029754582792520523,
+        0.3132830858230591,
+        -0.0,
+        -0.0,
+        1.0132738680113107e-05,
+        0.011382285505533218,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0054143453016877174
+      ],
+      "sampler_output_tokens": 21,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 576,
+          "raw_logprob": -0.0008305437513627112,
+          "sampler_logprob": -0.0008305437513627112,
+          "temperature_only_logprob": -5.722029527532868e-06
+        },
+        {
+          "token_id": 8500,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": -2.3841855067985307e-07,
+          "sampler_logprob": -2.3841855067985307e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 264,
+          "raw_logprob": -0.0025178655050694942,
+          "sampler_logprob": -0.0025178655050694942,
+          "temperature_only_logprob": -4.541770613286644e-05
+        },
+        {
+          "token_id": 264,
+          "raw_logprob": -0.0001234931987710297,
+          "sampler_logprob": -0.0001234931987710297,
+          "temperature_only_logprob": -3.576278118089249e-07
+        },
+        {
+          "token_id": 293,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 293,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 272,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 272,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 13,
+          "raw_logprob": -0.06343524158000946,
+          "sampler_logprob": -0.06343524158000946,
+          "temperature_only_logprob": -0.010188593529164791
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.029754582792520523,
+          "sampler_logprob": -0.029754582792520523,
+          "temperature_only_logprob": -0.00292397802695632
+        },
+        {
+          "token_id": 1782,
+          "raw_logprob": -0.3132830858230591,
+          "sampler_logprob": -0.3132830858230591,
+          "temperature_only_logprob": -0.17300845682621002
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 264,
+          "raw_logprob": -1.0132738680113107e-05,
+          "sampler_logprob": -1.0132738680113107e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 264,
+          "raw_logprob": -0.011382285505533218,
+          "sampler_logprob": -0.011382285505533218,
+          "temperature_only_logprob": -0.0005540504935197532
+        },
+        {
+          "token_id": 293,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 293,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 272,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 272,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -0.0054143453016877174,
+          "sampler_logprob": -0.0054143453016877174,
+          "temperature_only_logprob": -0.00015889335190877318
+        }
+      ],
+      "name": "double",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.14200296998023987,
+      "negative_control_passed": true,
+      "output_tokens": 29,
+      "client_token_nll": [
+        0.3150281608104706,
+        1.1920922133867862e-06,
+        0.0948932096362114,
+        0.1677340716123581,
+        0.0024945589248090982,
+        0.00020346954988781363,
+        7.152555099310121e-07,
+        2.3841855067985307e-07,
+        0.005429165903478861,
+        0.018283288925886154,
+        0.5005185604095459,
+        -0.0,
+        5.960462772236497e-07,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.00020346954988781363,
+        0.005233872216194868,
+        9.298280929215252e-06,
+        0.04861105978488922,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.018157687038183212,
+        -0.0
+      ],
+      "sampler_output_tokens": 30,
+      "sampler_extra_tokens": 1,
+      "finish_reason": "stop",
+      "stop_reason": "\nStep",
+      "captured": [
+        {
+          "token_id": 2691,
+          "raw_logprob": -0.3150281608104706,
+          "sampler_logprob": -0.3150281608104706,
+          "temperature_only_logprob": -0.1730251908302307
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -1.1920922133867862e-06,
+          "sampler_logprob": -1.1920922133867862e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 64895,
+          "raw_logprob": -0.0948932096362114,
+          "sampler_logprob": -0.0948932096362114,
+          "temperature_only_logprob": -0.016278445720672607
+        },
+        {
+          "token_id": 553,
+          "raw_logprob": -0.1677340716123581,
+          "sampler_logprob": -0.1677340716123581,
+          "temperature_only_logprob": -0.05289305001497269
+        },
+        {
+          "token_id": 9271,
+          "raw_logprob": -0.0024945589248090982,
+          "sampler_logprob": -0.0024945589248090982,
+          "temperature_only_logprob": -4.541770613286644e-05
+        },
+        {
+          "token_id": 264,
+          "raw_logprob": -0.00020346954988781363,
+          "sampler_logprob": -0.00020346954988781363,
+          "temperature_only_logprob": -7.152555099310121e-07
+        },
+        {
+          "token_id": 4185,
+          "raw_logprob": -7.152555099310121e-07,
+          "sampler_logprob": -7.152555099310121e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 46912,
+          "raw_logprob": -2.3841855067985307e-07,
+          "sampler_logprob": -2.3841855067985307e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 13,
+          "raw_logprob": -0.005429165903478861,
+          "sampler_logprob": -0.005429165903478861,
+          "temperature_only_logprob": -0.00015877417172305286
+        },
+        {
+          "token_id": 576,
+          "raw_logprob": -0.018283288925886154,
+          "sampler_logprob": -0.018283288925886154,
+          "temperature_only_logprob": -0.0012722263345494866
+        },
+        {
+          "token_id": 61165,
+          "raw_logprob": -0.5005185604095459,
+          "sampler_logprob": -0.5005185604095459,
+          "temperature_only_logprob": -0.3640308678150177
+        },
+        {
+          "token_id": 2973,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 525,
+          "raw_logprob": -5.960462772236497e-07,
+          "sampler_logprob": -5.960462772236497e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 323,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 21,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 11,
+          "raw_logprob": -0.00020346954988781363,
+          "sampler_logprob": -0.00020346954988781363,
+          "temperature_only_logprob": -7.152555099310121e-07
+        },
+        {
+          "token_id": 773,
+          "raw_logprob": -0.005233872216194868,
+          "sampler_logprob": -0.005233872216194868,
+          "temperature_only_logprob": -0.00015841660206206143
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -9.298280929215252e-06,
+          "sampler_logprob": -9.298280929215252e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 3245,
+          "raw_logprob": -0.04861105978488922,
+          "sampler_logprob": -0.04861105978488922,
+          "temperature_only_logprob": -0.006715348921716213
+        },
+        {
+          "token_id": 4185,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 46912,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 21,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 382,
+          "raw_logprob": -0.018157687038183212,
+          "sampler_logprob": -0.018157687038183212,
+          "temperature_only_logprob": -0.0012718691723421216
+        },
+        {
+          "token_id": 8304,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": -4.768360213347478e-06,
+          "sampler_logprob": -4.768360213347478e-06,
+          "temperature_only_logprob": 0.0
+        }
+      ],
+      "name": "fraction",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.21950235962867737,
+      "negative_control_passed": true,
+      "output_tokens": 50,
+      "client_token_nll": [
+        0.3157569169998169,
+        0.10948372632265091,
+        1.1920928244535389e-07,
+        0.0050340332090854645,
+        2.3364747903542593e-05,
+        0.35666972398757935,
+        0.0007761088781990111,
+        4.768360213347478e-06,
+        1.1920858014491387e-05,
+        1.2445359230041504,
+        0.0015062665333971381,
+        1.0250909328460693,
+        -0.0,
+        -0.0,
+        -0.0,
+        4.768370445162873e-07,
+        -0.0,
+        -0.0,
+        5.364274329622276e-05,
+        1.1920928244535389e-07,
+        8.344646857949556e-07,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0009133219718933105,
+        0.35779860615730286,
+        0.3868735432624817,
+        1.1920928244535389e-07,
+        7.486063259420916e-05,
+        0.008627403527498245,
+        1.5497195136049413e-06,
+        -0.0,
+        0.018149960786104202,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0009114163694903255,
+        0.00882239080965519,
+        3.790783375734463e-05,
+        -0.0,
+        0.011047860607504845,
+        -0.0,
+        -0.0,
+        0.00032419670606032014,
+        5.483612312673358e-06
+      ],
+      "sampler_output_tokens": 50,
+      "sampler_extra_tokens": 0,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "captured": [
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.3157569169998169,
+          "sampler_logprob": -0.3157569169998169,
+          "temperature_only_logprob": -0.13106724619865417
+        },
+        {
+          "token_id": 5338,
+          "raw_logprob": -0.10948372632265091,
+          "sampler_logprob": -0.10948372632265091,
+          "temperature_only_logprob": -0.016832813620567322
+        },
+        {
+          "token_id": 11,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 12564,
+          "raw_logprob": -0.0050340332090854645,
+          "sampler_logprob": -0.0050340332090854645,
+          "temperature_only_logprob": -7.903263758635148e-05
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -2.3364747903542593e-05,
+          "sampler_logprob": -2.3364747903542593e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2750,
+          "raw_logprob": -0.35666972398757935,
+          "sampler_logprob": -0.35666972398757935,
+          "temperature_only_logprob": -0.13716736435890198
+        },
+        {
+          "token_id": 4766,
+          "raw_logprob": -0.0007761088781990111,
+          "sampler_logprob": -0.0007761088781990111,
+          "temperature_only_logprob": -5.722029527532868e-06
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -4.768360213347478e-06,
+          "sampler_logprob": -4.768360213347478e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 73975,
+          "raw_logprob": -1.1920858014491387e-05,
+          "sampler_logprob": -1.1920858014491387e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 25,
+          "raw_logprob": -1.2445359230041504,
+          "sampler_logprob": -1.2445359230041504,
+          "temperature_only_logprob": -1.1344354152679443
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.0015062665333971381,
+          "sampler_logprob": -0.0015062665333971381,
+          "temperature_only_logprob": -1.9788545614574105e-05
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": -1.0250909328460693,
+          "sampler_logprob": -1.0250909328460693,
+          "temperature_only_logprob": -0.9781078100204468
+        },
+        {
+          "token_id": 488,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 19,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 284,
+          "raw_logprob": -4.768370445162873e-07,
+          "sampler_logprob": -4.768370445162873e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 22,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -5.364274329622276e-05,
+          "sampler_logprob": -5.364274329622276e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 23,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 481,
+          "raw_logprob": -8.344646857949556e-07,
+          "sampler_logprob": -8.344646857949556e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 20,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 284,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18611,
+          "raw_logprob": -0.0009133219718933105,
+          "sampler_logprob": -0.0009133219718933105,
+          "temperature_only_logprob": -8.583032467868179e-06
+        },
+        {
+          "token_id": 7039,
+          "raw_logprob": -0.35779860615730286,
+          "sampler_logprob": -0.35779860615730286,
+          "temperature_only_logprob": -0.17835409939289093
+        },
+        {
+          "token_id": 30270,
+          "raw_logprob": -0.3868735432624817,
+          "sampler_logprob": -0.3868735432624817,
+          "temperature_only_logprob": -0.25192904472351074
+        },
+        {
+          "token_id": 279,
+          "raw_logprob": -1.1920928244535389e-07,
+          "sampler_logprob": -1.1920928244535389e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 3059,
+          "raw_logprob": -7.486063259420916e-05,
+          "sampler_logprob": -7.486063259420916e-05,
+          "temperature_only_logprob": -1.1920928244535389e-07
+        },
+        {
+          "token_id": 25,
+          "raw_logprob": -0.008627403527498245,
+          "sampler_logprob": -0.008627403527498245,
+          "temperature_only_logprob": -0.00036459474358707666
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -1.5497195136049413e-06,
+          "sampler_logprob": -1.5497195136049413e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 22,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 353,
+          "raw_logprob": -0.018149960786104202,
+          "sampler_logprob": -0.018149960786104202,
+          "temperature_only_logprob": -0.0012718691723421216
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 284,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 18611,
+          "raw_logprob": -0.0009114163694903255,
+          "sampler_logprob": -0.0009114163694903255,
+          "temperature_only_logprob": -8.583032467868179e-06
+        },
+        {
+          "token_id": 785,
+          "raw_logprob": -0.00882239080965519,
+          "sampler_logprob": -0.00882239080965519,
+          "temperature_only_logprob": -0.00036530973738990724
+        },
+        {
+          "token_id": 4226,
+          "raw_logprob": -3.790783375734463e-05,
+          "sampler_logprob": -3.790783375734463e-05,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 220,
+          "raw_logprob": -0.011047860607504845,
+          "sampler_logprob": -0.011047860607504845,
+          "temperature_only_logprob": -0.0005529781919904053
+        },
+        {
+          "token_id": 17,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 13,
+          "raw_logprob": -0.00032419670606032014,
+          "sampler_logprob": -0.00032419670606032014,
+          "temperature_only_logprob": -1.311301275563892e-06
+        },
+        {
+          "token_id": 151645,
+          "raw_logprob": -5.483612312673358e-06,
+          "sampler_logprob": -5.483612312673358e-06,
+          "temperature_only_logprob": 0.0
+        }
+      ],
+      "name": "product",
+      "repeated_token_ids": true
+    },
+    {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "temperature_only_max_error": 0.16680032014846802,
+      "negative_control_passed": true,
+      "output_tokens": 13,
+      "client_token_nll": [
+        0.07540319114923477,
+        0.07404901832342148,
+        0.28751668334007263,
+        0.04868781939148903,
+        2.861018856492592e-06,
+        3.576278118089249e-07,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.10065457224845886,
+        0.09726278483867645,
+        0.10594039410352707
+      ],
+      "sampler_output_tokens": 14,
+      "sampler_extra_tokens": 1,
+      "finish_reason": "stop",
+      "stop_reason": "\nStep",
+      "captured": [
+        {
+          "token_id": 576,
+          "raw_logprob": -0.07540319114923477,
+          "sampler_logprob": -0.07540319114923477,
+          "temperature_only_logprob": -0.01065293699502945
+        },
+        {
+          "token_id": 8500,
+          "raw_logprob": -0.07404901832342148,
+          "sampler_logprob": -0.07404901832342148,
+          "temperature_only_logprob": -0.006979016587138176
+        },
+        {
+          "token_id": 374,
+          "raw_logprob": -0.28751668334007263,
+          "sampler_logprob": -0.28751668334007263,
+          "temperature_only_logprob": -0.12071636319160461
+        },
+        {
+          "token_id": 330,
+          "raw_logprob": -0.04868781939148903,
+          "sampler_logprob": -0.04868781939148903,
+          "temperature_only_logprob": -0.006715467199683189
+        },
+        {
+          "token_id": 1151,
+          "raw_logprob": -2.861018856492592e-06,
+          "sampler_logprob": -2.861018856492592e-06,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 6303,
+          "raw_logprob": -3.576278118089249e-07,
+          "sampler_logprob": -3.576278118089249e-07,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2518,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 6303,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 2518,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 6303,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        },
+        {
+          "token_id": 3263,
+          "raw_logprob": -0.10065457224845886,
+          "sampler_logprob": -0.10065457224845886,
+          "temperature_only_logprob": -0.023247892037034035
+        },
+        {
+          "token_id": 2303,
+          "raw_logprob": -0.09726278483867645,
+          "sampler_logprob": -0.09726278483867645,
+          "temperature_only_logprob": -0.013411073945462704
+        },
+        {
+          "token_id": 8304,
+          "raw_logprob": -0.10594039410352707,
+          "sampler_logprob": -0.10594039410352707,
+          "temperature_only_logprob": -0.023405347019433975
+        },
+        {
+          "token_id": 16,
+          "raw_logprob": 0.0,
+          "sampler_logprob": 0.0,
+          "temperature_only_logprob": 0.0
+        }
+      ],
+      "name": "repeat_sequence",
+      "repeated_token_ids": true
+    }
+  ],
+  "no_extra_model_forward": true,
+  "observer_installed_only_for_validation": true
+}

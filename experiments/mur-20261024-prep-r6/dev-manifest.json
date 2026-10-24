@@ -1,0 +1,131 @@
+{
+  "source": "EleutherAI/hendrycks_math",
+  "revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+  "split": "train",
+  "selection_seed": 42,
+  "selection_method": "stable sort (subject,row_index), random.Random(seed).sample",
+  "normalized_test_dedup": true,
+  "rows": 20,
+  "questions": [
+    {
+      "id": "dev-1329ed353664",
+      "subject": "number_theory",
+      "row_index": 558,
+      "question_sha256": "1329ed353664bbebb0d994bd5ec7eeba4ebf9e2dc716b52d037abcfad757687e"
+    },
+    {
+      "id": "dev-93c8fb854e04",
+      "subject": "algebra",
+      "row_index": 912,
+      "question_sha256": "93c8fb854e04316d264be68715bc2fc304374bb594ecb28bea3ce1b0d908267e"
+    },
+    {
+      "id": "dev-c4d8de334223",
+      "subject": "algebra",
+      "row_index": 204,
+      "question_sha256": "c4d8de3342231c390501cb1fff9e5500658dc1d4fb3213f07f379b58720c5926"
+    },
+    {
+      "id": "dev-2733fbeb603b",
+      "subject": "prealgebra",
+      "row_index": 525,
+      "question_sha256": "2733fbeb603bb79bb9cdcf98b8be1ca6386cee823d831a4588a464eab1205e51"
+    },
+    {
+      "id": "dev-7e84c772b127",
+      "subject": "counting_and_probability",
+      "row_index": 509,
+      "question_sha256": "7e84c772b1270c59504c50ac7a793b8683668a0ce29e760eb7d2ccfa8c8043fc"
+    },
+    {
+      "id": "dev-f0e280dee8b2",
+      "subject": "counting_and_probability",
+      "row_index": 262,
+      "question_sha256": "f0e280dee8b282ca6ea13ca396c96163b9c06ac3a3c588c0e6c1dd6421753f35"
+    },
+    {
+      "id": "dev-d4d0ff8da14b",
+      "subject": "counting_and_probability",
+      "row_index": 84,
+      "question_sha256": "d4d0ff8da14b3a63b27d7c7daf33111d5df152aa9bdf4b3191f8e7c8fb2f35ef"
+    },
+    {
+      "id": "dev-879023d2ae85",
+      "subject": "algebra",
+      "row_index": 1143,
+      "question_sha256": "879023d2ae851fe7b4588fa88e9e04e1f2e32484406e32ed89f3e5a4d20098cb"
+    },
+    {
+      "id": "dev-e1df7b4e0525",
+      "subject": "prealgebra",
+      "row_index": 484,
+      "question_sha256": "e1df7b4e0525fb8c32c39c7ab5350f15320980cc7c0625da6e4af6c8fdddc638"
+    },
+    {
+      "id": "dev-0c9211e1a884",
+      "subject": "algebra",
+      "row_index": 839,
+      "question_sha256": "0c9211e1a8847cd47cf70efb169eb8793c89613dc8e953ce381dac992eb8761e"
+    },
+    {
+      "id": "dev-fa3a1dc5a448",
+      "subject": "number_theory",
+      "row_index": 863,
+      "question_sha256": "fa3a1dc5a448a68b3a4bcb4c245e4c5cbab2cafaf588de525c7ebea4e2b2d8cb"
+    },
+    {
+      "id": "dev-8f775fd2a7e3",
+      "subject": "prealgebra",
+      "row_index": 518,
+      "question_sha256": "8f775fd2a7e3bc1a088b61e2fce875a5ee12fa5fed0ef0abe184be6d7e44c5a6"
+    },
+    {
+      "id": "dev-3e23a8235e69",
+      "subject": "precalculus",
+      "row_index": 554,
+      "question_sha256": "3e23a8235e691ac584ff7c378da259237d71dafa736eb9027e59455d742bc6f4"
+    },
+    {
+      "id": "dev-cf46668ac620",
+      "subject": "intermediate_algebra",
+      "row_index": 1082,
+      "question_sha256": "cf46668ac620c4a8d81788c348197c7207623467babff4136e0529bace4fa374"
+    },
+    {
+      "id": "dev-a95fc2a50f8f",
+      "subject": "algebra",
+      "row_index": 712,
+      "question_sha256": "a95fc2a50f8fff7431eb9dcdc1d83747931d4f717bdae1b216eab522ed65c368"
+    },
+    {
+      "id": "dev-711fb6309588",
+      "subject": "number_theory",
+      "row_index": 157,
+      "question_sha256": "711fb63095881373bcf639ec1d3c204a1e374184b215f43c9ef49270dc3e1fff"
+    },
+    {
+      "id": "dev-de262e39e1b4",
+      "subject": "intermediate_algebra",
+      "row_index": 71,
+      "question_sha256": "de262e39e1b408977edb1d6f4c7be4e9586044813fb8021d88767a11011fa671"
+    },
+    {
+      "id": "dev-f465cb5ab75a",
+      "subject": "algebra",
+      "row_index": 260,
+      "question_sha256": "f465cb5ab75a502381ebb89f4c3fc64d34233ea905593069b79e17081b7e70b6"
+    },
+    {
+      "id": "dev-87ad74d51d4e",
+      "subject": "algebra",
+      "row_index": 244,
+      "question_sha256": "87ad74d51d4e2fe891fe409726d1c01a566c2ef7ba1a47701a10edacf78a2dca"
+    },
+    {
+      "id": "dev-574760ae030b",
+      "subject": "algebra",
+      "row_index": 767,
+      "question_sha256": "574760ae030ba959ba4374d40a2739a4e411b5e5f0e28301cb76b1af3b22efc0"
+    }
+  ]
+}
