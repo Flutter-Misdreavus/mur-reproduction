@@ -1,0 +1,29 @@
+{
+  "paper": {
+    "arxiv": "2507.14958v5",
+    "sha256": "dc981152b007458f4d77c5e3e89427be988fc07f03e3c0f827314815b0fadbd3"
+  },
+  "upstream": {
+    "repository": "yayayacc/MUR",
+    "revision": "5cc34676f1a0d0515b7940260cdde98a69f2b671"
+  },
+  "policy": {
+    "id": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+  },
+  "critic": {
+    "id": "GenPRM/GenPRM-1.5B",
+    "revision": "a0fa69768f4524257e1730fec639aa7781c7fa82"
+  },
+  "verifier": {
+    "id": "TIGER-Lab/general-verifier",
+    "revision": "dc59c0c82360170cab0be91c91ae545ff32ea896"
+  },
+  "test": {
+    "id": "HuggingFaceH4/MATH-500",
+    "revision": "6e4ed1a2a79af7d8630a6b768ec859cb5af4d3be",
+    "split": "test",
+    "rows": 500
+  }
+}
+

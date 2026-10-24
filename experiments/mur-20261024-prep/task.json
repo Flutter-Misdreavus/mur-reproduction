@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep",
+  "parent_run_id": null,
+  "ready": true,
+  "hypothesis": "MUR reduces total generated policy+critic tokens by >=40% against per-step Guided Search with accuracy loss <=2pp. This task only implements and validates the smoke gate.",
+  "baseline": "Stepwise CoT and per-step Guided Search; Qwen3-1.7B BF16 with GenPRM-1.5B. Exact protocol in PROTOCOL.md.",
+  "intervention": "Bias-corrected EMA alpha=0.9, gamma=0.9; no scaling first step; scale four candidates only when proposal mean NLL exceeds corrected history-log(gamma).",
+  "dataset": "Pinned HuggingFaceH4/MATH-500 revision in configs/sources.json for eventual full test; prepare 20 held-out development MATH training questions with fixed revision and hashes, excluding normalized test questions.",
+  "split": "20 development questions only in this task. Prepare full 500-test manifest but do not generate or tune on test.",
+  "primary_metric": "Gate validity, then total generated tokens (policy+critic, lower better); pass@1 guardrail. No scientific success claim from smoke.",
+  "decision_rule": "Pass prep only with source/environment manifests, numerical logprob check, complete token ledger and 20x3 smoke+verification; return timing and 1500-trajectory estimate. Stop before main. If budget prevents full20, retain partial evidence and BLOCKED, not SUCCEEDED.",
+  "controls": [
+    "Read PROTOCOL.md, AGENTS.md, configs/*.json. The user requires REMOTE ONLY and future-public-safe history.",
+    "Use one shared GPU index2 only if sufficient observed free memory; at most14GiB new memory, at least4GiB free reserve. Check scheduler; no scheduler found by initial probe. Do not kill or change others' processes.",
+    "Reuse existing compatible environments/caches belonging to this user read-only. Inspect flashblock/minicache runtime environments via sibling directories. Never upgrade their packages, modify symlink targets, or copy personal credentials. If new environment needed create isolated runtime environment.",
+    "New storage <=20GiB; keep data-volume free >=25GiB; stop otherwise. No unbounded downloads. Pin dependencies and model/dataset commits.",
+    "Implement independent, compact vLLM-based runner for three methods sharing prompt/termination/sampling/cost code; main entry python -m mur.run. Add prepare, evaluate and summarize commands and tests. Existing mur.control is a contract, integrate it.",
+    "Audit upstream only as reference; no license file detected previously, so do not vendor its code tree. Preserve citation. Inspect installed vLLM API and explicit logprob semantics before implementation.",
+    "Backend must provide raw model logprobs for NLL. On remote verify selected-token logprobs against teacher-forced forward for a short output. If sampling transformations differ, fix using supported raw-logprob mode or report blocker. Include cost of any extra scoring calls, not free rescoring.",
+    "Prepare sources/download hashes into portable public manifest, store actual paths/URLs with credentials (if any) only in ignored runtime files. Never put host IP, user names, home/data absolute paths or raw logs into tracked outputs.",
+    "Keep role-boundary tokens in chat template; first proposal, four fresh candidates, one verification each. Implement Yes/No fallback specified in PROTOCOL.md. Log malformed judgments. Do not silently ignore exceptions.",
+    "Commit implementation and configuration BEFORE smoke (run_id in message); run scripts/audit_public.py --staged before every commit. After smoke commit sanitized numeric results. Preserve run SHA separately from HEAD. Every15min active editing checkpoint.",
+    "Use deterministic independent request seeds and report execution non-determinism. Bootstrap at question level. Evaluation model loaded after policy/critic are released if necessary.",
+    "No API paid model calls other than the authorized DSH session. No full500, no alpha/gamma/seed sweeps, no ablations in this stage.",
+    "Long commands foreground inside the managed DSH tool; track job IDs. Do not detach nohup/setsid subprocesses. Wrapper's systemd unit provides final cleanup.",
+    "Create report.json and all listed report artifacts in the provided run_dir. Include raw smoke traces there, never Git. Cumulative budget1 GPU-hour within2h wall including model inference and judging; record actual GPU allocation time."
+  ],
+  "seeds": [
+    42
+  ],
+  "code_revision": "Supervisor bootstrap commit at worker startup; executor MUST commit implementation/config before any real model execution and record actual SHA.",
+  "environment": "Remote RTX3090 CUDA, BF16, compatible vLLM/transformers environment resolved and frozen in environment-lock. Runtime paths from MUR_RUNTIME_ROOT. DSH 0.2.1-rc.2 with existing Node22 adapter verified by supervisor.",
+  "experiment_commands": [
+    "python3 -m unittest discover -s tests -v",
+    "Implement python -m mur.prepare --sources configs/sources.json --runtime-root \"$MUR_RUNTIME_ROOT\"; commit implementation/config, then prepare exact public models and data.",
+    "Implement python -m mur.run --config configs/core.json --split dev --methods cot per_step mur --output-dir \"$MUR_RUN_DIR/smoke\" with model revisions frozen; commit first.",
+    "Implement python -m mur.evaluate --input-dir \"$MUR_RUN_DIR/smoke\" --output-dir \"$MUR_RUN_DIR/evaluation\"; commit evaluator before invocation.",
+    "Implement python -m mur.summarize to export sanitized numerical evidence and protocol checks.",
+    "python3 scripts/audit_public.py --staged; record commit/push status (relay supervisor pushes)."
+  ],
+  "budget": {
+    "gpu_count": 1,
+    "gpu_hours": 1,
+    "wall_seconds": 7200,
+    "max_attempts": 1,
+    "model_cost_limit": "No paid inference API. DSH existing subscription only. Smoke <=60 trajectories; <=1 million generated policy+critic+verifier tokens total, <=1 GPU-hour. No full test."
+  },
+  "stop_conditions": [
+    "OOM or NaN",
+    "No suitable remote GPU/headroom",
+    "Disk free would drop below25GiB or newstorage20GiB",
+    "Wrong source revision, test leakage or unsafe path/credential in staging",
+    "Raw-logprob validation fails",
+    "Exceeded token/GPU/wall budget",
+    "Need to change scientific protocol; report BLOCKED to supervisor"
+  ],
+  "required_outputs": [
+    "report.json",
+    "environment.json",
+    "source-manifest.json",
+    "smoke-summary.json",
+    "logprob-validation.json",
+    "raw-smoke-traces.jsonl",
+    "implementation-review.md",
+    "sanitized-public-metrics.json",
+    "budget-estimate.json"
+  ],
+  "version_control": {
+    "repository": "Flutter-Misdreavus/mur-reproduction",
+    "visibility": "private",
+    "branch": "exp/mur-20261024",
+    "push_mode": "relay",
+    "checkpoint_minutes": 15
+  }
+}

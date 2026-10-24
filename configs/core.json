@@ -1,0 +1,26 @@
+{
+  "model_dtype": "bfloat16",
+  "methods": [
+    "cot",
+    "per_step",
+    "mur"
+  ],
+  "seed": 42,
+  "alpha": 0.9,
+  "gamma": 0.9,
+  "bias_correction": true,
+  "candidates": 4,
+  "verifications": 1,
+  "temperature": 0.6,
+  "top_p": 0.8,
+  "top_k": 20,
+  "presence_penalty": 1.5,
+  "max_step_tokens": 2048,
+  "max_steps": 20,
+  "max_accepted_tokens": 16384,
+  "critic_analysis_tokens": 1024,
+  "critic_output_tokens": 2048,
+  "bootstrap_seed": 20261024,
+  "bootstrap_replicates": 10000
+}
+
