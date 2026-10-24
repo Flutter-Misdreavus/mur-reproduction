@@ -22,7 +22,7 @@ def main(argv=None):
     sources = json.load(open(args.sources, encoding="utf-8"))
     root = Path(os.environ.get("MUR_RUNTIME_ROOT", "runtime")) / "models"
     path = str(root / sources["policy"]["id"].split("/")[-1])
-    backend = VLLMBackend(path, gpu_memory_utilization=0.29, max_model_len=4096, seed=args.seed)
+    backend = VLLMBackend(path, gpu_memory_utilization=0.26, max_model_len=4096, seed=args.seed)
     question = "What is 2+2? Give a short answer."
     prompt = policy_prompt(backend.tokenizer, question, [], 0)
     gen = backend.generate(prompt, max_tokens=args.max_tokens, temperature=0.6,

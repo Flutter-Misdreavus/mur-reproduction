@@ -30,17 +30,19 @@ def model_dir(root: Path, repo: str) -> Path:
 
 
 def verify_model(root: Path, spec: dict, problems: list[str]) -> dict:
+    """Verify every pinned local file, including config and tokenizer files."""
     d = model_dir(root, spec["id"])
     files = {}
-    for name, expected in spec.get("weights_sha256", {}).items():
-        p = d / name
-        if not p.exists():
-            problems.append(f"missing model file {spec['id']}/{name}")
-            continue
-        got = sha256_file(p)
-        files[name] = {"bytes": p.stat().st_size, "sha256": got}
-        if got != expected:
-            problems.append(f"sha256 mismatch {spec['id']}/{name}: {got} != {expected}")
+    for kind, key in (("weights", "weights_sha256"), ("config", "config_sha256")):
+        for name, expected in spec.get(key, {}).items():
+            p = d / name
+            if not p.exists():
+                problems.append(f"missing model file {spec['id']}/{name}")
+                continue
+            got = sha256_file(p)
+            files[name] = {"kind": kind, "bytes": p.stat().st_size, "sha256": got}
+            if got != expected:
+                problems.append(f"sha256 mismatch {spec['id']}/{name}: {got} != {expected}")
     return {"id": spec["id"], "revision": spec["revision"], "files": files}
 
 
