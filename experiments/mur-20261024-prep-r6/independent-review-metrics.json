@@ -1,0 +1,104 @@
+{
+  "questions": 20,
+  "trajectories": 60,
+  "mur_steps_checked": 54,
+  "mur_triggers_checked": 5,
+  "candidate_judgments_checked": 236,
+  "trace_sha256": "9128416c2fcc13676af2c80ffee15453d8a1e4f304d43ce3fdaa862a957a8c53",
+  "methods": {
+    "cot": {
+      "tokens": 10575,
+      "mean_tokens": 528.75,
+      "wall_seconds": 292.0673859119415,
+      "correct": 16,
+      "ambiguous": 0
+    },
+    "per_step": {
+      "tokens": 100738,
+      "mean_tokens": 5036.9,
+      "wall_seconds": 1199.2378199100494,
+      "correct": 16,
+      "ambiguous": 0
+    },
+    "mur": {
+      "tokens": 21855,
+      "mean_tokens": 1092.75,
+      "wall_seconds": 477.40780329704285,
+      "correct": 15,
+      "ambiguous": 0
+    }
+  },
+  "first_proposal_identity_cot_mur": 12,
+  "paired_accuracy_delta": -0.05,
+  "token_savings": 0.7830510830074053,
+  "paired_accuracy_delta_bootstrap95": [
+    -0.15,
+    0.0
+  ],
+  "token_savings_bootstrap95": [
+    0.6662426915581086,
+    0.8827266580267088
+  ],
+  "disagreements": [
+    "dev-cf46668ac620",
+    "dev-fa3a1dc5a448"
+  ],
+  "blind_discordance_audit": [
+    {
+      "code": "Q1-A",
+      "qid": "dev-cf46668ac620",
+      "method": "per_step",
+      "automated_correct": 1,
+      "audited_correct": 1,
+      "agreement": true
+    },
+    {
+      "code": "Q1-B",
+      "qid": "dev-cf46668ac620",
+      "method": "cot",
+      "automated_correct": 0,
+      "audited_correct": 0,
+      "agreement": true
+    },
+    {
+      "code": "Q1-C",
+      "qid": "dev-cf46668ac620",
+      "method": "mur",
+      "automated_correct": 0,
+      "audited_correct": 0,
+      "agreement": true
+    },
+    {
+      "code": "Q2-A",
+      "qid": "dev-fa3a1dc5a448",
+      "method": "per_step",
+      "automated_correct": 0,
+      "audited_correct": 0,
+      "agreement": true
+    },
+    {
+      "code": "Q2-B",
+      "qid": "dev-fa3a1dc5a448",
+      "method": "cot",
+      "automated_correct": 1,
+      "audited_correct": 1,
+      "agreement": true
+    },
+    {
+      "code": "Q2-C",
+      "qid": "dev-fa3a1dc5a448",
+      "method": "mur",
+      "automated_correct": 0,
+      "audited_correct": 0,
+      "agreement": true
+    }
+  ],
+  "reviewer": "supervisor independent CPU recomputation; no local model inference",
+  "corrected_trigger_rates": {
+    "per_step_all_steps": 1.0,
+    "mur_eligible_nonfirst_steps": 0.14705882352941177,
+    "mur_all_steps": 0.09259259259259259
+  },
+  "report_sha256": "e38fe37d818ecf444557e70c6cb25483819335789b52c9c4d034065eb60c9d4e",
+  "event_id": "9d9bc914f5060b8588f7ce275af9242b98a1f17456e3d830ca2ba82a7102b5b2"
+}

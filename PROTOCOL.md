@@ -154,3 +154,26 @@ unexplained tail. Save failing vectors before raising. Keep the same eight probe
 float32 arithmetic bound and negative control. Validation resource token counts include
 these tails. Main output-token metrics follow the paper-style API counts; asynchronous
 text-stop cancellation is another reason this proxy does not measure exact GPU FLOPs.
+
+## First independent test amendment (after r6, before test generation)
+The reviewed development gate passes engineering checks but does not meet the
+accuracy guardrail: MUR15/20 versus per-step16/20, with78.3% output-token savings.
+The measured full500x3 generation projection is13.97 GPU-hours, beyond the12-hour
+project ceiling. The next stage is an explicitly exploratory fixed100-question test,
+not a full500 result. Shuffle all500 original row indices with random.Random(20261024),
+take the first100, commit their ordered IDs/hashes before generation, and run all three
+methods in four25-question chunks. Stop on resource failure, never on accuracy.
+Do not tune algorithm/sampling parameters or replace questions. The full500 target
+remains a separate later decision. Point criteria and paired confidence-interval
+criteria remain unchanged; report inconclusive non-inferiority when appropriate.
+
+Uniformly disable prefix caching for policy,critic and verifier to remove cross-method
+cache-order coupling observed in development. Verify common pre-trigger CoT/MUR paths
+on dev indices0 and3 before test; at most300 GPU seconds, no repeated variants after
+failure. This is an engineering control, not an accuracy-driven search. Correct the
+auxiliary trigger-rate denominator and deduplicate equivalent pending grader requests.
+Keep all earlier failed diagnostics and original development artifacts unchanged.
+The100-question stage receives at most14400 allocation seconds and2.5M generated
+tokens including engineering and grading, within the existing12GPU-hour project cap.
+Its wrapper may last6hours for implementation plus execution; each compute chunk is
+bounded to3300seconds with grading reserved. No local model execution is permitted.
