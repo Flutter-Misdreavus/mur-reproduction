@@ -31,11 +31,20 @@ GPU_MIN_FREE_MIB = 4096
 GPU_PREFLIGHT_MIN_FREE_MIB = 8192
 DISK_MIN_FREE_BYTES = 25 * (1 << 30)
 NEW_STORAGE_LIMIT_BYTES = 20 * (1 << 30)
-CHUNK_GENERATION_SECONDS = 3300
-GRADING_RESERVE_SECONDS = 600
+CHUNK_ALLOCATION_SECONDS = 3300
+GRADING_RESERVE_SECONDS = 300
+CLEANUP_RESERVE_SECONDS = 60
 GRADING_RESERVE_TOKENS = 30000
 CHUNK_TOKEN_GRANT = 300000
 EXPECTED_ROWS = 300
+
+
+def chunk_caps(gpu_remaining, wall_remaining, spent=0):
+    """One combined generation+grading allocation, including cleanup."""
+    remaining = max(0, min(CHUNK_ALLOCATION_SECONDS - spent,
+                           gpu_remaining, wall_remaining))
+    return max(0, remaining - GRADING_RESERVE_SECONDS), min(
+        GRADING_RESERVE_SECONDS, remaining)
 
 
 def now_iso():
@@ -215,6 +224,8 @@ class TestDriver:
             self.preflight_errors.append("task run_id mismatch")
         if self.task.get("ready") is not True:
             self.preflight_errors.append("task is not ready")
+        if self.gpu_index != 2:
+            self.preflight_errors.append("this task is pinned to the validated GPU index 2")
         vc = self.task.get("version_control") or {}
         if vc.get("visibility") != "private" or not vc.get("repository"):
             self.preflight_errors.append("missing private version_control")
@@ -327,7 +338,7 @@ class TestDriver:
                 "max_new_mib": GPU_MAX_NEW_MIB,
                 "min_free_mib": GPU_MIN_FREE_MIB,
                 "gpu_index": self.gpu_index,
-                "chunk_generation_seconds": CHUNK_GENERATION_SECONDS,
+                "chunk_allocation_seconds": CHUNK_ALLOCATION_SECONDS,
                 "grading_reserve_seconds": GRADING_RESERVE_SECONDS,
                 "grading_reserve_tokens": GRADING_RESERVE_TOKENS,
             },
@@ -377,7 +388,7 @@ class TestDriver:
                        for p in self.phases],
         })
 
-    def tokens_from(self, name: str) -> tuple[int, str, bool]:
+    def tokens_from(self, name: str, grant: int) -> tuple[int, str, bool]:
         mapping = {
             "engineering": (self.run_dir / "engineering" / "engineering-check.json",
                             "generated_tokens"),
@@ -395,19 +406,25 @@ class TestDriver:
             value = payload.get(key)
             if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
                 return value, "reported", False
-        return 0, "missing_reported_zero", True
+        return grant, "unknown_conservative_reservation", True
 
     def phase(self, name: str, cmd: list[str], wall_cap: float, result_dir: Path | None = None):
         if self.preflight_errors:
             return {"name": name, "status": "skipped_preflight", "phase_ok": False,
                     "exit_code": None, "tokens": 0, "cleanup": "not_started"}
         head_now = git_state()
-        if head_now.get("head") != self.initial_commit:
-            self.failures.append(f"{name}: code HEAD changed during run")
+        if head_now.get("head") != self.initial_commit or head_now.get("dirty") is not False:
+            self.failures.append(f"{name}: code HEAD/worktree changed during run")
             return {"name": name, "status": "aborted_head_changed", "phase_ok": False,
                     "exit_code": None, "tokens": 0, "cleanup": "not_started"}
-        wall_cap = min(wall_cap, self.args.wall_budget_seconds - self.wall_elapsed,
-                       self.gpu_remaining)
+        grant = int(cmd[cmd.index("--max-generated-tokens") + 1])
+        if grant <= 0 or grant > self.token_remaining:
+            raise ValueError("phase token grant exceeds remaining budget")
+        if shutil.disk_usage(Path("runtime")).free < DISK_MIN_FREE_BYTES:
+            raise RuntimeError("disk free below 25GiB before phase")
+        allocation_cap = min(wall_cap, self.args.wall_budget_seconds - self.wall_elapsed,
+                             self.gpu_remaining)
+        wall_cap = max(0, allocation_cap - CLEANUP_RESERVE_SECONDS)
         if wall_cap <= 30:
             self.failures.append(f"{name}: no bounded wall budget remains")
             return {"name": name, "status": "skipped_no_budget", "phase_ok": False,
@@ -509,13 +526,14 @@ class TestDriver:
         duration = time.monotonic() - started
         self.gpu_allocated += duration
         self.gpu_work += work_seconds
-        tokens, token_source, unknown = self.tokens_from(name)
+        tokens, token_source, unknown = self.tokens_from(name, grant)
         self.spent_tokens += tokens
         if unknown:
             self.unknown_reserved_tokens += tokens
         else:
             self.reported_tokens += tokens
-        phase_ok = (status == "ok" and rc == 0 and not telemetry_failed
+        phase_ok = (status == "ok" and rc == 0 and not telemetry_failed and not unknown
+                    and tokens <= grant and duration <= allocation_cap
                     and cleanup in ("clean", "waited_clean"))
         result = {
             "name": name, "status": status, "exit_code": rc, "phase_ok": phase_ok,
@@ -525,6 +543,7 @@ class TestDriver:
             "cleanup_seconds": round(cleanup_seconds, 2),
             "duration_seconds": round(duration, 2), "tokens": tokens,
             "token_source": token_source, "unknown_reservation": unknown,
+            "token_grant": grant, "allocation_cap_seconds": allocation_cap,
             "gpu_allocated_after_seconds": round(self.gpu_allocated, 2),
             "max_new_usage_mib": round(max((s["new_usage_mib"] for s in samples),
                                            default=0.0), 1),
@@ -580,11 +599,10 @@ class TestDriver:
             self.write_evidence()
             return 3
         write_json_atomic(self.run_dir / "engineering-check.json", eng_payload)
-        write_json_atomic(Path("experiments") / run_id / "engineering-check.json",
-                          eng_payload)
 
         chunks_ok = True
         for i in range(4):
+            chunk_started_gpu = self.gpu_allocated
             chunk_dir = self.run_dir / "chunks" / f"chunk-{i:02d}"
             gen_dir = chunk_dir / "generation"
             eval_dir = chunk_dir / "evaluation"
@@ -592,9 +610,8 @@ class TestDriver:
             (chunk_dir).mkdir(parents=True, exist_ok=True)
             (chunk_dir / "expected-ids.txt").write_text("\n".join(qids) + "\n",
                                                         encoding="utf-8")
-            gen_cap = min(CHUNK_GENERATION_SECONDS,
-                          self.gpu_remaining - GRADING_RESERVE_SECONDS,
-                          self.args.wall_budget_seconds - self.wall_elapsed)
+            gen_cap, _ = chunk_caps(self.gpu_remaining,
+                                   self.args.wall_budget_seconds - self.wall_elapsed)
             gen_tokens = min(CHUNK_TOKEN_GRANT,
                              self.token_remaining - GRADING_RESERVE_TOKENS)
             if gen_cap <= 60 or gen_tokens < 10000:
@@ -630,8 +647,9 @@ class TestDriver:
                 break
             # The generation process and its engine children have exited before
             # the grader starts.  Full stop is asserted by the driver cleanup.
-            eval_cap = min(600, self.gpu_remaining,
-                           self.args.wall_budget_seconds - self.wall_elapsed)
+            _, eval_cap = chunk_caps(self.gpu_remaining,
+                                    self.args.wall_budget_seconds - self.wall_elapsed,
+                                    self.gpu_allocated - chunk_started_gpu)
             eval_tokens = self.token_remaining
             eres = self.phase(f"chunk-{i:02d}-evaluate", [
                 py, "-m", "mur.evaluate", "--input-dir", str(gen_dir),
@@ -657,6 +675,7 @@ class TestDriver:
                 "chunk": i, "questions": len(qids), "rows": len(emetrics["rows"]),
                 "complete": True, "generation_tokens": status.get("generated_tokens"),
                 "evaluation_tokens": estatus.get("generated_tokens"),
+                "gpu_allocated_seconds": self.gpu_allocated - chunk_started_gpu,
             })
 
         if not chunks_ok:
@@ -698,6 +717,8 @@ class TestDriver:
         shutil.copyfile(src_manifest, self.run_dir / "source-manifest.json")
         shutil.copyfile(src_manifest,
                         Path("experiments") / run_id / "source-manifest.json")
+        write_json_atomic(Path("experiments") / run_id / "engineering-check.json",
+                          eng_payload)
         self.write_environment(sources)
         self.write_evidence()
         shutil.copyfile(self.run_dir / "resource-usage.json",
@@ -785,7 +806,7 @@ def main(argv=None):
     ap.add_argument("--task-file", required=True)
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--run-id", default="mur-20261024-test100")
-    ap.add_argument("--gpu-index", type=int, default=None)
+    ap.add_argument("--gpu-index", type=int, default=2)
     ap.add_argument("--gpu-budget-seconds", type=float, default=14400)
     ap.add_argument("--token-budget", type=int, default=2500000)
     ap.add_argument("--wall-budget-seconds", type=float, default=21600)

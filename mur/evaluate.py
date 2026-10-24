@@ -151,6 +151,10 @@ def main(argv=None):
         if t.get("split") != args.split:
             raise ValueError(f"split mismatch for {qid}: {t.get('split')} != {args.split}")
     if expected_ids is not None:
+        expected_pairs = {(qid, method) for qid in expected_ids
+                          for method in ("cot", "per_step", "mur")}
+        if seen != expected_pairs:
+            raise ValueError("missing or unknown method/question pairs before grading")
         got_ids = {t["qid"] for t in traces}
         if got_ids != set(expected_ids):
             missing = sorted(set(expected_ids) - got_ids)

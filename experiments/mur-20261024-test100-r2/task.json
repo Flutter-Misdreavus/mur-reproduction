@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-test100-r2",
+  "parent_run_id": "mur-20261024-test100",
+  "ready": true,
+  "hypothesis": "On a fixed 100-question MATH-500 test subset, MUR reduces API-returned policy+critic generated tokens by >=40% versus per-step Guided Search while accuracy loss is <=2 percentage points. This is an exploratory first independent test, not the full500 reproduction.",
+  "baseline": "Stepwise CoT and per-step Guided Search; Qwen3-1.7B BF16 with GenPRM-1.5B. Exact protocol in PROTOCOL.md.",
+  "intervention": "Bias-corrected EMA alpha=0.9, gamma=0.9; no scaling first step; scale four candidates only when proposal mean NLL exceeds corrected history-log(gamma).",
+  "dataset": "Pinned HuggingFaceH4/MATH-500 revision in configs/sources.json for eventual full test; prepare 20 held-out development MATH training questions with fixed revision and hashes, excluding normalized test questions.",
+  "split": "Before any test generation, freeze the first100 of a random.Random(20261024) permutation of all500 canonical test records. Publish only IDs and source hashes. No outcome-based selection, early success stopping, tuning or replacement questions. Dev data remain disjoint.",
+  "primary_metric": "Ratio of mean policy+critic API-returned generated tokens on the fixed paired100, lower better, with pass@1 accuracy guardrail. Report CoT, per-step and MUR together; verifier cost separate.",
+  "decision_rule": "Point target: token savings>=0.40 and accuracy delta>=-0.02. Separately report paired bootstrap95% intervals,10000 resamples seed20261024. Non-inferiority is supported only if the lower accuracy-delta bound is strictly>-0.02; otherwise evidence is inconclusive. No complete-test claim from100.",
+  "controls": [
+    "Read experiments/mur-20261024-test100/review.md and original R6 review. Reuse the identical committed100-question manifest, no reselection. Original test100 implementation was cancelled after CPU preflight, before any GPU phase. This new task authorizes the same matrix after the dev identity gate.",
+    "Supervisor fixed combined3300sec per-chunk allocation, conservative missing-token reservation,60sec cleanup reserve,clean-tree checks at each phase,pinned physical GPU2,strict grader method/question joins and exact integer accuracy-delta arithmetic. Review these narrow fixes and run tests; do not rewrite the driver or build new infrastructure. Never select GPU3 or a different device automatically. No scientific changes.",
+    "Use scripts/test_stage_driver.py --task-file experiments/mur-20261024-test100-r2/task.json --run-dir \"$MUR_RUN_DIR\" --gpu-index 2. The one foreground driver stays inside this task cgroup. Copy the committed identical test-manifest.json to run root before driver preflight. Do not modify any tracked file while the driver runs; all per-phase raw evidence stays ignored until model work ends.",
+    "Keep alpha=.9,gamma=.9,candidates4 and all scientific prompt, token limits, sampling/model/data revisions fixed. Uniformly disable prefix caching for policy, critic and verifier in this stage to remove cross-method prefix-cache order coupling. Add explicit recorded config and meaningful CPU checks. Do not alter installed/shared packages.",
+    "Before test, use only dev indices0 and3 for a bounded no-trigger path check: same policy instance and identical seeds, compare CoT and MUR trajectories and first proposals, record raw evidence. Use real MUR, do not suppress triggers. If a genuine trigger occurs compare only the common pre-trigger portion. Identity failure: BLOCKED before test; no repeated numerical variants. At most300 GPU seconds for engineering. Existing same-forward gate is accepted; no repeat eight-probe or HF parity variants.",
+    "Implement explicit --split test support: verify source hash/count500, stable canonical test IDs and frozen100 manifest, strip all gold/solution fields before generation. Test access gated by this ready task and accepted review. Never allow forced engineering triggers on test. Evaluator loads correct split, verifies ID joins, fails on unknown/duplicate/missing rows; cache includes model revision,prompt,seed,sampling and effective context/output cap. Deduplicate pending identical cache keys before calls.",
+    "Run exactly100 questions x3 methods in four25-question chunks with policy/critic fully stopped before each grading phase. Fresh process/outputs for each chunk; no restarts or silently omitted questions. Save/checkpoint complete chunks; if budget prevents all100, mark partial and report all attempts plus complete paired subset as exploratory only. No stopping based on accuracy.",
+    "Correct auxiliary trigger-rate denominators explicitly: per-step eligible=all steps; MUR eligible=sum(max(steps-1,0)); report numerator,denominator and all-step rate. Preserve R6 original artifacts and document correction. Add a meaningful regression covering single-step trajectories. No accuracy/cost values are changed by this fix.",
+    "Canonical test identity: keep original JSONL order; ID=test- plus zero-padded3-digit row index plus first12 hex of sha256(problem UTF-8). Shuffle indices using a new random.Random(20261024), take first100, save ordered IDs,row hashes and index before any inference. Do not sample by topic/difficulty or use the later score to select rows.",
+    "Reuse Driver telemetry, owned process groups, fail-closed cleanup and clean-tree actual SHA recording. Count every phase including loading/cleanup, diagnostic and verifier work against global14400 GPU seconds and2500000 generated-token budget. Reserve grading time/tokens before each generation chunk. Max per-chunk GPU allocation3300sec; stop only own processes on resource failures. Runtime directory inside ignored runtime/runs only; no downloads, >=25GiB free disk, <=14GiB own/new GPU memory and>=4GiB free. One GPU only.",
+    "Generated-token ledger includes discarded proposal,candidates,both critic phases and final fallback. Preserve input/output per-call counts, actual selection probabilities and all failures. API returned-token proxy is not exact GPU FLOPs; text-stop extra engine work and shared-GPU latency limitations must remain disclosed.",
+    "Compute all3 method metrics, paired100 bootstrap, finish/truncation/context/ambiguity counts and genuine MUR triggers from raw traces. Provide a method-blinded audit file for every question whose correctness differs among methods, including gold and candidate answer with random anonymized labels; keep mapping separate. Do not change verifier labels silently; preserve automated and audited columns.",
+    "Commit implementation/config/tests and frozen manifest before inference, check progress every15min during edits, never edit executing code. Stage explicitly and audit staged plus all history. Keep raw data/answers/model weights/DSH logs/private infrastructure untracked. Small numeric per-question metrics and sanitized manifests/review belong in experiments/run_id. Remote commits are relayed by supervisor; do not claim pushed.",
+    "After final chunk or failure, emit structured report, raw artifact hashes, exact commands, actual run commit, fixes/currentHEAD, resource charges and all deviations. Do not launch a new dataset, second seed, sweep, full500 or next stage.",
+    "Prior budget charge is6090.79sec (R1/R3 conservative, R4/R5/R6 measured). Thus this task max14400sec leaves project charge<=20490.79sec<43200. Do not describe prior-plus-measured charges as all measured. R1 generated tokens are not fully included in historical token totals; report that limitation, not an exact project-wide token sum.",
+    "If resource/identity failure occurs, preserve every completed and incomplete trajectory. Emit partial CPU summaries for any complete paired chunk without labeling the100-question task complete; keep original failure and all actual costs. Do not rerun a failed GPU phase or choose variants. A successful identity check must be reviewed in your report before advancing automatically through the frozen matrix."
+  ],
+  "seeds": [
+    42
+  ],
+  "code_revision": "Continue committed implementation fba4a79 plus supervisor budget/precision guards. Record clean actual run SHA. Original test100 was cancelled before GPU execution; no test or dev engineering output exists.",
+  "environment": "Remote-only RTX3090 BF16; reuse existing runtime/venv (vLLM0.8.5 V1, transformers4.51.3, torch2.6.0+cu124). No shared environment mutations.",
+  "experiment_commands": [
+    "runtime/venv/bin/python -m unittest discover -s tests -v",
+    "runtime/venv/bin/python scripts/test_stage_driver.py --task-file experiments/mur-20261024-test100-r2/task.json --run-dir \"$MUR_RUN_DIR\" --gpu-index 2",
+    "python3 scripts/audit_public.py --history"
+  ],
+  "budget": {
+    "gpu_count": 1,
+    "gpu_hours": 4,
+    "wall_seconds": 21600,
+    "max_attempts": 1,
+    "model_cost_limit": "One bounded execution: <=14400 GPU allocation seconds, <=2.5M total generated tokens, includes dev engineering and verifier. Project total12GPUh remains unchanged."
+  },
+  "stop_conditions": [
+    "OOM or NaN",
+    "No suitable remote GPU/headroom",
+    "Disk free would drop below25GiB or newstorage20GiB",
+    "Wrong source revision, test leakage or unsafe path/credential in staging",
+    "Raw-logprob validation fails",
+    "Exceeded token/GPU/wall budget",
+    "Need to change scientific protocol; report BLOCKED to supervisor"
+  ],
+  "required_outputs": [
+    "report.json",
+    "environment.json",
+    "source-manifest.json",
+    "test-manifest.json",
+    "engineering-check.json",
+    "metrics.json",
+    "raw-traces.jsonl",
+    "blind-audit.jsonl",
+    "blind-audit-mapping.json",
+    "resource-usage.json",
+    "implementation-review.md"
+  ],
+  "version_control": {
+    "repository": "Flutter-Misdreavus/mur-reproduction",
+    "visibility": "private",
+    "branch": "exp/mur-20261024",
+    "push_mode": "relay",
+    "checkpoint_minutes": 15
+  }
+}

@@ -58,7 +58,8 @@ def paired_bootstrap(per_q: dict[str, dict[str, dict]], seed: int = 20261024,
         pd = sum(per_q[q]["per_step"]["correct"] for q in sample) / n
         md = sum(per_q[q]["mur"]["correct"] for q in sample) / n
         cd = sum(per_q[q]["cot"]["correct"] for q in sample) / n
-        acc_delta.append(md - pd)
+        acc_delta.append(sum(per_q[q]["mur"]["correct"] -
+                             per_q[q]["per_step"]["correct"] for q in sample) / n)
         mur_acc.append(md)
         per_acc.append(pd)
         cot_acc.append(cd)
@@ -66,8 +67,8 @@ def paired_bootstrap(per_q: dict[str, dict[str, dict]], seed: int = 20261024,
     point_mur = statistics.mean(per_q[q]["mur"]["tokens"] for q in qids)
     point_cot = statistics.mean(per_q[q]["cot"]["tokens"] for q in qids)
     point_savings = 1 - point_mur / point_per
-    point_delta = (statistics.mean(per_q[q]["mur"]["correct"] for q in qids)
-                   - statistics.mean(per_q[q]["per_step"]["correct"] for q in qids))
+    point_delta = sum(per_q[q]["mur"]["correct"] -
+                      per_q[q]["per_step"]["correct"] for q in qids) / n
     return {
         "seed": int(seed),
         "replicates": int(replicates),
@@ -168,9 +169,9 @@ def aggregate_rows(rows: list[dict], manifest: dict) -> tuple[dict, dict[str, di
             "context_limit_count": sum(1 for r in mr if r["finish"] == "context_limit"),
             "budget_stop_count": sum(1 for r in mr if r["finish"] == "budget_stopped"),
             "error_count": sum(1 for r in mr if r["finish"] == "error"),
-            "verifier_tokens_total": sum(r["verifier_tokens"] for r in mr),
+            "verifier_tokens_attributed_total": sum(r["verifier_tokens"] for r in mr),
             "verifier_tokens_mean": statistics.mean(r["verifier_tokens"] for r in mr),
-            "verifier_calls": len(mr),
+            "graded_rows": len(mr),
         }
     cot = summary["cot"]
     per = summary["per_step"]
