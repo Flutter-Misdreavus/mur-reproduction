@@ -19,6 +19,7 @@ class Generation:
     finish_reason: str | None = None
     logprobs: list = field(default_factory=list)
     prompt_tokens: int = 0
+    stop_reason: str | int | None = None
 
 
 class VLLMBackend:
@@ -106,6 +107,7 @@ class VLLMBackend:
             finish_reason=getattr(o, "finish_reason", None),
             logprobs=list(o.logprobs or []),
             prompt_tokens=prompt_tokens,
+            stop_reason=getattr(o, "stop_reason", None),
         )
 
     def score_nll(self, prompt_ids: list[int], output_ids: list[int]) -> dict:

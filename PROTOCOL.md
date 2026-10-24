@@ -144,3 +144,13 @@ or independent-prefill parity. Do not relax or replace this direct gate after fa
 Conservatively charge R1's entire3600-second GPU allocation, R3 280, R4 62.77, and
 R5 <=3000; their sum stays below the combined2GPU-hour prep ceiling. These charges
 are distinct from actual measured GPU use. No test-set results informed these changes.
+
+## Text-stop observer alignment correction (r6)
+The direct r5 gate verified five probes exactly but aborted on a token-count mismatch.
+All client-returned tokens must match the leading sampler token sequence exactly.
+Retain and validate any trailing sampler entries, permitting them only for an explicitly
+reported configured text-stop cancellation. Never drop a returned token or permit an
+unexplained tail. Save failing vectors before raising. Keep the same eight probes,
+float32 arithmetic bound and negative control. Validation resource token counts include
+these tails. Main output-token metrics follow the paper-style API counts; asynchronous
+text-stop cancellation is another reason this proxy does not measure exact GPU FLOPs.

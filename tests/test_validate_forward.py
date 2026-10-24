@@ -6,6 +6,20 @@ from mur.validate_forward import compare_returned
 
 
 class ForwardObserverContracts(unittest.TestCase):
+    def test_text_stop_tail_is_retained_but_all_returned_tokens_must_match(self):
+        gen, observed = self.fixture()
+        gen.finish_reason = "stop"
+        gen.stop_reason = "\nStep"
+        observed.append({"token_id": 10, "raw_logprob": -0.4, "sampler_logprob": -0.4,
+                         "temperature_only_logprob": -0.2})
+        result = compare_returned(gen, observed)
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["sampler_extra_tokens"], 1)
+        self.assertEqual(len(result["captured"]), 2)
+        gen.stop_reason = None
+        with self.assertRaises(ValueError):
+            compare_returned(gen, observed)
+
     def fixture(self, client_lp=-0.3):
         gen = Generation(token_ids=[9], logprobs=[{9: SimpleNamespace(logprob=client_lp)}])
         observed = [{"token_id": 9, "raw_logprob": -0.3, "sampler_logprob": -0.3,

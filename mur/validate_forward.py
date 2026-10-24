@@ -78,19 +78,28 @@ def drain_observer(worker):
 def compare_returned(generation, captured):
     if not captured:
         raise ValueError("empty observer evidence")
-    if generation.token_ids != [r["token_id"] for r in captured]:
-        raise ValueError("sampler and client token IDs/counts differ")
+    returned_count = len(generation.token_ids)
+    captured_ids = [r["token_id"] for r in captured]
+    if generation.token_ids != captured_ids[:returned_count]:
+        raise ValueError("sampler and client token IDs/order differ")
+    extras = len(captured) - returned_count
+    if extras and not (generation.finish_reason == "stop" and generation.stop_reason == "\nStep"):
+        raise ValueError("extra sampler tokens without the configured text stop")
     nll = generation_nll(generation)["token_nll"]
     if not nll:
         raise ValueError("empty generation")
-    if len(nll) != len(captured):
-        raise ValueError("client and observer token counts differ")
+    if len(nll) != returned_count:
+        raise ValueError("client logprob/token counts differ")
     errors = []
     negative_control = []
-    for value, row in zip(nll, captured):
+    for row in captured:
         if not all(math.isfinite(row[k]) for k in
                    ("raw_logprob", "sampler_logprob", "temperature_only_logprob")):
             raise ValueError("nonfinite observer evidence")
+        # Check raw-vs-sampler arithmetic even for the explicitly retained
+        # engine samples discarded after a client-side text-stop cancellation.
+        errors.append(abs(row["sampler_logprob"] - row["raw_logprob"]))
+    for value, row in zip(nll, captured[:returned_count]):
         errors.extend((abs(value + row["raw_logprob"]),
                        abs(row["sampler_logprob"] - row["raw_logprob"]),
                        abs(value + row["sampler_logprob"])))
@@ -101,6 +110,8 @@ def compare_returned(generation, captured):
             "temperature_only_max_error": max_negative,
             "negative_control_passed": max_negative > NEGATIVE_CONTROL_MIN_DIFF,
             "output_tokens": len(nll), "client_token_nll": nll,
+            "sampler_output_tokens": len(captured), "sampler_extra_tokens": extras,
+            "finish_reason": generation.finish_reason, "stop_reason": generation.stop_reason,
             "captured": captured}
 
 
@@ -119,7 +130,7 @@ def main(argv=None):
     probes = cfg["probes"]
     if len(probes) != 8 or len(probes) * cfg["max_tokens"] > args.max_generated_tokens:
         raise ValueError("frozen probe count or validation token budget violated")
-    results, backend, error = [], None, None
+    results, backend, error, failed_probe = [], None, None, None
     budget = StageBudget(args.max_generated_tokens, args.max_wall_seconds, args.max_model_len)
     evidence = sampler_source_evidence()
     try:
@@ -143,9 +154,16 @@ def main(argv=None):
             captured = backend.llm.collective_rpc(drain_observer, timeout=30)
             if len(captured) != 1:
                 raise ValueError("single observed worker required")
+            extra_count = max(0, len(captured[0]) - len(gen.token_ids))
+            budget.account("policy", extra_count)
+            failed_probe = {"name": name, "client_token_ids": gen.token_ids,
+                            "client_token_nll": generation_nll(gen)["token_nll"],
+                            "finish_reason": gen.finish_reason, "stop_reason": gen.stop_reason,
+                            "captured": captured[0]}
             result = compare_returned(gen, captured[0])
             result.update(name=name, repeated_token_ids=len(gen.token_ids) != len(set(gen.token_ids)))
             results.append(result)
+            failed_probe = None
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
     finally:
@@ -176,6 +194,9 @@ def main(argv=None):
                "prior_failed_runs": ["mur-20261024-prep-r3", "mur-20261024-prep-r4"],
                "generation_logprobs_used_for_nll": True,
                "generated_tokens": budget.generated,
+               "client_output_tokens": sum(r["output_tokens"] for r in results),
+               "sampler_extra_tokens": sum(r["sampler_extra_tokens"] for r in results),
+               "failed_probe": failed_probe,
                "sampler_source": evidence, "probes": results,
                "no_extra_model_forward": True, "observer_installed_only_for_validation": True}
 
