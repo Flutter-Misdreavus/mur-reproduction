@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r3",
+  "parent_run_id": "mur-20261024-prep-r2",
+  "ready": true,
+  "hypothesis": "MUR reduces total generated policy+critic tokens by >=40% against per-step Guided Search with accuracy loss <=2pp. This task only implements and validates the smoke gate.",
+  "baseline": "Stepwise CoT and per-step Guided Search; Qwen3-1.7B BF16 with GenPRM-1.5B. Exact protocol in PROTOCOL.md.",
+  "intervention": "Bias-corrected EMA alpha=0.9, gamma=0.9; no scaling first step; scale four candidates only when proposal mean NLL exceeds corrected history-log(gamma).",
+  "dataset": "Pinned HuggingFaceH4/MATH-500 revision in configs/sources.json for eventual full test; prepare 20 held-out development MATH training questions with fixed revision and hashes, excluding normalized test questions.",
+  "split": "20 development questions only in this task. Prepare full 500-test manifest but do not generate or tune on test.",
+  "primary_metric": "Gate validity, then total generated tokens (policy+critic, lower better); pass@1 guardrail. No scientific success claim from smoke.",
+  "decision_rule": "Pass prep only with source/environment manifests, numerical logprob check, complete token ledger and 20x3 smoke+verification; return timing and 1500-trajectory estimate. Stop before main. If budget prevents full20, retain partial evidence and BLOCKED, not SUCCEEDED.",
+  "controls": [
+    "Read both previous reviews. R2 did ZERO model generation due to a known device permission issue. This is environment resumption of the unused 1 GPU-hour repair budget, not a new scientific attempt. Retain both failed stages. No extra downloads or scientific protocol changes.",
+    "The supervisor configured official DSH_PERMISSION_MODE=danger-full-access for THIS bounded task only under existing user authorization for Python/SSH execution. Do not modify global profiles, permission modes, credentials, or launch services. The parent systemd service retains time/memory/CPU/control-group termination. First confirm nvidia-smi AND torch.cuda.is_available inside the managed bash tool; record /proc/self/cgroup and CUDA_VISIBLE_DEVICES. If unavailable, report BLOCKED immediately; no alternate launchers.",
+    "Implement a single foreground stage driver before running: sequential short-lived validation, smoke, then verifier processes; verify each model process is gone before next. Monitor actual GPU memory during allocation and stop own process group if new usage exceeds14GiB or free memory below4GiB. Never kill unrelated processes. Enforce <=3600s cumulative model allocation INCLUDING load/validation/smoke/verifier, <=1 million actual generated tokens across stages, and total <=7200s wall. Include measured resource evidence in artifacts.",
+    "Outstanding code defects: run.py checks budgets only after calls and does not exit outer loop on wall cap; guard whole-stage before every call/batch using reserved maximum output bounds, account completed calls exactly, fail globally. evaluate.py has no global token/wall guard; fix. Context bound checks must precede model calls. Do not silently truncate original scientific protocol; stop and report if out of budget/context.",
+    "Strengthen validate_logprobs: at least3 short probe outputs including repeated tokens under nonzero presence penalty. Use separate processes for vLLM generation and HF teacher-forced reference to guarantee release. Preserve frozen numerical tolerances; do not relax after seeing values. Only proceed when every probe passes. Validation output tokens count toward stage budget.",
+    "Review backend.close for V1 engine subprocess shutdown. Ensure after driver termination no model children survive. External foreground parent service must contain all children; no daemonized jobs. Summarize observed global allocation seconds and token budget, not only smoke interval. No fabricated zero unknown values.",
+    "Supervisor has repaired major correctness issues. Review diffs and preserve fixes: chat role markers, anchored initial boxed verdict parser, V1 raw generation logprobs, per-model memory fraction0.26, fail-fast trajectory errors, strict judge parser and versioned cache.",
+    "Current compatible runtime/venv has vLLM0.8.5, transformers4.51.3, torch2.6.0+cu124. Existing model/data files are in ignored runtime/models and runtime/data. MUR_RUNTIME_ROOT is set to that runtime. Reuse exact files and verify hashes; no new weight downloads.",
+    "VLLM_USE_V1=1 is REQUIRED. Installed vllm/v1/sample/sampler.py computes raw_logprobs before penalties/temperature. The supervisor inspected this source. Validate generation_nll using returned logprobs=0 against teacher-forced reference on multiple short outputs, including repeated tokens. Do NOT use expensive prompt rescoring in main decoding. Fail if not V1.",
+    "Actual new GPU usage must stay below14GiB with4GiB headroom; verify per-process allocations using nvidia-smi. Stop if exceeded. Keep same one physical GPU2 and BF16.",
+    "Run all model jobs FOREGROUND using managed DSH execution tools. NO standalone systemd-run/nohup/setsid: previous detached smoke survived wrapper cancellation. Verify child cgroup belongs to current parent service. If the tool cannot keep jobs in this cgroup, report BLOCKED before GPU execution.",
+    "Budget: <=1 GPU-hour for this attempt including validation and judge; preparation attempts combined<=2 GPU-hours, totalproject12GPU-hours unchanged. Measure GPU allocation interval conservatively; judge/validation count too. <=1 million generated tokens cumulatively including verifier. Wall<=2h.",
+    "Finish implementing actual limits: token/wall/GPU budget must stop the whole run, not merely one trajectory or inner method loop. Check space/context bounds BEFORE calls. Preserve partial evidence and denominators. Do not let a failed question restart continuously.",
+    "Implement observed environment versions and memory usage, rather than hardcoded successful claims. Run-summary must read actual smoke/run-status.json. A missing metric is unknown, not zero. Source manifest checks must verify hashes of config/tokenizer files as well as weights and data; bootstrap files must be proven from pinned revisions.",
+    "Fix backend cleanup if V1 subprocesses remain: validate in short subprocess, exit fully, then load smoke. Final verifier in a fresh process after policy/critic teardown. Cache identity includes verifier revision, prompt, per-question seed, sampling settings.",
+    "Gate must inspect at least one genuine MUR trigger if present. If all20 have zero triggers, retain that fact; validate triggered branch with a marked engineering forced-trigger case, excluded from scientific smoke. Do not adjust alpha/gamma to manufacture results.",
+    "Do not read or print secrets. No private usernames, home/data absolute paths, host IP, source texts/answers, raw sessions in Git. Only portable configs, hashes, numeric summaries. audit_public --history and staged before commit.",
+    "No new scientific protocols or test generation. Same20 deterministic development IDs, three methods, seed42. No full500 and no ablations. Additional implementation fixes permitted but must be committed BEFORE their runs.",
+    "Generate complete structured report and required artifacts even if interrupted or blocked; incomplete20x3 => BLOCKED, never SUCCEEDED. Include original14 partial trajectories only as discarded diagnostics, never merge into current metrics.",
+    "Copy raw-smoke-traces.jsonl into new run root for wrapper manifest (untracked). Report cumulative use and exact run SHAs. Submit portable summary to experiments/newrun and commit, then write final report.",
+    "Read PROTOCOL.md, AGENTS.md, configs/*.json. The user requires REMOTE ONLY and future-public-safe history.",
+    "Keep role-boundary tokens in chat template; first proposal, four fresh candidates, one verification each. Implement Yes/No fallback specified in PROTOCOL.md. Log malformed judgments. Do not silently ignore exceptions.",
+    "Use deterministic independent request seeds and report execution non-determinism. Bootstrap at question level. Evaluation model loaded after policy/critic are released if necessary.",
+    "No API paid model calls other than the authorized DSH session. No full500, no alpha/gamma/seed sweeps, no ablations in this stage."
+  ],
+  "seeds": [
+    42
+  ],
+  "code_revision": "Supervisor environment-resumption task commit at startup; record SHA. Commit every implementation fix before GPU execution.",
+  "environment": "Remote-only RTX3090 BF16; reuse existing runtime/venv (vLLM0.8.5 V1, transformers4.51.3, torch2.6.0+cu124). No shared environment mutations.",
+  "experiment_commands": [
+    "runtime/venv/bin/python -m unittest discover -s tests -v",
+    "runtime/venv/bin/python -m mur.prepare --sources configs/sources.json --runtime-root \"$MUR_RUNTIME_ROOT\" --run-dir \"$MUR_RUN_DIR\"",
+    "Implement and invoke one foreground budget-monitoring driver for the following GPU commands; run each GPU phase in a fresh child process; do not run the commands twice.",
+    "runtime/venv/bin/python -m mur.validate_logprobs --output \"$MUR_RUN_DIR/logprob-validation.json\"",
+    "runtime/venv/bin/python -m mur.run --config configs/core.json --split dev --methods cot per_step mur --run-id mur-20261024-prep-r3 --output-dir \"$MUR_RUN_DIR/smoke\" --limit 20",
+    "runtime/venv/bin/python -m mur.evaluate --input-dir \"$MUR_RUN_DIR/smoke\" --output-dir \"$MUR_RUN_DIR/evaluation\"",
+    "runtime/venv/bin/python -m mur.summarize --run-dir \"$MUR_RUN_DIR\"",
+    "python3 scripts/audit_public.py --history; python3 scripts/audit_public.py --staged"
+  ],
+  "budget": {
+    "gpu_count": 1,
+    "gpu_hours": 1,
+    "wall_seconds": 7200,
+    "max_attempts": 1,
+    "model_cost_limit": "No paid inference API. DSH existing subscription only. Smoke <=60 trajectories; <=1 million generated policy+critic+verifier tokens total, <=1 GPU-hour. No full test."
+  },
+  "stop_conditions": [
+    "OOM or NaN",
+    "No suitable remote GPU/headroom",
+    "Disk free would drop below25GiB or newstorage20GiB",
+    "Wrong source revision, test leakage or unsafe path/credential in staging",
+    "Raw-logprob validation fails",
+    "Exceeded token/GPU/wall budget",
+    "Need to change scientific protocol; report BLOCKED to supervisor"
+  ],
+  "required_outputs": [
+    "report.json",
+    "environment.json",
+    "source-manifest.json",
+    "smoke-summary.json",
+    "logprob-validation.json",
+    "raw-smoke-traces.jsonl",
+    "implementation-review.md",
+    "sanitized-public-metrics.json",
+    "budget-estimate.json",
+    "resource-usage.json",
+    "gpu-probe.json"
+  ],
+  "version_control": {
+    "repository": "Flutter-Misdreavus/mur-reproduction",
+    "visibility": "private",
+    "branch": "exp/mur-20261024",
+    "push_mode": "relay",
+    "checkpoint_minutes": 15
+  }
+}
