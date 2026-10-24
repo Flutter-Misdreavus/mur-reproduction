@@ -63,7 +63,7 @@ class FreshnessAndOutputContracts(unittest.TestCase):
             rd = Path(td)
             payload = {
                 "passed": True,
-                "validation_reference": "same_engine_identity_sampling_teacher_forced_prefill",
+                "validation_reference": "same_forward_unmodified_logits",
                 "cross_engine_hf_parity": False,
                 "probe_count": 8,
                 "complete_nonempty_probes": True,

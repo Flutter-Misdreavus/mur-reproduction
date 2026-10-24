@@ -529,7 +529,7 @@ def validation_passed(run_dir: Path, result: dict) -> bool:
     payload = read_json(path, {}) or {}
     return (payload.get("passed") is True
             and payload.get("validation_reference")
-            == "same_engine_identity_sampling_teacher_forced_prefill"
+            == "same_forward_unmodified_logits"
             and payload.get("cross_engine_hf_parity") is False
             and payload.get("probe_count") == 8
             and payload.get("complete_nonempty_probes") is True)
@@ -578,7 +578,7 @@ def main(argv=None):
     eres = None
     validate_grant = min(10_000, d.token_remaining)
     vres = d.phase("validate", [
-        py, "-m", "mur.validate_signal",
+        py, "-m", "mur.validate_forward",
         "--output", str(out / "logprob-validation.json"),
         "--config", args.validation_config,
         "--sources", args.sources,

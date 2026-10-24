@@ -42,5 +42,10 @@
     "mean_abs_token_nll": 0.02,
     "mean_nll": 0.005
   },
-  "cross_engine_hf_status": "FAILED in r3; retained diagnostic, not overridden"
+  "cross_engine_hf_status": "FAILED in r3; retained diagnostic, not overridden",
+  "current_gate": {
+    "reference": "same_forward_unmodified_logits",
+    "max_abs_error": 5e-05,
+    "negative_control": "at least one temperature-only probability differs by >0.001"
+  }
 }

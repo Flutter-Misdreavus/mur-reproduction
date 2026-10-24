@@ -147,7 +147,7 @@ def main(argv=None):
     signal_gate_ok = (
         bool(validation.get("passed"))
         and validation.get("validation_reference")
-        == "same_engine_identity_sampling_teacher_forced_prefill"
+        == "same_forward_unmodified_logits"
         and validation.get("cross_engine_hf_parity") is False
         and validation.get("probe_count") == 8
         and validation.get("complete_nonempty_probes") is True
@@ -175,7 +175,7 @@ def main(argv=None):
         "raw_logprob_validation": signal_gate_ok,
         "signal_gate_8_probes": signal_gate_ok,
         "validation_reference_recorded": validation.get("validation_reference")
-        == "same_engine_identity_sampling_teacher_forced_prefill",
+        == "same_forward_unmodified_logits",
         "cross_engine_parity_not_claimed": validation.get("cross_engine_hf_parity") is False,
         "three_methods_20x3": complete,
         "complete_token_ledger": bool(traces) and ledger_ok,
@@ -381,9 +381,9 @@ Gate status: **{smoke['gate_status']}**.
 - vLLM 0.8.5 V1 backend that reads raw sampled-token logprobs from the generating forward pass
   (inspected `vllm/v1/sample/sampler.py`: `raw_logprobs` precedes penalties/temperature), so no extra
   prompt-rescoring call is used for `m_t`.
-- `mur.validate_signal` re-scores the exact saved prompt/output ids with an identity-sampling
-  teacher-forced prefill in a fresh pinned BF16 vLLM V1 process. The r3 HF cross-engine comparison
-  remains a separate FAILED diagnostic; `cross_engine_hf_parity=false`.
+- `mur.validate_forward` compares each returned token probability with unmodified logits in the same forward.
+  Prior independent-prefill (r4) and cross-engine (r3) comparisons remain FAILED diagnostics;
+  this observer establishes neither kind of numerical parity.
 - Driver bookkeeping includes cleanup time in GPU allocation, fails closed without NVML/compute
   telemetry, refuses reused output directories, and marks unknown token reservations separately.
 - Momentum detector with `U_t = alpha*U_(t-1)+(1-alpha)*m_accepted`, bias correction, and trigger

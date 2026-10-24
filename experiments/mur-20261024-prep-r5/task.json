@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r5",
+  "parent_run_id": "mur-20261024-prep-r4",
+  "ready": true,
+  "hypothesis": "MUR reduces total generated policy+critic tokens by >=40% against per-step Guided Search with accuracy loss <=2pp. This task only implements and validates the smoke gate.",
+  "baseline": "Stepwise CoT and per-step Guided Search; Qwen3-1.7B BF16 with GenPRM-1.5B. Exact protocol in PROTOCOL.md.",
+  "intervention": "Bias-corrected EMA alpha=0.9, gamma=0.9; no scaling first step; scale four candidates only when proposal mean NLL exceeds corrected history-log(gamma).",
+  "dataset": "Pinned HuggingFaceH4/MATH-500 revision in configs/sources.json for eventual full test; prepare 20 held-out development MATH training questions with fixed revision and hashes, excluding normalized test questions.",
+  "split": "20 development questions only in this task. Prepare full 500-test manifest but do not generate or tune on test.",
+  "primary_metric": "Gate validity, then total generated tokens (policy+critic, lower better); pass@1 guardrail. No scientific success claim from smoke.",
+  "decision_rule": "Pass only the frozen same-forward probability-contract gate on all8 probes, followed by full20x3 smoke+verifier and actual resource/ledger evidence. Both prior numerical-parity checks remain failed. No fulltest until supervisor review.",
+  "controls": [
+    "Read latest PROTOCOL amendment and experiments/mur-20261024-prep-r4/review.md. Supervisor already implemented mur.validate_forward and wired driver/summary. Review it; avoid redesign or another large framework. The r3 HF and r4 fresh-prefill comparisons remain FAILED. Scientific protocol, alpha/gamma and eight synthetic prompts are unchanged.",
+    "The direct gate is frozen: clone exact input logits before original sampler transforms; compute independent torch.log_softmax(raw.float()); call original sampler ONCE; compare raw-reference, actual sampled column, and client Generation token logprobs with max error<=5e-5. Exact token IDs/count/order across observer and API required. At least8 complete nonempty probes, repeated-token coverage, and temperature-only negative control differing>0.001 somewhere. No extra random draws or model forwards. Observer only exists in validation engine; fresh main engine has NO observer.",
+    "Use public LLM.collective_rpc callable support already inspected in installed vLLM0.8.5 V1. install_observer operates on worker.model_runner.sampler.forward after initialization. drain_observer returns scalar evidence, not full logits. Inspect installed API for compatibility BEFORE GPU execution. Do not modify vLLM installation or monkeypatch shared packages. Capturing only this validation instance is authorized.",
+    "Run all meaningful CPU tests and audit history. One local test needs the remote vLLM package; keep that environment test explicit. Supervisor local observer tests already passed. Ensure gate summaries require both prior parity flags false, complete8 probes and negative control; update documentation that still describes r4. Add prior stage resource charges to reporting. Commit these small fixes before GPU work.",
+    "One bounded direct-gate attempt, then complete20x3 development smoke and verifier if it passes. If direct numerical gate fails, STOP with BLOCKED; no follow-up numerical references/tolerance changes, architecture/backend variants, or repeating probes in this task. Compatibility fixes before first actual sampling are permitted but preserve failed import/RPC logs and count time.",
+    "Use existing foreground stage_driver with max3000 GPU seconds,1M generated tokens,7000 driver wall; wrapper2hwall. Count validation/load/cleanup/generation/evaluation. ChargeR1 full3600seconds conservatively, R2zero, R3280, R462.77, R5<=3000: sum<7200 prepceiling; totalproject12GPUh remains unchanged. Distinguish conservative charge from actual measurement.",
+    "Reuse existing model/data/environment. Observed working V1 fractions0.42 policy/0.62 critic/0.40 verifier; real new GPU memory<=14GiB and free>=4GiB. Same GPU2, BF16. No new downloads, global edits, detached services/nohup. Foreground child groups remain in parent service cgroup. Never kill unrelated processes.",
+    "No full500, no tuning/sweeps/newdatasets. Scientific algorithms/cost ledger unchanged. Inspect genuine MUR trigger and actual GenPRM judgment position; marked forced engineering case allowed only if no genuine triggers, excluded from metrics.",
+    "Commit implementation/config before every model execution, preserve actualrunSHA/fixSHA/finalHEAD and relay pushstate. Do not edit running implementation. No private paths/hosts/users/credentials/raw DSH or benchmark text in Git. Keep raw traces untracked and copy run-root raw-smoke-traces.jsonl for manifest. Audit staged and entirehistory.",
+    "Provide complete structured report and required artifacts. Report independent_prefill_parity=false and cross_engine_hf_parity=false alongside direct-signal status. A passing direct signal test does not prove kernel parity or scientific success. No test data generation until supervisor review."
+  ],
+  "seeds": [
+    42
+  ],
+  "code_revision": "Supervisor direct-observer implementation commit at startup; record exact SHA. Commit any narrowly necessary compatibility correction before inference.",
+  "environment": "Remote-only RTX3090 BF16; reuse existing runtime/venv (vLLM0.8.5 V1, transformers4.51.3, torch2.6.0+cu124). No shared environment mutations.",
+  "experiment_commands": [
+    "runtime/venv/bin/python -m unittest discover -s tests -v",
+    "runtime/venv/bin/python -m mur.prepare --sources configs/sources.json --runtime-root \"$MUR_RUNTIME_ROOT\" --run-dir \"$MUR_RUN_DIR\"",
+    "runtime/venv/bin/python scripts/stage_driver.py --run-dir \"$MUR_RUN_DIR\" --run-id mur-20261024-prep-r5 --gpu-index 2 --gpu-budget-seconds 3000 --wall-budget-seconds 7000 --token-budget 1000000 --max-new-mib 14336 --min-free-mib 4096 # driver validation command must use mur.validate_forward",
+    "python3 scripts/audit_public.py --history"
+  ],
+  "budget": {
+    "gpu_count": 1,
+    "gpu_hours": 0.8333333333333334,
+    "wall_seconds": 7200,
+    "max_attempts": 1,
+    "model_cost_limit": "One remote GPU, <=3000 allocation seconds including every phase and cleanup. <=1 million generated tokens. Existing DSH subscription only. One signal validation attempt; no exploratory GPU runs after failure."
+  },
+  "stop_conditions": [
+    "OOM or NaN",
+    "No suitable remote GPU/headroom",
+    "Disk free would drop below25GiB or newstorage20GiB",
+    "Wrong source revision, test leakage or unsafe path/credential in staging",
+    "Raw-logprob validation fails",
+    "Exceeded token/GPU/wall budget",
+    "Need to change scientific protocol; report BLOCKED to supervisor"
+  ],
+  "required_outputs": [
+    "report.json",
+    "environment.json",
+    "source-manifest.json",
+    "smoke-summary.json",
+    "logprob-validation.json",
+    "raw-smoke-traces.jsonl",
+    "implementation-review.md",
+    "sanitized-public-metrics.json",
+    "budget-estimate.json",
+    "resource-usage.json",
+    "gpu-probe.json"
+  ],
+  "version_control": {
+    "repository": "Flutter-Misdreavus/mur-reproduction",
+    "visibility": "private",
+    "branch": "exp/mur-20261024",
+    "push_mode": "relay",
+    "checkpoint_minutes": 15
+  }
+}

@@ -128,3 +128,19 @@ numerical parity. All three scientific methods still use the identical frozen ba
 Keep diagnostic forward/token costs separate from main inference but within the resource
 budget. R4 has one attempt and 3000 GPU seconds; no test generation until supervisor
 review of the complete development gate. Combined preparation ceiling is 2 GPU-hours.
+
+## Direct probability-contract gate (r5)
+R4 also failed its independent-prefill comparison; that result remains failed.
+The required property is that the supplied MUR signal equals raw probability in the
+actual generating forward. Validate it directly with a read-only sampler observer,
+cloning logits before transforms, computing float32 log_softmax, and comparing both
+sampler and returned client probabilities for each exact selected token. Call the
+original sampler once; consume no RNG and modify no logits/metadata. Remove the
+observer by ending the validation process before scientific generation. Run the same
+eight frozen probes. Maximum arithmetic error <=5e-5 on identical logits, complete
+exact token alignment, finite outputs, repeated tokens, and a temperature-only negative
+control differing by >0.001 somewhere are all required. This does not establish HF
+or independent-prefill parity. Do not relax or replace this direct gate after failure.
+Conservatively charge R1's entire3600-second GPU allocation, R3 280, R4 62.77, and
+R5 <=3000; their sum stays below the combined2GPU-hour prep ceiling. These charges
+are distinct from actual measured GPU use. No test-set results informed these changes.
