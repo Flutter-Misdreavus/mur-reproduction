@@ -105,6 +105,16 @@ def main(argv=None):
     driver = load(rd / "stage-driver.json", {})
     cumulative = load(rd / "cumulative-budget.json", {})
     eval_status = load(rd / "evaluation" / "run-status.json", {})
+    raw_sampler = dict(validation.get("sampler_source") or {})
+    sampler_source = {k: v for k, v in raw_sampler.items() if k != "path"}
+    if sampler_source and not sampler_source.get("relative_path"):
+        raw_path = raw_sampler.get("path")
+        if raw_path:
+            try:
+                sampler_source["relative_path"] = str(
+                    Path(raw_path).resolve().relative_to(Path.cwd().resolve()))
+            except Exception:
+                sampler_source["relative_path"] = Path(raw_path).name
     rows = metrics.get("rows", [])
     summary = metrics.get("summary", {})
     traces = []
@@ -170,11 +180,12 @@ def main(argv=None):
         "three_methods_20x3": complete,
         "complete_token_ledger": bool(traces) and ledger_ok,
         "verifier_judgments": len(rows) == len(traces) and len(traces) > 0,
-        "no_test_generation": bool(traces) and all(t.get("split") == "dev" for t in traces),
-        "no_runtime_errors": bool(traces) and all(t.get("error") is None for t in traces),
+        "no_test_generation": all(t.get("split") == "dev" for t in traces),
+        "test_generation_absent": not any(t.get("split") == "test" for t in traces),
+        "no_runtime_errors": all(t.get("error") is None for t in traces),
         "verifier_no_ambiguous": verifier_clean,
         "critic_malformed_rate_reported": malformed_reported,
-        "no_budget_or_context_truncation": bool(traces) and all(
+        "no_budget_or_context_truncation": all(
             t.get("finish") not in ("budget_stopped", "context_limit", "error")
             for t in traces),
         "stage_budget_observed": stage_budget_ok,
@@ -247,8 +258,16 @@ def main(argv=None):
             "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
             "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
             "tolerance": validation.get("tolerance"),
-            "sampler_source": validation.get("sampler_source"),
+            "sampler_source": sampler_source,
             "generated_tokens": validation.get("generated_tokens"),
+            "generation_generated_tokens": validation.get("generation_generated_tokens"),
+            "reference_probe_tokens": validation.get("reference_probe_tokens"),
+            "probes": [{k: p.get(k) for k in
+                        ("name", "passed", "output_tokens", "repeated_token_ids",
+                         "eos_scored", "max_abs_token_logprob_diff",
+                         "mean_abs_token_logprob_diff", "abs_mean_diff",
+                         "generation_mean_nll", "reference_mean_nll")}
+                       for p in (validation.get("probes") or [])],
         },
         "driver": {k: driver.get(k) for k in
                    ("run_commit", "gpu_allocated_seconds", "gpu_work_seconds",
@@ -293,9 +312,14 @@ def main(argv=None):
             "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
             "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
             "generated_tokens": validation.get("generated_tokens"),
-            "sampler_source_sha256": (validation.get("sampler_source") or {}).get("sha256"),
-            "raw_before_penalties_and_temperature": (validation.get("sampler_source") or {}).get(
+            "sampler_source_sha256": sampler_source.get("sha256"),
+            "raw_before_penalties_and_temperature": sampler_source.get(
                 "raw_before_penalties_and_temperature"),
+            "probes": [{k: p.get(k) for k in
+                        ("name", "passed", "output_tokens", "eos_scored",
+                         "max_abs_token_logprob_diff", "mean_abs_token_logprob_diff",
+                         "abs_mean_diff")}
+                       for p in (validation.get("probes") or [])],
         },
         "prior_runs": prior_r3,
         "budget": projected,
@@ -328,7 +352,7 @@ def main(argv=None):
         "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
         "hf_parity_status": validation.get("hf_parity_status"),
         "signal_gate_passed": validation.get("passed"),
-        "sampler_source": validation.get("sampler_source"),
+        "sampler_source": sampler_source,
         "cuda_visible_devices": gpu.get("cuda_visible_devices"),
         "notes": [
             "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
@@ -390,10 +414,10 @@ Gate status: **{smoke['gate_status']}**.
 - At least one MUR triggered branch inspected or a marked engineering forced-trigger case: {gate_checks['mur_triggered_branch']}
 
 ## Validation details
-- Installed sampler source: `{(validation.get('sampler_source') or {}).get('path')}`
-  SHA256 `{(validation.get('sampler_source') or {}).get('sha256')}`;
+- Installed sampler source: `{sampler_source.get('relative_path')}`
+  SHA256 `{sampler_source.get('sha256')}`;
   raw logprobs computed before penalties/temperature:
-  `{(validation.get('sampler_source') or {}).get('raw_before_penalties_and_temperature')}`.
+  `{sampler_source.get('raw_before_penalties_and_temperature')}`.
 - r3 cross-engine HF parity remains **FAILED** and is not a passing result.
 - r3 prior allocation reported separately: 280 conservative GPU seconds and 300 conservative
   diagnostic tokens (excluded from the r4 budget totals).

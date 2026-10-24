@@ -1,0 +1,31 @@
+{
+  "measured_trajectories": 0,
+  "measured_generated_tokens": 0,
+  "measured_wall_seconds": 0,
+  "seconds_per_trajectory": null,
+  "projected_1500_trajectories_seconds": null,
+  "projected_1500_trajectories_gpu_hours": null,
+  "projected_1500_trajectories_tokens": null,
+  "prep_gpu_hours": 0.01743611111111111,
+  "prep_gpu_allocated_seconds": 62.77,
+  "prep_reported_generated_tokens": 243,
+  "prep_unknown_reserved_tokens": 0,
+  "prep_wall_seconds": 63.21,
+  "prep_generated_tokens": 243,
+  "prior_runs": {
+    "run_id": "mur-20261024-prep-r3",
+    "gpu_allocated_seconds_conservative": 280,
+    "generated_diagnostic_tokens_conservative": 300,
+    "status": "BLOCKED at the retired HF cross-engine gate",
+    "note": "reported separately; not part of the r4 allocation"
+  },
+  "budget_limits": {
+    "gpu_seconds": 3000,
+    "gpu_hours": 0.8333333333333334,
+    "combined_prep_gpu_hours": 2,
+    "wall_seconds": 7200,
+    "generated_tokens": 1000000,
+    "trajectories": 60
+  },
+  "interpretation": "No 1500-trajectory estimate is reported because the gate stopped before a complete 20x3 smoke; GPU time is the measured model-allocation interval including cleanup."
+}

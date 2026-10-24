@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r4",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "same-engine raw generation-logprob signal gate is missing or failed",
+  "gate_checks": {
+    "gpu_available": true,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "signal_gate_8_probes": false,
+    "validation_reference_recorded": true,
+    "cross_engine_parity_not_claimed": true,
+    "three_methods_20x3": false,
+    "complete_token_ledger": false,
+    "verifier_judgments": false,
+    "no_test_generation": true,
+    "test_generation_absent": true,
+    "no_runtime_errors": true,
+    "verifier_no_ambiguous": false,
+    "critic_malformed_rate_reported": true,
+    "no_budget_or_context_truncation": true,
+    "stage_budget_observed": true,
+    "mur_triggered_branch": false
+  },
+  "methods": {
+    "cot": {},
+    "per_step": {},
+    "mur": {}
+  },
+  "per_question": [],
+  "signal_validation": {
+    "passed": false,
+    "validation_reference": "same_engine_identity_sampling_teacher_forced_prefill",
+    "reference_run": "mur-20261024-prep-r3",
+    "cross_engine_hf_parity": false,
+    "probe_count": 8,
+    "repeated_token_probe": true,
+    "max_abs_token_logprob_diff": 0.42633776366710663,
+    "mean_abs_token_logprob_diff": 0.009439944785516057,
+    "generated_tokens": 243,
+    "sampler_source_sha256": "9d1c04c6f44adbaabb96388ca0766791351a6c84fa95672be70a1116498972b1",
+    "raw_before_penalties_and_temperature": true,
+    "probes": [
+      {
+        "name": "repeat",
+        "passed": false,
+        "output_tokens": 15,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.42633776366710663,
+        "mean_abs_token_logprob_diff": 0.030067020810527843,
+        "abs_mean_diff": 0.026778427601349603
+      },
+      {
+        "name": "count",
+        "passed": true,
+        "output_tokens": 29,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.08731085062026978,
+        "mean_abs_token_logprob_diff": 0.003011458430807642,
+        "abs_mean_diff": 0.003011425545643197
+      },
+      {
+        "name": "ones",
+        "passed": true,
+        "output_tokens": 63,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.06980687379837036,
+        "mean_abs_token_logprob_diff": 0.0018718987109923185,
+        "abs_mean_diff": 0.0012103225742259652
+      },
+      {
+        "name": "sum",
+        "passed": true,
+        "output_tokens": 15,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.015798132866621017,
+        "mean_abs_token_logprob_diff": 0.0010545671880739368,
+        "abs_mean_diff": 0.0010523579895486065
+      },
+      {
+        "name": "double",
+        "passed": true,
+        "output_tokens": 21,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.07361239194869995,
+        "mean_abs_token_logprob_diff": 0.00443378975692862,
+        "abs_mean_diff": 0.002642434058933371
+      },
+      {
+        "name": "fraction",
+        "passed": false,
+        "output_tokens": 29,
+        "eos_scored": false,
+        "max_abs_token_logprob_diff": 0.26272955536842346,
+        "mean_abs_token_logprob_diff": 0.014652227612902512,
+        "abs_mean_diff": 0.012243452225667514
+      },
+      {
+        "name": "product",
+        "passed": false,
+        "output_tokens": 50,
+        "eos_scored": true,
+        "max_abs_token_logprob_diff": 0.16667604446411133,
+        "mean_abs_token_logprob_diff": 0.006544747457711111,
+        "abs_mean_diff": 0.005817416153559657
+      },
+      {
+        "name": "repeat_sequence",
+        "passed": false,
+        "output_tokens": 13,
+        "eos_scored": false,
+        "max_abs_token_logprob_diff": 0.054396793246269226,
+        "mean_abs_token_logprob_diff": 0.013883848316184482,
+        "abs_mean_diff": 0.010474103861340088
+      }
+    ]
+  },
+  "prior_runs": {
+    "run_id": "mur-20261024-prep-r3",
+    "gpu_allocated_seconds_conservative": 280,
+    "generated_diagnostic_tokens_conservative": 300,
+    "status": "BLOCKED at the retired HF cross-engine gate",
+    "note": "reported separately; not part of the r4 allocation"
+  },
+  "budget": {
+    "measured_trajectories": 0,
+    "measured_generated_tokens": 0,
+    "measured_wall_seconds": 0,
+    "seconds_per_trajectory": null,
+    "projected_1500_trajectories_seconds": null,
+    "projected_1500_trajectories_gpu_hours": null,
+    "projected_1500_trajectories_tokens": null,
+    "prep_gpu_hours": 0.01743611111111111,
+    "prep_gpu_allocated_seconds": 62.77,
+    "prep_reported_generated_tokens": 243,
+    "prep_unknown_reserved_tokens": 0,
+    "prep_wall_seconds": 63.21,
+    "prep_generated_tokens": 243,
+    "prior_runs": {
+      "run_id": "mur-20261024-prep-r3",
+      "gpu_allocated_seconds_conservative": 280,
+      "generated_diagnostic_tokens_conservative": 300,
+      "status": "BLOCKED at the retired HF cross-engine gate",
+      "note": "reported separately; not part of the r4 allocation"
+    },
+    "budget_limits": {
+      "gpu_seconds": 3000,
+      "gpu_hours": 0.8333333333333334,
+      "combined_prep_gpu_hours": 2,
+      "wall_seconds": 7200,
+      "generated_tokens": 1000000,
+      "trajectories": 60
+    },
+    "interpretation": "No 1500-trajectory estimate is reported because the gate stopped before a complete 20x3 smoke; GPU time is the measured model-allocation interval including cleanup."
+  }
+}

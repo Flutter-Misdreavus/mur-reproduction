@@ -116,9 +116,14 @@ def sampler_source_evidence(path: str | None = None) -> dict:
                 and temperature_line is not None and sample_line is not None
                 and raw_line < penalties_line and raw_line < temperature_line
                 and raw_line < sample_line)
+    try:
+        relative = str(sampler.resolve().relative_to(Path.cwd().resolve()))
+    except Exception:
+        relative = sampler.name
     return {
         "available": True,
         "path": str(sampler),
+        "relative_path": relative,
         "sha256": sha256_file(sampler),
         "raw_logprobs_line": raw_line,
         "apply_penalties_line": penalties_line,

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-24T08:00:47.360071+00:00",
+  "run_id": "mur-20261024-prep-r4",
+  "python": "3.10.12",
+  "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+  "packages": {
+    "torch": "2.6.0",
+    "transformers": "4.51.3",
+    "vllm": "0.8.5",
+    "tokenizers": "0.21.4",
+    "pyarrow": "25.0.1",
+    "setuptools": "82.0.1"
+  },
+  "gpu": {
+    "available": true,
+    "source": "nvidia-smi",
+    "devices": [
+      {
+        "index": "0",
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total_mib": 24576.0,
+        "memory_used_mib": 8518.0,
+        "memory_free_mib": 15618.0,
+        "driver_version": "570.211.01",
+        "utilization_gpu_pct": 67.0
+      },
+      {
+        "index": "1",
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total_mib": 24576.0,
+        "memory_used_mib": 13893.0,
+        "memory_free_mib": 10242.0,
+        "driver_version": "570.211.01",
+        "utilization_gpu_pct": 79.0
+      },
+      {
+        "index": "2",
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total_mib": 24576.0,
+        "memory_used_mib": 3257.0,
+        "memory_free_mib": 20878.0,
+        "driver_version": "570.211.01",
+        "utilization_gpu_pct": 10.0
+      },
+      {
+        "index": "3",
+        "name": "NVIDIA GeForce RTX 3090",
+        "memory_total_mib": 24576.0,
+        "memory_used_mib": 3700.0,
+        "memory_free_mib": 20435.0,
+        "driver_version": "570.211.01",
+        "utilization_gpu_pct": 11.0
+      }
+    ],
+    "driver_version": "570.211.01",
+    "cuda_visible_devices": "2",
+    "observed_at": "2026-10-24T08:00:47.351566+00:00"
+  },
+  "host_memory": {
+    "MemTotal": "196677288 kB",
+    "MemAvailable": "105772172 kB"
+  },
+  "git_head": "d2e0408165055f975504b1c5b509c379dad3b7c7",
+  "git_branch": "exp/mur-20261024",
+  "actual_run_commit": "d2e0408165055f975504b1c5b509c379dad3b7c7",
+  "validation_reference": "same_engine_identity_sampling_teacher_forced_prefill",
+  "reference_run": "mur-20261024-prep-r3",
+  "cross_engine_hf_parity": false,
+  "hf_parity_status": "FAILED in r3; retained as a separate diagnostic",
+  "signal_gate_passed": false,
+  "sampler_source": {
+    "available": true,
+    "sha256": "9d1c04c6f44adbaabb96388ca0766791351a6c84fa95672be70a1116498972b1",
+    "raw_logprobs_line": 36,
+    "apply_penalties_line": 47,
+    "apply_temperature_line": 108,
+    "sample_line": 49,
+    "raw_before_penalties_and_temperature": true,
+    "comment": "raw logits are used for top-k/sampled-token logprobs; sampling penalties and temperature are applied afterwards",
+    "relative_path": "runtime/venv/lib/python3.10/site-packages/vllm/v1/sample/sampler.py"
+  },
+  "cuda_visible_devices": "2",
+  "notes": [
+    "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
+    "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
+    "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
+    "vLLM memory fractions: policy 0.42, critic 0.62, verifier 0.40. The shared GPU had a co-tenant allocation, and V1 counts it as non-torch use; 0.26 left no KV-cache blocks.",
+    "The r4 signal gate is same-engine raw-logprob validation; cross-engine HF parity remains FAILED from r3 and is not relabelled."
+  ]
+}

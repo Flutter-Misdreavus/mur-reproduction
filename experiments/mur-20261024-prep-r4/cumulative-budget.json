@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r4",
+  "note": "R3 and R4 are reported separately; R4 did not reuse R3 diagnostics.",
+  "runs": [
+    {
+      "run_id": "mur-20261024-prep-r3",
+      "gpu_allocated_seconds_conservative": 280,
+      "generated_diagnostic_tokens_conservative": 300,
+      "status": "BLOCKED",
+      "stage": "raw generation-logprob gate (HF cross-engine reference)"
+    },
+    {
+      "run_id": "mur-20261024-prep-r4",
+      "gpu_allocated_seconds": 62.77,
+      "generated_tokens": 243,
+      "status": "BLOCKED",
+      "stage": "same-engine 8-probe signal gate"
+    }
+  ],
+  "combined_prep_gpu_seconds_conservative": 342.77,
+  "combined_prep_gpu_hours_conservative": 0.09521388888888889,
+  "combined_generated_tokens_conservative": 543,
+  "combined_prep_gpu_hours_ceiling": 2.0,
+  "total_project_gpu_hours_ceiling": 12.0
+}
