@@ -86,6 +86,28 @@ class TestAuthorizationContracts(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 testdata.authorize_test(td / "task.json", td / "review.md", "run")
 
+    def test_r2_frozen_wording_requires_reused_manifest_and_exact_matrix(self):
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            task = {"run_id": "run", "ready": True,
+                    "controls": ["Reuse the identical committed100-question manifest, "
+                                 "no reselection.",
+                                 "Run exactly100 questions x3 methods in four25-question "
+                                 "chunks with policy/critic fully stopped.",
+                                 "Test access gated by this ready task and accepted review."],
+                    "version_control": {"repository": "Owner/Repo",
+                                        "visibility": "private"}}
+            (td / "task.json").write_text(json.dumps(task), encoding="utf-8")
+            (td / "review.md").write_text(
+                "# Review\n\nDecision: **accept the preparation gate**\n"
+                "Authorize the separate frozen `run` task.\n", encoding="utf-8")
+            self.assertTrue(testdata.authorize_test(
+                td / "task.json", td / "review.md", "run")["review_accepted"])
+            task["controls"] = task["controls"][1:]
+            (td / "task.json").write_text(json.dumps(task), encoding="utf-8")
+            with self.assertRaises(PermissionError):
+                testdata.authorize_test(td / "task.json", td / "review.md", "run")
+
 
 class TriggerDenominatorRegression(unittest.TestCase):
     def test_single_step_mur_has_zero_eligible_but_all_step_rate_reported(self):

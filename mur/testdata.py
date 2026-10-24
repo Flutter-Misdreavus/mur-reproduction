@@ -246,7 +246,14 @@ def authorize_test(task_file: Path, review_file: Path, run_id: str) -> dict:
     if task.get("ready") is not True:
         raise PermissionError("task is not ready")
     controls = " ".join(task.get("controls") or [])
-    if "fixed100" not in controls or "ready task" not in controls:
+    # Accept equivalent frozen-100 wording (literal "fixed100" in the original
+    # dispatch, or the r2 wording that names the reused manifest and exact matrix).
+    control_key = re.sub(r"[^a-z0-9]+", "", controls.lower())
+    fixed100 = "fixed100" in control_key
+    r2_frozen = ("exactly100questions" in control_key
+                 and "four25questionchunks" in control_key
+                 and "identicalcommitted100questionmanifest" in control_key)
+    if not (fixed100 or r2_frozen) or "readytask" not in control_key:
         raise PermissionError("task does not contain the frozen fixed100 test controls")
     vc = task.get("version_control") or {}
     if not vc.get("repository") or vc.get("visibility") != "private":
