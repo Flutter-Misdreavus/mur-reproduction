@@ -21,5 +21,6 @@
   "critic_analysis_tokens": 1024,
   "critic_output_tokens": 2048,
   "bootstrap_seed": 20261024,
-  "bootstrap_replicates": 10000
+  "bootstrap_replicates": 10000,
+  "prefix_caching": false
 }

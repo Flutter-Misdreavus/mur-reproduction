@@ -15,6 +15,7 @@ from .prompts import (analyze_prompt, critic_prompt, extract_answer, finalize_pr
                       judgment_prompt, policy_prompt, request_seed, strip_step_prefix,
                       to_step_string)
 from .backend import VLLMBackend, judgment_from_generation, generation_nll
+from . import testdata
 
 
 # Backwards-compatible name used by older callers/tests.
@@ -46,16 +47,30 @@ def model_path(repo: str) -> Path:
     return model_root() / repo.split("/")[-1]
 
 
-def load_questions(split: str, limit: int | None) -> list[dict]:
-    if split != "dev":
-        raise SystemExit("this task only permits --split dev")
-    path = data_root() / "dev.jsonl"
-    rows = []
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                rows.append(json.loads(line))
+def load_questions(split: str, limit: int | None,
+                   test_manifest: str | None = None) -> list[dict]:
+    if split == "dev":
+        path = data_root() / "dev.jsonl"
+        rows = []
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    rows.append(json.loads(line))
+    elif split == "test":
+        if not test_manifest:
+            raise SystemExit("--split test requires --test-manifest")
+        manifest = load_json(test_manifest)
+        expected = testdata.load_source_rows(
+            Path(os.environ.get("MUR_RUNTIME_ROOT", Path.cwd() / "runtime")),
+            load_json("configs/sources.json"))[0]
+        problems = testdata.verify_test_manifest(manifest, expected,
+                                                load_json("configs/sources.json"))
+        if problems:
+            raise SystemExit("test manifest verification failed: " + "; ".join(problems))
+        rows = testdata.load_test_generation_file(data_root(), manifest)
+    else:
+        raise SystemExit(f"unsupported split: {split}")
     if limit:
         rows = rows[:limit]
     return rows
@@ -168,6 +183,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
                 ["\nStep"], "proposal")
             proposal_text = strip_step_prefix(proposal.text)
             rec = {"step": step_idx, "proposal": proposal_text,
+                   "proposal_token_ids": list(proposal.token_ids),
                    "proposal_finish": proposal.finish_reason,
                    "proposal_max_tokens": proposal_cap,
                    "triggered": False, "candidates": [], "selected": 0,
@@ -222,6 +238,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
             trajectory.append(to_step_string(step_idx, accepted_text))
             accepted_tokens += len(accepted_ids)
             rec["accepted_text"] = accepted_text
+            rec["accepted_token_ids"] = list(accepted_ids)
             rec["accepted_tokens"] = len(accepted_ids)
             step_records.append(rec)
             if has_final_answer(accepted_text):
@@ -249,6 +266,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
             accepted_tokens += len(g.token_ids)
             step_records.append({"step": len(step_records), "final_fallback": True,
                                  "accepted_text": strip_step_prefix(g.text),
+                                 "accepted_token_ids": list(g.token_ids),
                                  "accepted_tokens": len(g.token_ids),
                                  "max_tokens": cap})
             finish = "final_fallback"
@@ -278,7 +296,9 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
         "qid": qid,
         "subject": question.get("subject"),
         "seed": seed,
-        "split": "dev",
+        "split": cfg.get("_split", "dev"),
+        "source_index": question.get("index"),
+        "question_sha256": question.get("question_sha256"),
         "engineering_forced_trigger": engineering_forced,
         "steps": step_records,
         "trajectory": "\n".join(trajectory),
@@ -311,9 +331,22 @@ def main(argv=None):
     ap.add_argument("--max-wall-seconds", type=float, default=3300)
     ap.add_argument("--max-model-len", type=int, default=16384)
     ap.add_argument("--force-trigger-step", type=int, default=None)
+    ap.add_argument("--test-manifest", default=None)
+    ap.add_argument("--task-file", default=None)
+    ap.add_argument("--acceptance-review", default=None)
     args = ap.parse_args(argv)
     cfg = load_json(args.config)
     cfg["run_id"] = args.run_id
+    cfg["_split"] = args.split
+    test_authorization = None
+    if args.split == "test":
+        if not (args.test_manifest and args.task_file and args.acceptance_review):
+            raise SystemExit("--split test requires --test-manifest, --task-file and "
+                             "--acceptance-review")
+        if args.force_trigger_step is not None:
+            raise SystemExit("forced engineering triggers are forbidden on test")
+        test_authorization = testdata.authorize_test(
+            Path(args.task_file), Path(args.acceptance_review), args.run_id)
     if args.force_trigger_step is not None:
         cfg["_force_trigger_step"] = args.force_trigger_step
     outdir = Path(args.output_dir)
@@ -321,11 +354,23 @@ def main(argv=None):
     traces = outdir / "raw-smoke-traces.jsonl"
     if traces.exists():
         raise SystemExit(f"refusing to overwrite existing traces: {traces}")
-    questions = load_questions(args.split, None)
+    questions = load_questions(args.split, None, args.test_manifest)
     questions = questions[args.offset:(args.offset + args.limit if args.limit else None)]
+    if not questions:
+        raise SystemExit("empty question slice")
+    test_manifest_obj = load_json(args.test_manifest) if args.test_manifest else None
     write_json_atomic(outdir / "run-config.json",
                       {"config": cfg, "methods": args.methods, "questions": len(questions),
-                       "seed": cfg["seed"], "limits": {
+                       "question_ids": [q["id"] for q in questions],
+                       "split": args.split, "seed": cfg["seed"],
+                       "prefix_caching": False,
+                       "test_manifest_sha256": (
+                           testdata.sha256_file(Path(args.test_manifest))
+                           if args.test_manifest else None),
+                       "test_manifest_rows": (
+                           test_manifest_obj.get("rows") if test_manifest_obj else None),
+                       "test_authorization": test_authorization,
+                       "limits": {
                            "max_generated_tokens": args.max_generated_tokens,
                            "max_wall_seconds": args.max_wall_seconds,
                            "max_model_len": args.max_model_len}})
@@ -342,12 +387,12 @@ def main(argv=None):
         policy = VLLMBackend(
             str(model_path(load_json("configs/sources.json")["policy"]["id"])),
             gpu_memory_utilization=0.42, max_model_len=args.max_model_len,
-            seed=int(cfg["seed"]))
+            seed=int(cfg["seed"]), enable_prefix_caching=False)
         if any(m in ("per_step", "mur") for m in args.methods):
             critic = VLLMBackend(
                 str(model_path(load_json("configs/sources.json")["critic"]["id"])),
                 gpu_memory_utilization=0.62, max_model_len=args.max_model_len,
-                seed=int(cfg["seed"]))
+                seed=int(cfg["seed"]), enable_prefix_caching=False)
         for q in questions:
             for method in args.methods:
                 if budget.elapsed >= budget.max_wall_seconds:
