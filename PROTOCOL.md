@@ -114,3 +114,17 @@ Commit code/config before every real run. Record actual run SHA, fix SHA, curren
 and push status separately. Repository stays private during experiments.
 Tracked artifacts use portable paths; secrets, private infrastructure/account details,
 raw DSH transcripts, raw question/answer traces, data and model files stay untracked.
+
+## Validation reference amendment (before any complete smoke or test)
+The r3 cross-engine BF16/HF numerical test failed and remains reported as failed.
+It is not a scientific accuracy result. To validate the actual MUR signal, r4 compares
+raw generation logprobs with an identity-sampling teacher-forced prefill in a fresh
+instance of the same pinned vLLM V1 engine, on exact token IDs. Eight synthetic probes
+are frozen in configs/validation.json. Numerical tolerances are unchanged; no probe
+may be dropped. Require repeated-token coverage and finite complete token vectors.
+The independent HF comparison remains a diagnostic and is not relabelled as passing.
+This separates raw-versus-transformed probability correctness from cross-engine BF16
+numerical parity. All three scientific methods still use the identical frozen backend.
+Keep diagnostic forward/token costs separate from main inference but within the resource
+budget. R4 has one attempt and 3000 GPU seconds; no test generation until supervisor
+review of the complete development gate. Combined preparation ceiling is 2 GPU-hours.

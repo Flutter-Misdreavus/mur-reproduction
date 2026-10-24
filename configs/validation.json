@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "reference": "same_engine_identity_sampling_teacher_forced_prefill",
+  "probes": [
+    [
+      "repeat",
+      "Repeat the word echo exactly four times separated by spaces. Output only the repeated words."
+    ],
+    [
+      "count",
+      "Write the numbers 1 1 2 2 3 3 separated by spaces. Output only the numbers."
+    ],
+    [
+      "ones",
+      "Write ten copies of the digit 1 separated by spaces. Output only the digits."
+    ],
+    [
+      "sum",
+      "What is 2+2? Give a very short answer."
+    ],
+    [
+      "double",
+      "Write the sequence a a b b c c. Output only the letters."
+    ],
+    [
+      "fraction",
+      "Compute 1/3 + 1/6. Explain in two short steps and give the final fraction."
+    ],
+    [
+      "product",
+      "Compute (3+4)*(8-5). Explain the intermediate arithmetic and give the result."
+    ],
+    [
+      "repeat_sequence",
+      "Write red blue red blue red blue, then state how many words were written."
+    ]
+  ],
+  "max_tokens": 64,
+  "seed": 42,
+  "tolerance": {
+    "max_abs_token_nll": 0.15,
+    "mean_abs_token_nll": 0.02,
+    "mean_nll": 0.005
+  },
+  "cross_engine_hf_status": "FAILED in r3; retained diagnostic, not overridden"
+}

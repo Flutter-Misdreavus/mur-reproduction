@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r4",
+  "parent_run_id": "mur-20261024-prep-r3",
+  "ready": true,
+  "hypothesis": "MUR reduces total generated policy+critic tokens by >=40% against per-step Guided Search with accuracy loss <=2pp. This task only implements and validates the smoke gate.",
+  "baseline": "Stepwise CoT and per-step Guided Search; Qwen3-1.7B BF16 with GenPRM-1.5B. Exact protocol in PROTOCOL.md.",
+  "intervention": "Bias-corrected EMA alpha=0.9, gamma=0.9; no scaling first step; scale four candidates only when proposal mean NLL exceeds corrected history-log(gamma).",
+  "dataset": "Pinned HuggingFaceH4/MATH-500 revision in configs/sources.json for eventual full test; prepare 20 held-out development MATH training questions with fixed revision and hashes, excluding normalized test questions.",
+  "split": "20 development questions only in this task. Prepare full 500-test manifest but do not generate or tune on test.",
+  "primary_metric": "Gate validity, then total generated tokens (policy+critic, lower better); pass@1 guardrail. No scientific success claim from smoke.",
+  "decision_rule": "Pass only with the explicitly amended same-engine signal gate on all8 probes, complete20x3 smoke/evaluation and resource/ledger evidence. Report original HF parity failure separately. No full test until supervisor review.",
+  "controls": [
+    "Read PROTOCOL.md validation amendment, configs/validation.json and experiments/mur-20261024-prep-r3/review.md. Previous HF parity test FAILED and MUST remain failed in reporting. This task implements a distinct raw-signal gate with a frozen reference change, not a tolerance relaxation.",
+    "Reuse all existing runtime assets and the observed working V1 memory fractions: policy0.42, critic0.62, verifier0.40. Never set global profiles or install shared dependencies. Official task-local DSH permission mode is already configured under user authorization.",
+    "Implement a separate mur.validate_signal module using configs/validation.json. Generate all8 frozen synthetic prompts with original T0.6/top_p0.8/top_k20/presence1.5 and raw logprobs=0; save exact prompt/output token IDs and raw vectors. Generation in one short-lived process; teacher-forced reference in a fresh process/engine after full cleanup. Use same pinned weights, BF16 and default attention backend in both.",
+    "Teacher-forced reference must use the exact saved prompt+output IDs, prompt_logprobs=0, identity sampler temperature0/top_p1/top_k-1/presence0, max_tokens1. Verify all output positions including boundary positions and EOS; do not score decoded/re-tokenized text. Disable prefix caching for reference or prove prompt_logprobs forces fresh prefill. Extra probe tokens MUST be counted. No rescoring in main inference.",
+    "Apply unchanged max_abs<0.15, mean_abs<0.02, abs_mean<0.005 to EVERY probe. At least8 complete nonempty probes and repeated token coverage. Retain raw numeric vectors to independently recompute. A failed probe => STOP, write BLOCKED; no further GPU diagnosis, sampler/attention variants, tolerance changes or repetitions in this task.",
+    "Record validation_reference explicitly in gate/environment/reports. State cross_engine_hf_parity=false and reference_run=mur-20261024-prep-r3. A passing same-engine gate must never be presented as passing HF parity. Inspect and record installed sampler-source hash proving raw_logprobs computed BEFORE penalties/temperature.",
+    "After this one signal gate passes, run the same20 development questions for cot/per_step/mur and final verifier using stage_driver. Whole run <=3000GPU seconds and1M output tokens; combinedprep<=2GPU-hours, totalproject<=12. No full500, sweeps, newdataset or hyperparameter changes.",
+    "Fix remaining driver bookkeeping BEFORE GPU run: include cleanup time in allocation duration; fail closed if NVML/compute process telemetry is unavailable; do not advance from a phase whose exit/status/cleanup failed even if a stale passed file exists; refuse reused GPU-output directories. Sum actual reported tokens and mark unknown conservative reservations separately.",
+    "Keep all processes foreground under current bounded service cgroup. Child process groups used for cleanup are allowed, detached services/nohup are not. RuntimeMaxSec/MemoryMax unchanged. Monitor own GPU allocations<=14GiB and free>=4GiB. Do not kill unrelated processes.",
+    "Commit code/config before actual GPU work. Run meaningful CPU tests. Do not modify active running code. No raw benchmark questions/answers, private usernames/paths/host/IPs, credentials or session logs in Git. audit_public staged/history before commits. Relay push only.",
+    "Include actual run SHA, failure/fix SHAs, final HEAD and push state. Copy raw-smoke-traces.jsonl to run root for artifact manifest but never Git. Sanitize only numeric per-question and aggregate results.",
+    "Inspect genuine MUR triggers and critic parser outputs. If zero genuine triggers, existing marked engineering forced-trigger test is allowed and excluded from metrics. Do not change alpha/gamma.",
+    "Report total previous R3 conservative280GPU seconds/300 generated diagnostic tokens separately; do not hide failed gates. R1 incomplete14 trajectories remain excluded. No scientific conclusion from development smoke.",
+    "Use original scientific protocol exactly: role markers, accepted-only termination, raw mean NLL with bias-corrected EMA, four fresh candidates, complete proposal/candidate/critic ledger, strict verifier parser and versioned cache. Match source hashes and data manifest."
+  ],
+  "seeds": [
+    42
+  ],
+  "code_revision": "Supervisor environment-resumption task commit at startup; record SHA. Commit every implementation fix before GPU execution.",
+  "environment": "Remote-only RTX3090 BF16; reuse existing runtime/venv (vLLM0.8.5 V1, transformers4.51.3, torch2.6.0+cu124). No shared environment mutations.",
+  "experiment_commands": [
+    "runtime/venv/bin/python -m unittest discover -s tests -v",
+    "runtime/venv/bin/python -m mur.prepare --sources configs/sources.json --runtime-root \"$MUR_RUNTIME_ROOT\" --run-dir \"$MUR_RUN_DIR\"",
+    "runtime/venv/bin/python scripts/stage_driver.py --run-dir \"$MUR_RUN_DIR\" --run-id mur-20261024-prep-r4 --gpu-index 2 --gpu-budget-seconds 3000 --wall-budget-seconds 7000 --token-budget 1000000 --max-new-mib 14336 --min-free-mib 4096 # driver validation command must use mur.validate_signal",
+    "python3 scripts/audit_public.py --history"
+  ],
+  "budget": {
+    "gpu_count": 1,
+    "gpu_hours": 0.8333333333333334,
+    "wall_seconds": 7200,
+    "max_attempts": 1,
+    "model_cost_limit": "One remote GPU, <=3000 allocation seconds including every phase and cleanup. <=1 million generated tokens. Existing DSH subscription only. One signal validation attempt; no exploratory GPU runs after failure."
+  },
+  "stop_conditions": [
+    "OOM or NaN",
+    "No suitable remote GPU/headroom",
+    "Disk free would drop below25GiB or newstorage20GiB",
+    "Wrong source revision, test leakage or unsafe path/credential in staging",
+    "Raw-logprob validation fails",
+    "Exceeded token/GPU/wall budget",
+    "Need to change scientific protocol; report BLOCKED to supervisor"
+  ],
+  "required_outputs": [
+    "report.json",
+    "environment.json",
+    "source-manifest.json",
+    "smoke-summary.json",
+    "logprob-validation.json",
+    "raw-smoke-traces.jsonl",
+    "implementation-review.md",
+    "sanitized-public-metrics.json",
+    "budget-estimate.json",
+    "resource-usage.json",
+    "gpu-probe.json"
+  ],
+  "version_control": {
+    "repository": "Flutter-Misdreavus/mur-reproduction",
+    "visibility": "private",
+    "branch": "exp/mur-20261024",
+    "push_mode": "relay",
+    "checkpoint_minutes": 15
+  }
+}
