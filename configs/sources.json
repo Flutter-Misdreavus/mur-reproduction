@@ -9,20 +9,56 @@
   },
   "policy": {
     "id": "Qwen/Qwen3-1.7B",
-    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "weights_sha256": {
+      "model-00001-of-00002.safetensors": "169ad53ec313c3a34b06c0809216e4fc072cce444a5d4ff2b59690d064130ed5",
+      "model-00002-of-00002.safetensors": "912becff8d60672aa8628ef08c05898d9adf17c2ad4ae3caf99b065622fdeff9"
+    }
   },
   "critic": {
     "id": "GenPRM/GenPRM-1.5B",
-    "revision": "a0fa69768f4524257e1730fec639aa7781c7fa82"
+    "revision": "a0fa69768f4524257e1730fec639aa7781c7fa82",
+    "weights_sha256": {
+      "model.safetensors": "e5e2e5157b95cda69798857551acffddf03137e48a62ba81d41182ff1e85a601"
+    }
   },
   "verifier": {
     "id": "TIGER-Lab/general-verifier",
-    "revision": "dc59c0c82360170cab0be91c91ae545ff32ea896"
+    "revision": "dc59c0c82360170cab0be91c91ae545ff32ea896",
+    "weights_sha256": {
+      "model.safetensors": "95c6dcf173c22d7fd31f75372b803a0f3ed061f90dd563eb8f3e3b2c2f9d277a"
+    }
   },
   "test": {
     "id": "HuggingFaceH4/MATH-500",
     "revision": "6e4ed1a2a79af7d8630a6b768ec859cb5af4d3be",
     "split": "test",
-    "rows": 500
+    "rows": 500,
+    "sha256": "35dc41080a3680858b27fa7e0533d2d547825316fc5dafe5d316f4ccc5a06132"
+  },
+  "dev": {
+    "id": "EleutherAI/hendrycks_math",
+    "revision": "21a5633873b6a120296cce3e2df9d5550074f4a3",
+    "split": "train",
+    "rows": 20,
+    "selection_seed": 42,
+    "subjects": [
+      "algebra",
+      "counting_and_probability",
+      "geometry",
+      "intermediate_algebra",
+      "number_theory",
+      "prealgebra",
+      "precalculus"
+    ],
+    "files_sha256": {
+      "algebra-train.parquet": "73347f5b55869f21ff094361025dbd12d291e971aa4d72142eacee10438e449f",
+      "counting_and_probability-train.parquet": "d37ae017930df41678edee50dcde18c17fb06afaff9eb505c1b95f1002bfcb31",
+      "geometry-train.parquet": "9dbf5e5b55499e696e0ba72da9d85d4f0be3acbf7eaa6cb014b0fc78bb63784f",
+      "intermediate_algebra-train.parquet": "0c87f3798ebdfb915b1f9b6fc13c1a8d064c3cb91631ccbe85b83ed5d71150f6",
+      "number_theory-train.parquet": "81c08649149b39811f2d1d7ddf5dfccf6c4c8044a2e169cfb24db09160c941f4",
+      "prealgebra-train.parquet": "765b526fb5c0b8385cb7be2c16bf4f6f28cf71f2bc15c826abfbb5fa7f8616cc",
+      "precalculus-train.parquet": "28bb1ff95525c8d32521509bef91de76339659f5467a381e6e8deea204538f0e"
+    }
   }
 }
