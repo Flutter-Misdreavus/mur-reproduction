@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r3",
+  "wall_seconds": 42.27,
+  "gpu_allocated_seconds": 41.81,
+  "generated_tokens_total": 112,
+  "gpu_budget_seconds": 3500.0,
+  "token_budget": 978000,
+  "wall_budget_seconds": 7000.0,
+  "peak_new_usage_mib": 6849.0,
+  "peak_our_processes_mib": 6846.0,
+  "min_free_mib": 14029.0,
+  "per_phase": {
+    "validate": {
+      "seconds": 41.81,
+      "tokens": 112,
+      "status": "ok",
+      "max_new_usage_mib": 6849.0,
+      "min_free_mib": 14029.0
+    }
+  },
+  "cleanup": {
+    "validate": "clean"
+  }
+}

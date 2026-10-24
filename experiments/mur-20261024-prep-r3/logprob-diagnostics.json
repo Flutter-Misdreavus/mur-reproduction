@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r3",
+  "gate": "raw generation logprob",
+  "primary_result": "failed",
+  "frozen_tolerance": {"max_abs_token_nll": 0.15, "mean_abs_token_nll": 0.02, "mean_nll": 0.005},
+  "tolerance_relaxed": false,
+  "what_was_verified": [
+    "vLLM 0.8.5 V1 is active; vllm/v1/sample/sampler.py computes raw_logprobs from logits before penalties/temperature.",
+    "generation_nll uses the sampled token id and the returned logprobs=0 entry directly, with no rescoring call.",
+    "A separate vLLM prompt_logprobs call on the exact saved token ids reproduces the generation logprobs, including the outlier positions (e.g. double token 11 = 0.252 in both).",
+    "The failure is therefore not a sampling-transform mismatch in the returned signal; it is a vLLM-vs-HF forward/kernel difference on a few low-margin tokens."
+  ],
+  "per_probe_attempt_03_sdpa_hf": [
+    {"name": "repeat", "max_abs": 0.4610, "mean_abs": 0.03235, "mean_diff": 0.03109, "passed": false},
+    {"name": "count", "max_abs": 0.0737, "mean_abs": 0.00254, "mean_diff": 0.00254, "passed": true},
+    {"name": "ones", "max_abs": 0.1664, "mean_abs": 0.00893, "mean_diff": 0.00692, "passed": false},
+    {"name": "sum", "max_abs": 0.0148, "mean_abs": 0.00126, "mean_diff": 0.00072, "passed": true},
+    {"name": "double", "max_abs": 0.0736, "mean_abs": 0.00425, "mean_diff": 0.00286, "passed": true}
+  ],
+  "attention_backend_diagnostic": {
+    "vllm_default_flash_attention_with_hf_eager_bf16": {
+      "repeat": {"max_abs": 0.3533, "mean_abs": 0.02536, "mean_diff": 0.02174},
+      "count": {"max_abs": 0.1351, "mean_abs": 0.00468, "mean_diff": 0.00468},
+      "ones": {"max_abs": 0.0580, "mean_abs": 0.00388, "mean_diff": 0.00375},
+      "sum": {"max_abs": 0.0003, "mean_abs": 0.00004, "mean_diff": 0.00002},
+      "double": {"max_abs": 0.1608, "mean_abs": 0.01252, "mean_diff": 0.01113}
+    },
+    "vllm_triton_attention_with_hf_eager_bf16": {
+      "repeat": {"max_abs": 0.0663, "mean_abs": 0.00459, "mean_diff": 0.00459},
+      "count": {"max_abs": 0.0614, "mean_abs": 0.00213, "mean_diff": 0.00213},
+      "ones": {"max_abs": 0.1106, "mean_abs": 0.00580, "mean_diff": 0.00356},
+      "sum": {"max_abs": 0.0019, "mean_abs": 0.00029, "mean_diff": 0.00029},
+      "double": {"max_abs": 0.2222, "mean_abs": 0.01570, "mean_diff": 0.01346}
+    },
+    "vllm_triton_attention_with_hf_eager_float32": {
+      "repeat": {"max_abs": 0.2163, "mean_abs": 0.01570, "mean_diff": 0.01315},
+      "count": {"max_abs": 0.1403, "mean_abs": 0.00485, "mean_diff": 0.00485},
+      "ones": {"max_abs": 0.0641, "mean_abs": 0.00427, "mean_diff": 0.00231},
+      "sum": {"max_abs": 0.0096, "mean_abs": 0.00078, "mean_diff": 0.00050},
+      "double": {"max_abs": 0.0811, "mean_abs": 0.00472, "mean_diff": 0.00436}
+    }
+  },
+  "outlier_example": {
+    "probe": "double",
+    "token_index": 11,
+    "token_id": 1782,
+    "token_text": "the",
+    "hf_bf16_eager": {"nll": 0.4741, "top1": "the", "top2": "The"},
+    "vllm_triton_generation": {"nll": 0.2520},
+    "vllm_triton_prompt_logprobs": {"nll": 0.2520},
+    "interpretation": "The sampled token is top-1 in both, but its probability differs at a low-margin position. The same vLLM value is produced by an independent prefill/prompt_logprobs path, so the discrepancy is forward-kernel precision, not a sampling transform."
+  },
+  "decision": "BLOCKED. The frozen validation tolerances were not relaxed and the 20x3 smoke was not launched.",
+  "minimal_decision_needed": [
+    "Accept a documented validation-reference change (e.g. a specific HF attention/precision configuration) and rerun this gate with a new commit; or",
+    "Revise the frozen numerical tolerance with a stated rationale before any smoke; or",
+    "Provide an exclusive GPU so vLLM's memory accounting and kernel selection are not affected by co-tenants (this does not by itself remove BF16 kernel differences)."
+  ]
+}

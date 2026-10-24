@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r3",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "raw generation-logprob validation is missing or failed",
+  "gate_checks": {
+    "gpu_available": true,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "three_methods_20x3": false,
+    "complete_token_ledger": false,
+    "verifier_judgments": false,
+    "no_test_generation": false,
+    "no_runtime_errors": false,
+    "no_invalid_judgments": false,
+    "no_budget_or_context_truncation": false,
+    "stage_budget_observed": true,
+    "mur_triggered_branch": false
+  },
+  "methods": {
+    "cot": {},
+    "per_step": {},
+    "mur": {}
+  },
+  "per_question": [],
+  "budget": {
+    "measured_trajectories": 0,
+    "measured_generated_tokens": 0,
+    "measured_wall_seconds": 0,
+    "seconds_per_trajectory": null,
+    "projected_1500_trajectories_seconds": null,
+    "projected_1500_trajectories_gpu_hours": null,
+    "projected_1500_trajectories_tokens": null,
+    "prep_gpu_hours": 0.07083333333333333,
+    "prep_gpu_allocated_seconds": 255,
+    "prep_wall_seconds": 1080,
+    "prep_generated_tokens": 245,
+    "budget_limits": {
+      "gpu_hours": 1,
+      "wall_seconds": 7200,
+      "generated_tokens": 1000000,
+      "trajectories": 60
+    },
+    "interpretation": "No 1500-trajectory estimate is reported because the gate stopped before the 20x3 smoke; GPU time is the measured cumulative model-allocation interval."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "measured_trajectories": 0,
+  "measured_generated_tokens": 0,
+  "measured_wall_seconds": 0,
+  "seconds_per_trajectory": null,
+  "projected_1500_trajectories_seconds": null,
+  "projected_1500_trajectories_gpu_hours": null,
+  "projected_1500_trajectories_tokens": null,
+  "prep_gpu_hours": 0.07083333333333333,
+  "prep_gpu_allocated_seconds": 255,
+  "prep_wall_seconds": 1080,
+  "prep_generated_tokens": 245,
+  "budget_limits": {
+    "gpu_hours": 1,
+    "wall_seconds": 7200,
+    "generated_tokens": 1000000,
+    "trajectories": 60
+  },
+  "interpretation": "No 1500-trajectory estimate is reported because the gate stopped before the 20x3 smoke; GPU time is the measured cumulative model-allocation interval."
+}

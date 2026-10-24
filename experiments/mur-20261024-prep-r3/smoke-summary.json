@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-24T07:46:37.022773+00:00",
+  "run_id": "mur-20261024-prep-r3",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "raw generation-logprob validation is missing or failed",
+  "gate_checks": {
+    "gpu_available": true,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "three_methods_20x3": false,
+    "complete_token_ledger": false,
+    "verifier_judgments": false,
+    "no_test_generation": false,
+    "no_runtime_errors": false,
+    "no_invalid_judgments": false,
+    "no_budget_or_context_truncation": false,
+    "stage_budget_observed": true,
+    "mur_triggered_branch": false
+  },
+  "trajectories": {
+    "cot": 0,
+    "per_step": 0,
+    "mur": 0
+  },
+  "metrics": {},
+  "generated_tokens_total": 0,
+  "run_status": {},
+  "evaluation_status": {},
+  "driver": {
+    "gpu_allocated_seconds": 41.81,
+    "total_generated_tokens": 112,
+    "wall_seconds": 42.27,
+    "peak_new_usage_mib": null,
+    "min_free_mib": null,
+    "phases": [
+      {
+        "name": "validate",
+        "status": "ok",
+        "exit_code": 1,
+        "started_at": "2026-10-24T07:40:31.485361+00:00",
+        "ended_at": "2026-10-24T07:41:13.370230+00:00",
+        "duration_seconds": 41.81,
+        "tokens": 112,
+        "token_source": "reported",
+        "token_grant": 10000,
+        "gpu_allocated_after_seconds": 41.81,
+        "max_new_usage_mib": 6849.0,
+        "min_free_mib": 14029.0,
+        "cleanup": "clean"
+      }
+    ]
+  },
+  "cumulative_budget": {
+    "schema_version": 1,
+    "run_id": "mur-20261024-prep-r3",
+    "observed_at": "2026-10-24T07:46:09Z",
+    "session_started_at": "2026-10-24T07:28:10Z",
+    "wall_seconds": 1080,
+    "gpu_allocated_seconds": 255,
+    "conservative_gpu_seconds": 280,
+    "total_generated_tokens": 245,
+    "conservative_generated_tokens": 300,
+    "limits": {
+      "gpu_seconds": 3600,
+      "generated_tokens": 1000000,
+      "wall_seconds": 7200,
+      "max_new_mib": 14336,
+      "min_free_mib": 4096
+    },
+    "within_limits": true,
+    "measurement": "GPU seconds for the three driver attempts are exact process-allocation intervals from resource-usage.json. Diagnostic intervals are conservative estimates from command start/end timing; generated diagnostic tokens are counted where generation occurred. No full smoke or verifier was launched.",
+    "attempts": [
+      {
+        "name": "attempt-01",
+        "gpu_seconds": 22.1,
+        "generated_tokens": 0,
+        "result": "FAILED: Triton import required setuptools"
+      },
+      {
+        "name": "attempt-02",
+        "gpu_seconds": 31.03,
+        "generated_tokens": 0,
+        "result": "FAILED: V1 engine had no KV-cache blocks at gpu_memory_utilization=0.26"
+      },
+      {
+        "name": "attempt-03",
+        "gpu_seconds": 41.81,
+        "generated_tokens": 112,
+        "result": "FAILED: raw-logprob validation tolerance"
+      }
+    ],
+    "diagnostics": [
+      {
+        "name": "shared-gpu-memory-fractions",
+        "estimated_gpu_seconds": 35,
+        "generated_tokens": 16,
+        "result": "both engines load/generate/release at 0.42/0.62; new usage 11637 MiB"
+      },
+      {
+        "name": "vllm-torch-sdpa-rejected",
+        "estimated_gpu_seconds": 5,
+        "generated_tokens": 0,
+        "result": "V1 does not support TORCH_SDPA"
+      },
+      {
+        "name": "vllm-triton-probes",
+        "estimated_gpu_seconds": 25,
+        "generated_tokens": 112,
+        "result": "5 probes generated for attention-backend comparison"
+      },
+      {
+        "name": "vllm-prompt-logprob-crosscheck",
+        "estimated_gpu_seconds": 15,
+        "generated_tokens": 5,
+        "result": "prompt_logprobs reproduce generation logprobs exactly, including outliers"
+      },
+      {
+        "name": "hf-reference-variants",
+        "estimated_gpu_seconds": 95,
+        "generated_tokens": 0,
+        "result": "eager/sdpa and bf16/float32 references compared against saved vLLM probes"
+      }
+    ]
+  },
+  "limitations": [
+    "Development questions only; no MATH-500 test generation.",
+    "Smoke evidence is not a scientific success claim.",
+    "Latency is descriptive on a shared GPU."
+  ]
+}
