@@ -1,0 +1,96 @@
+{
+  "run_id": "mur-20261024-test100-r2",
+  "paired_questions": 65,
+  "paired_trajectories": 195,
+  "all_saved_trajectory_token_ledgers_checked": 196,
+  "mur_steps_checked": 184,
+  "mur_triggers_checked": 12,
+  "candidate_judgments_checked": 776,
+  "first_proposal_token_identity_cot_mur": 65,
+  "chunks": [
+    {
+      "questions": 25,
+      "trajectories": 75,
+      "mur_steps_checked": 58,
+      "mur_triggers_checked": 1,
+      "candidate_judgments_checked": 276,
+      "trace_sha256": "c5e46f429964c82eda8a20abf77a7a78801fbe0e14d32a2f47cbca440d0598b8",
+      "methods": {
+        "cot": {
+          "tokens": 12429,
+          "mean_tokens": 497.16,
+          "wall_seconds": 347.3809049129486
+        },
+        "per_step": {
+          "tokens": 120506,
+          "mean_tokens": 4820.24,
+          "wall_seconds": 1421.5378136634827
+        },
+        "mur": {
+          "tokens": 12855,
+          "mean_tokens": 514.2,
+          "wall_seconds": 347.66471576690674
+        }
+      },
+      "first_proposal_identity_cot_mur": 25,
+      "first_proposal_token_identity_cot_mur": 25,
+      "accepted_nll_audit_limit": "Triggered accepted-candidate NLL is retained as a mean only; EMA is recomputed from that recorded mean, not independently from candidate per-token logprobs."
+    },
+    {
+      "questions": 25,
+      "trajectories": 75,
+      "mur_steps_checked": 87,
+      "mur_triggers_checked": 6,
+      "candidate_judgments_checked": 312,
+      "trace_sha256": "e3a4d89a228ced6de76ed5ea6e0f01522d9b2c0e75b879a3b7383a495a4827eb",
+      "methods": {
+        "cot": {
+          "tokens": 15751,
+          "mean_tokens": 630.04,
+          "wall_seconds": 428.7148051261902
+        },
+        "per_step": {
+          "tokens": 126342,
+          "mean_tokens": 5053.68,
+          "wall_seconds": 1462.4837205410004
+        },
+        "mur": {
+          "tokens": 28610,
+          "mean_tokens": 1144.4,
+          "wall_seconds": 535.0131537914276
+        }
+      },
+      "first_proposal_identity_cot_mur": 25,
+      "first_proposal_token_identity_cot_mur": 25,
+      "accepted_nll_audit_limit": "Triggered accepted-candidate NLL is retained as a mean only; EMA is recomputed from that recorded mean, not independently from candidate per-token logprobs."
+    },
+    {
+      "questions": 15,
+      "trajectories": 45,
+      "mur_steps_checked": 39,
+      "mur_triggers_checked": 5,
+      "candidate_judgments_checked": 188,
+      "trace_sha256": "bf1001fea07483af92bc40f3d575f353bb0351d04d8b3d9cc2cc2dcb9b961e3f",
+      "methods": {
+        "cot": {
+          "tokens": 15731,
+          "mean_tokens": 1048.7333333333333,
+          "wall_seconds": 427.4220848083496
+        },
+        "per_step": {
+          "tokens": 130618,
+          "mean_tokens": 8707.866666666667,
+          "wall_seconds": 1616.4915826320648
+        },
+        "mur": {
+          "tokens": 31728,
+          "mean_tokens": 2115.2,
+          "wall_seconds": 641.3450372219086
+        }
+      },
+      "first_proposal_identity_cot_mur": 15,
+      "first_proposal_token_identity_cot_mur": 15,
+      "accepted_nll_audit_limit": "Triggered accepted-candidate NLL is retained as a mean only; EMA is recomputed from that recorded mean, not independently from candidate per-token logprobs."
+    }
+  ]
+}

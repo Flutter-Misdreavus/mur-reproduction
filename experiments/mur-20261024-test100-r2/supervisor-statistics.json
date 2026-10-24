@@ -1,0 +1,166 @@
+{
+  "run_id": "mur-20261024-test100-r2",
+  "task_complete": false,
+  "primary_automated_scored_subset": {
+    "questions": 50,
+    "methods": {
+      "cot": {
+        "n": 50,
+        "correct": 37,
+        "accuracy": 0.74,
+        "total_output_tokens": 28180,
+        "mean_output_tokens": 563.6,
+        "wall_seconds": 776.0957100391388
+      },
+      "per_step": {
+        "n": 50,
+        "correct": 40,
+        "accuracy": 0.8,
+        "total_output_tokens": 246848,
+        "mean_output_tokens": 4936.96,
+        "wall_seconds": 2884.021534204483
+      },
+      "mur": {
+        "n": 50,
+        "correct": 37,
+        "accuracy": 0.74,
+        "total_output_tokens": 41465,
+        "mean_output_tokens": 829.3,
+        "wall_seconds": 882.6778695583344
+      }
+    },
+    "token_saving_vs_per_step": 0.832022135079077,
+    "token_saving_ci95": [
+      0.7625776463123606,
+      0.8843829551516309
+    ],
+    "accuracy_delta_vs_per_step": -0.06,
+    "accuracy_delta_ci95": [
+      -0.18,
+      0.06
+    ],
+    "mur_only_correct": 3,
+    "per_step_only_correct": 6,
+    "point_target_met": false,
+    "non_inferiority_supported": false
+  },
+  "secondary_reviewed_same_scored_subset": {
+    "questions": 50,
+    "methods": {
+      "cot": {
+        "n": 50,
+        "correct": 36,
+        "accuracy": 0.72,
+        "total_output_tokens": 28180,
+        "mean_output_tokens": 563.6,
+        "wall_seconds": 776.0957100391388
+      },
+      "per_step": {
+        "n": 50,
+        "correct": 40,
+        "accuracy": 0.8,
+        "total_output_tokens": 246848,
+        "mean_output_tokens": 4936.96,
+        "wall_seconds": 2884.021534204483
+      },
+      "mur": {
+        "n": 50,
+        "correct": 36,
+        "accuracy": 0.72,
+        "total_output_tokens": 41465,
+        "mean_output_tokens": 829.3,
+        "wall_seconds": 882.6778695583344
+      }
+    },
+    "token_saving_vs_per_step": 0.832022135079077,
+    "token_saving_ci95": [
+      0.7625776463123606,
+      0.8843829551516309
+    ],
+    "accuracy_delta_vs_per_step": -0.08,
+    "accuracy_delta_ci95": [
+      -0.2,
+      0.02
+    ],
+    "mur_only_correct": 2,
+    "per_step_only_correct": 6,
+    "point_target_met": false,
+    "non_inferiority_supported": false
+  },
+  "supplementary_reviewed_all_complete_pairs": {
+    "questions": 65,
+    "methods": {
+      "cot": {
+        "n": 65,
+        "correct": 44,
+        "accuracy": 0.676923076923077,
+        "total_output_tokens": 43911,
+        "mean_output_tokens": 675.5538461538462,
+        "wall_seconds": 1203.5177948474884
+      },
+      "per_step": {
+        "n": 65,
+        "correct": 46,
+        "accuracy": 0.7076923076923077,
+        "total_output_tokens": 377466,
+        "mean_output_tokens": 5807.169230769231,
+        "wall_seconds": 4500.513116836548
+      },
+      "mur": {
+        "n": 65,
+        "correct": 42,
+        "accuracy": 0.6461538461538462,
+        "total_output_tokens": 73193,
+        "mean_output_tokens": 1126.0461538461539,
+        "wall_seconds": 1524.022906780243
+      }
+    },
+    "token_saving_vs_per_step": 0.8060937938781241,
+    "token_saving_ci95": [
+      0.7426208881029681,
+      0.85860446327664
+    ],
+    "accuracy_delta_vs_per_step": -0.06153846153846154,
+    "accuracy_delta_ci95": [
+      -0.15384615384615385,
+      0.015384615384615385
+    ],
+    "mur_only_correct": 2,
+    "per_step_only_correct": 6,
+    "point_target_met": false,
+    "non_inferiority_supported": false
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20261024,
+    "unit": "question",
+    "sampling": "random.randrange on sorted IDs, with replacement",
+    "interval": "two-sided 95% percentile, linear interpolation"
+  },
+  "scope": "Resource-truncated exploratory subsets; neither estimates completion of the fixed100 task.",
+  "reviewer": "GPT supervisor mathematical-equivalence review, not human annotation",
+  "changed_automated_labels": [
+    {
+      "qid": "test-007-659b49f54a96",
+      "method": "cot",
+      "chunk": 0,
+      "total_output_tokens": 986,
+      "wall_seconds": 27.519944190979004,
+      "automated_correct": 1,
+      "audited_correct": 0,
+      "ambiguous_automated": false,
+      "audit_code": "C00-Q1-B"
+    },
+    {
+      "qid": "test-007-659b49f54a96",
+      "method": "mur",
+      "chunk": 0,
+      "total_output_tokens": 986,
+      "wall_seconds": 28.58968234062195,
+      "automated_correct": 1,
+      "audited_correct": 0,
+      "ambiguous_automated": false,
+      "audit_code": "C00-Q1-C"
+    }
+  ]
+}

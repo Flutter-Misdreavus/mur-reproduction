@@ -6,11 +6,24 @@ while approximately preserving accuracy on MATH-500.
 Scope: Qwen3-1.7B (non-thinking), GenPRM-1.5B, and three methods:
 stepwise CoT, Guided Search at every step, and Guided Search with MUR.
 There is no training. See PROTOCOL.md for frozen settings and acceptance rules.
-Current status: the20-question development gate is complete and independently reviewed.
-MUR used78.3% fewer policy+critic output tokens than per-step Guided Search, but scored
-15/20 versus16/20. Accuracy preservation is **not established**. CoT scored16/20 and
-was cheaper than MUR. See [the reviewed evidence](experiments/mur-20261024-prep-r6/review.md).
-The next frozen task uses100 fixed MATH-500 test questions; no test result is available yet.
+Current status: the fixed 100-question test **stopped at its time limit and is incomplete**.
+The first 50 questions were generated and automatically graded for all three methods.
+MUR used 83.2% fewer policy-plus-critic output tokens than per-step Guided Search,
+but scored 37/50 versus 40/50 automatically, or 36/50 versus 40/50 after GPT supervisor
+answer-equivalence review. CoT scored 37/50 automatically (36/50 reviewed) and cost
+563.6 tokens/question, versus MUR's 829.3. The accuracy-preservation target was **not met**.
+An additional 15 fully generated question pairs were reviewed separately; the resulting
+65-question supplementary comparison also misses the target. This is an exploratory,
+resource-truncated result, not a completed fixed100 or MATH-500 reproduction.
+See the [supervisor review](experiments/mur-20261024-test100-r2/review.md) for original
+and reviewed labels, confidence intervals, failure provenance and cumulative costs.
+The earlier [development review](experiments/mur-20261024-prep-r6/review.md) remains available.
+
+Recompute the sanitized result without models or benchmark text:
+
+```bash
+python3 scripts/recompute_supervisor.py experiments/mur-20261024-test100-r2/supervisor-rows.json
+```
 
 Reference: Yan et al., *MUR: Momentum Uncertainty guided Reasoning for Large Language Models*,
 [arXiv:2507.14958v5](https://arxiv.org/abs/2507.14958v5), 2026-05-24.

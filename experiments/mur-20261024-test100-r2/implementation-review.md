@@ -1,5 +1,7 @@
 # Implementation review — mur-20261024-test100-r2
 
+Supervisor note: see [review.md](review.md) for completed answer review, both-attempt costs, and reporting corrections. Original automatic scores are unchanged.
+
 Gate status: **FAILED / PARTIAL**. Engineering identity passed; two of four frozen
 test chunks completed. No complete fixed100 result exists and no full MATH-500
 claim is made.
@@ -24,7 +26,7 @@ PASSED on development indices 0 and 3 with one policy instance and identical
 seeds: 4 trajectories, 1,306 generated tokens, 77.19 GPU allocation seconds,
 no genuine MUR trigger. First proposals matched in text and token IDs and all
 common pre-trigger accepted steps matched. Raw trace SHA256:
-`5f61550f61d8632cdd614dbf45cdee9c0a7b5eeae8751b1c625f6440ca1baf8a`.
+`72ae9a1657f6faa4cb2ebc2d6cde470b253cd52a9354bcaf574a329b5f7cbfd3`.
 
 ## Code changes made during this task (no scientific changes)
 
@@ -79,8 +81,7 @@ non-first steps (7/145 over all steps). Nine method-discordant questions among t
 
 ## Resources and artifacts
 
-Driver allocation: 7,868.17 s (2.1856 GPU-hours), wall 7,868.93 s. Actual
-generated tokens from traces: 513,509 (497,739 policy/critic + 15,770 verifier).
+Driver allocation: 7,868.17 s (2.1856 GPU-hours), wall 7,868.93 s. Known saved token lower bound for this driver attempt: 513,509 (497,739 policy/critic + 15,770 verifier).
 The driver's conservative ledger is 633,569 because the ungraded killed chunk
 reserved its full 300,000-token grant. Peak new GPU memory 12,109 MiB; minimum
 free 8,770 MiB; no OOM or NaN. Disk stayed above the 25 GiB floor.

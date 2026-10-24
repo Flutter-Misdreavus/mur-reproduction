@@ -1,0 +1,46 @@
+{
+  "run_id": "mur-20261024-test100-r2",
+  "task_complete": false,
+  "attempts": [
+    {
+      "actual_commit": "2ed1d21ef298dee73ec066a662054762a176f574",
+      "allocation_seconds": 78.27,
+      "known_generated_tokens": 1306,
+      "conservative_unknown_reservation": 300000,
+      "test_generation_tokens": 0,
+      "reason": "Premodel loader failure; reservation is not observed generation."
+    },
+    {
+      "actual_commit": "5c91a8a178e2c39ba6aa50c3d116524eae8ecf6e",
+      "allocation_seconds": 7868.17,
+      "reported_phase_tokens": 333569,
+      "recovered_completed_trajectory_tokens_in_killed_phase": 179940,
+      "known_generated_tokens_lower_bound": 513509,
+      "conservative_unknown_phase_reservation": 300000,
+      "reservation_note": "Recovered 179940 tokens are part of the 300000 reservation, not additional charged tokens.",
+      "final_phase_status": "killed_phase_cap",
+      "cleanup": "waited_clean"
+    }
+  ],
+  "both_attempts_allocation_seconds": 7946.44,
+  "both_attempts_allocation_hours": 2.2073444444444443,
+  "both_attempts_observed_generated_tokens_lower_bound": 514815,
+  "both_attempts_conservative_token_charge": 934875,
+  "exact_actual_generated_tokens_known": false,
+  "grader_actual_generated_tokens": 15770,
+  "grader_unique_calls": 81,
+  "grader_attributed_tokens_not_actual_work": 27263,
+  "historical_preparation_charge_seconds": 6090.79,
+  "project_allocation_charge_seconds": 14037.23,
+  "project_allocation_charge_hours": 3.8992305555555555,
+  "historical_charge_note": "Contains conservative reservations and measured phases; not entirely measured. Historical first-attempt token accounting is incomplete.",
+  "peak_new_gpu_memory_mib": 12109,
+  "minimum_free_gpu_memory_mib": 8770,
+  "post_run_gpu_used_mib": 3257,
+  "post_run_matches_preflight_shared_gpu_baseline": true,
+  "report_corrections": [
+    "Worker actual-total fields are lower bounds because interrupted trajectory calls were not checkpointed.",
+    "Worker narrative engineering SHA refers to attempt01; the second-attempt raw trace SHA is 72ae9a1657f6faa4cb2ebc2d6cde470b253cd52a9354bcaf574a329b5f7cbfd3.",
+    "Two driver attempts reused one run ID despite max_attempts=1; preserved as an explicit workflow deviation, not claimed fully compliant."
+  ]
+}

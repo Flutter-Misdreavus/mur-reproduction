@@ -1,5 +1,7 @@
 # Report summary — mur-20261024-test100-r2
 
+Supervisor note: see [review.md](review.md) for completed answer review, both-attempt costs, and reporting corrections. Original automatic scores are unchanged.
+
 Status: **FAILED / PARTIAL** (engineering gate passed; fixed100 test incomplete).
 
 ## What actually ran
@@ -35,7 +37,7 @@ Status: **FAILED / PARTIAL** (engineering gate passed; fixed100 test incomplete)
 ## Resources
 
 - Driver GPU allocation: 7,868.17 s = 2.1856 GPU-hours; wall 7,868.93 s.
-- Actual generated tokens: 513,509 (497,739 policy/critic, 15,770 verifier).
+- Known saved token lower bound for this driver attempt: 513,509 (497,739 policy/critic, 15,770 verifier).
 - Conservative driver ledger: 633,569 because the killed chunk reserved its full
   300,000-token grant.
 - Peak new GPU memory 12,109 MiB; minimum free 8,770 MiB; no OOM/NaN.
