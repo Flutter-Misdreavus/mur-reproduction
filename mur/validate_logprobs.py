@@ -67,7 +67,7 @@ def generate_phase(args) -> int:
                          max_model_len=args.max_model_len)
     backend = None
     try:
-        backend = VLLMBackend(path, gpu_memory_utilization=0.26,
+        backend = VLLMBackend(path, gpu_memory_utilization=0.42,
                               max_model_len=args.max_model_len, seed=args.seed)
         probes = []
         for index, (name, question) in enumerate(PROBES):

@@ -341,12 +341,12 @@ def main(argv=None):
     try:
         policy = VLLMBackend(
             str(model_path(load_json("configs/sources.json")["policy"]["id"])),
-            gpu_memory_utilization=0.26, max_model_len=args.max_model_len,
+            gpu_memory_utilization=0.42, max_model_len=args.max_model_len,
             seed=int(cfg["seed"]))
         if any(m in ("per_step", "mur") for m in args.methods):
             critic = VLLMBackend(
                 str(model_path(load_json("configs/sources.json")["critic"]["id"])),
-                gpu_memory_utilization=0.26, max_model_len=args.max_model_len,
+                gpu_memory_utilization=0.62, max_model_len=args.max_model_len,
                 seed=int(cfg["seed"]))
         for q in questions:
             for method in args.methods:

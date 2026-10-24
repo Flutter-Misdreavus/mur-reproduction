@@ -257,6 +257,7 @@ def main(argv=None):
             "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
             "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
             "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
+            "vLLM memory fractions: policy 0.42, critic 0.62, verifier 0.40. The shared GPU had a co-tenant allocation, and V1 counts it as non-torch use; 0.26 left no KV-cache blocks.",
         ],
     }
     with open(rd / "environment.json", "w", encoding="utf-8") as f:
@@ -290,6 +291,10 @@ Gate status: **{smoke['gate_status']}**.
   and development data.
 - One foreground driver (`scripts/stage_driver.py`) runs validation, smoke and verifier in fresh
   child processes, samples `nvidia-smi`, and enforces cumulative GPU/token/wall budgets.
+- vLLM V1 memory fractions are 0.42 (policy), 0.62 (critic) and 0.40 (verifier).  vLLM's
+  `determine_available_memory` subtracts non-torch allocations that include co-tenant GPU use, so
+  the supervisor's 0.26 left no KV-cache blocks on the shared GPU; measured new usage stays below
+  14 GiB and free memory stays above 4 GiB.
 
 ## Verified
 - Source/test/dev manifest: {gate_checks['source_manifest'] and gate_checks['test_rows_500'] and gate_checks['dev_rows_20']}

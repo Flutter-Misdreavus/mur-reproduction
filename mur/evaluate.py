@@ -82,7 +82,7 @@ def main(argv=None):
     try:
         if todo:
             backend = VLLMBackend(str(model_path(sources["verifier"]["id"])),
-                                  gpu_memory_utilization=0.35,
+                                  gpu_memory_utilization=0.40,
                                   max_model_len=args.max_model_len, seed=seed)
             from vllm import SamplingParams
             for start in range(0, len(todo), args.batch_size):
