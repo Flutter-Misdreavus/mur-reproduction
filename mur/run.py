@@ -256,6 +256,7 @@ def main(argv=None):
     ap.add_argument("--methods", nargs="+", required=True)
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--offset", type=int, default=0)
     ap.add_argument("--run-id", default="mur-20261024-prep")
     args = ap.parse_args(argv)
     cfg = load_json(args.config)
@@ -265,7 +266,8 @@ def main(argv=None):
     traces = outdir / "raw-smoke-traces.jsonl"
     if traces.exists():
         raise SystemExit(f"refusing to overwrite existing traces: {traces}")
-    questions = load_questions(args.split, args.limit)
+    questions = load_questions(args.split, None)
+    questions = questions[args.offset:(args.offset + args.limit if args.limit else None)]
     with open(outdir / "run-config.json", "w", encoding="utf-8") as f:
         json.dump({"config": cfg, "methods": args.methods, "questions": len(questions),
                    "seed": cfg["seed"]}, f, indent=2)
