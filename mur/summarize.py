@@ -103,6 +103,7 @@ def main(argv=None):
     prep_problems = load(rd / "prepare-problems.json", [])
     forced = load(rd / "forced-trigger.json", {})
     driver = load(rd / "stage-driver.json", {})
+    cumulative = load(rd / "cumulative-budget.json", {})
     eval_status = load(rd / "evaluation" / "run-status.json", {})
     rows = metrics.get("rows", [])
     summary = metrics.get("summary", {})
@@ -124,9 +125,10 @@ def main(argv=None):
     forced_ok = bool(forced.get("passed")) and bool(forced.get("engineering_only")) \
         and bool(forced.get("excluded_from_scientific_smoke"))
     gpu = probe_gpu()
-    gpu_seconds = driver.get("gpu_allocated_seconds")
-    total_tokens = driver.get("total_generated_tokens")
-    wall_seconds = driver.get("wall_seconds")
+    budget_evidence = cumulative or driver
+    gpu_seconds = budget_evidence.get("gpu_allocated_seconds")
+    total_tokens = budget_evidence.get("total_generated_tokens")
+    wall_seconds = budget_evidence.get("wall_seconds")
     stage_budget_ok = (
         isinstance(gpu_seconds, (int, float)) and gpu_seconds <= 3600
         and isinstance(total_tokens, int) and total_tokens <= 1_000_000
@@ -139,7 +141,7 @@ def main(argv=None):
         "test_rows_500": manifest.get("test", {}).get("rows") == 500,
         "raw_logprob_validation": bool(validation.get("passed")),
         "three_methods_20x3": complete,
-        "complete_token_ledger": ledger_ok,
+        "complete_token_ledger": bool(traces) and ledger_ok,
         "verifier_judgments": len(rows) == len(traces) and len(traces) > 0,
         "no_test_generation": bool(traces) and all(t.get("split") == "dev" for t in traces),
         "no_runtime_errors": bool(traces) and all(t.get("error") is None for t in traces),
@@ -182,10 +184,11 @@ def main(argv=None):
         "prep_generated_tokens": total_tokens,
         "budget_limits": {"gpu_hours": 1, "wall_seconds": 7200,
                           "generated_tokens": 1_000_000, "trajectories": 60},
-        "interpretation": ("GPU time is the driver-measured cumulative model "
-                           "allocation interval; smoke throughput drives the 1500 "
-                           "projection." if gpu_seconds is not None else
-                           "No driver-measured GPU allocation was recorded."),
+        "interpretation": ("No 1500-trajectory estimate is reported because the gate "
+                           "stopped before the 20x3 smoke; GPU time is the measured "
+                           "cumulative model-allocation interval." if n_traj == 0 else
+                           "GPU time is the measured cumulative model-allocation "
+                           "interval; smoke throughput drives the 1500 projection."),
     }
     smoke = {
         "schema_version": 1,
@@ -203,6 +206,7 @@ def main(argv=None):
         "driver": {k: driver.get(k) for k in
                    ("gpu_allocated_seconds", "total_generated_tokens", "wall_seconds",
                     "peak_new_usage_mib", "min_free_mib", "phases")},
+        "cumulative_budget": cumulative or None,
         "limitations": [
             "Development questions only; no MATH-500 test generation.",
             "Smoke evidence is not a scientific success claim.",
