@@ -29,10 +29,10 @@ arithmetic error against the unmodified logits and the returned client
 | probe | tokens | max_abs (limit 5e-5) | negative control max | result |
 |---|---:|---:|---:|---|
 | repeat | 15 | 0.0 | 0.26924 | pass |
-| count | 29 | 0.0 | 0.26924 | pass |
-| ones | 63 | 0.0 | 0.26924 | pass |
-| sum | 15 | 0.0 | 0.26924 | pass |
-| double | 21 | 0.0 | 0.26924 | pass |
+| count | 29 | 0.0 | 0.13531 | pass |
+| ones | 63 | 0.0 | 0.14057 | pass |
+| sum | 15 | 0.0 | 0.04535 | pass |
+| double | 21 | 0.0 | 0.14027 | pass |
 
 Probe six (`fraction`) generated 29 tokens and then raised
 `ValueError: sampler and client token IDs/counts differ` inside
