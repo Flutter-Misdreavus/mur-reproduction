@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-24T07:20:42.338371+00:00",
+  "run_id": "mur-20261024-prep-r2",
+  "python": "3.10.12",
+  "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+  "packages": {
+    "torch": "2.6.0",
+    "transformers": "4.51.3",
+    "vllm": "0.8.5",
+    "tokenizers": "0.21.4",
+    "pyarrow": "25.0.1"
+  },
+  "gpu": {
+    "available": false,
+    "source": "nvidia-smi",
+    "devices": [],
+    "error": "Failed to initialize NVML: Unknown Error",
+    "driver_version": "570.211.01",
+    "cuda_visible_devices": "2",
+    "observed_at": "2026-10-24T07:20:42.331645+00:00"
+  },
+  "host_memory": {
+    "MemTotal": "196677288 kB",
+    "MemAvailable": "101351528 kB"
+  },
+  "git_head": "72f2bd8089b8531dc06edc547a52e4be1566ca14",
+  "git_branch": "exp/mur-20261024",
+  "cuda_visible_devices": "2",
+  "notes": [
+    "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
+    "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence."
+  ]
+}

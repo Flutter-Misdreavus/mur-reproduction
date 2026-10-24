@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-24T07:19:57Z",
+  "purpose": "Check whether the managed foreground execution sandbox can see the assigned GPU before any model execution.",
+  "cuda_visible_devices": "2",
+  "cgroup": "managed DSH subprocess scope (identifier omitted)",
+  "nvidia_smi": {
+    "command": "nvidia-smi --query-gpu=index,name,memory.total,memory.used,memory.free,utilization.gpu --format=csv,noheader",
+    "returncode": 255,
+    "stdout": "Failed to initialize NVML: Unknown Error\n",
+    "stderr": ""
+  },
+  "device_open": {
+    "/dev/nvidiactl": "PermissionError: [Errno 13] Permission denied: '/dev/nvidiactl'",
+    "/dev/nvidia0": "PermissionError: [Errno 13] Permission denied: '/dev/nvidia0'",
+    "/dev/nvidia1": "PermissionError: [Errno 13] Permission denied: '/dev/nvidia1'",
+    "/dev/nvidia2": "PermissionError: [Errno 13] Permission denied: '/dev/nvidia2'",
+    "/dev/nvidia3": "PermissionError: [Errno 13] Permission denied: '/dev/nvidia3'",
+    "/dev/nvidia-uvm": "PermissionError: [Errno 13] Permission denied: '/dev/nvidia-uvm'"
+  },
+  "torch": {
+    "error": "ModuleNotFoundError: No module named 'torch'"
+  },
+  "conclusion": "GPU not usable inside the managed DSH subprocess cgroup; no model execution attempted. Wider sandbox escalation had no approval channel. Detached systemd-run was not used because the task forbids it.",
+  "venv_torch": {
+    "command": "runtime/venv/bin/python -c '<torch cuda probe>'",
+    "returncode": 0,
+    "stdout": "torch 2.6.0+cu124\ncuda_available False\ndevice_count 0\n",
+    "stderr": "<workspace>/...:129: UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 304: OS call failed or operation not supported on this OS (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:109.)\n  return torch._C._cuda_getDeviceCount() > 0\n<workspace>/...:734: UserWarning: Can't initialize NVML\n  warnings.warn(\"Can't initialize NVML\")\n"
+  }
+}

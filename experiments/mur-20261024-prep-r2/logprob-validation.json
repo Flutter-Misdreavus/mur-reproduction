@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r2",
+  "status": "NOT_RUN",
+  "passed": false,
+  "reason": "GPU/NVML unavailable inside the managed foreground execution sandbox; validation was not executed.",
+  "gpu_error": "Failed to initialize NVML: Unknown Error",
+  "torch_cuda_available": false,
+  "checked_at": "2026-10-24T07:20:30Z",
+  "note": "No numeric validation result exists; false is a gate status, not a measured logprob difference."
+}

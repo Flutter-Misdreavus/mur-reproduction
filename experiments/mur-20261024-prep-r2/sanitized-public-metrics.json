@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "run_id": "mur-20261024-prep-r2",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "GPU/NVML is unavailable to the managed foreground execution sandbox",
+  "gate_checks": {
+    "gpu_available": false,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "three_methods_20x3": false,
+    "complete_token_ledger": true,
+    "verifier_judgments": false,
+    "no_test_generation": false,
+    "no_runtime_errors": false,
+    "no_invalid_judgments": false,
+    "mur_triggered_branch": false
+  },
+  "methods": {
+    "cot": {},
+    "per_step": {},
+    "mur": {}
+  },
+  "per_question": [],
+  "budget": {
+    "measured_trajectories": 0,
+    "measured_generated_tokens": 0,
+    "measured_wall_seconds": 0,
+    "seconds_per_trajectory": null,
+    "projected_1500_trajectories_seconds": null,
+    "projected_1500_trajectories_gpu_hours": null,
+    "projected_1500_trajectories_tokens": null,
+    "prep_gpu_hours": 0.0,
+    "budget_limits": {
+      "gpu_hours": 1,
+      "wall_seconds": 7200,
+      "generated_tokens": 1000000,
+      "trajectories": 60
+    },
+    "interpretation": "GPU time is conservatively the measured smoke wall interval; no allocation was made in this blocked run."
+  }
+}

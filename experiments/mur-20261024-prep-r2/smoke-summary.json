@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-24T07:20:42.331720+00:00",
+  "run_id": "mur-20261024-prep-r2",
+  "stage": "prep_smoke",
+  "gate_status": "BLOCKED",
+  "blocked_reason": "GPU/NVML is unavailable to the managed foreground execution sandbox",
+  "gate_checks": {
+    "gpu_available": false,
+    "source_manifest": true,
+    "dev_rows_20": true,
+    "test_rows_500": true,
+    "raw_logprob_validation": false,
+    "three_methods_20x3": false,
+    "complete_token_ledger": true,
+    "verifier_judgments": false,
+    "no_test_generation": false,
+    "no_runtime_errors": false,
+    "no_invalid_judgments": false,
+    "mur_triggered_branch": false
+  },
+  "trajectories": {
+    "cot": 0,
+    "per_step": 0,
+    "mur": 0
+  },
+  "metrics": {},
+  "generated_tokens_total": 0,
+  "run_status": {},
+  "limitations": [
+    "Development questions only; no MATH-500 test generation.",
+    "Smoke evidence is not a scientific success claim.",
+    "Latency is descriptive on a shared GPU."
+  ]
+}

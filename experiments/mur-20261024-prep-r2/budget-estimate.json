@@ -1,0 +1,17 @@
+{
+  "measured_trajectories": 0,
+  "measured_generated_tokens": 0,
+  "measured_wall_seconds": 0,
+  "seconds_per_trajectory": null,
+  "projected_1500_trajectories_seconds": null,
+  "projected_1500_trajectories_gpu_hours": null,
+  "projected_1500_trajectories_tokens": null,
+  "prep_gpu_hours": 0.0,
+  "budget_limits": {
+    "gpu_hours": 1,
+    "wall_seconds": 7200,
+    "generated_tokens": 1000000,
+    "trajectories": 60
+  },
+  "interpretation": "GPU time is conservatively the measured smoke wall interval; no allocation was made in this blocked run."
+}
