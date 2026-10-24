@@ -61,14 +61,13 @@ def load_questions(split: str, limit: int | None,
         if not test_manifest:
             raise SystemExit("--split test requires --test-manifest")
         manifest = load_json(test_manifest)
-        expected = testdata.load_source_rows(
-            Path(os.environ.get("MUR_RUNTIME_ROOT", Path.cwd() / "runtime")),
-            load_json("configs/sources.json"))[0]
-        problems = testdata.verify_test_manifest(manifest, expected,
-                                                load_json("configs/sources.json"))
+        runtime_root = Path(os.environ.get("MUR_RUNTIME_ROOT", Path.cwd() / "runtime"))
+        sources = load_json("configs/sources.json")
+        expected = testdata.load_source_rows(runtime_root, sources)[0]
+        problems = testdata.verify_test_manifest(manifest, expected, sources)
         if problems:
             raise SystemExit("test manifest verification failed: " + "; ".join(problems))
-        rows = testdata.load_test_generation_file(data_root(), manifest)
+        rows = testdata.load_test_generation_file(runtime_root, manifest)
     else:
         raise SystemExit(f"unsupported split: {split}")
     if limit:

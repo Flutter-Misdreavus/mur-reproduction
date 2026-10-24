@@ -1,8 +1,12 @@
+import hashlib
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
+from mur import run as runner
 from mur import testdata
 from mur.aggregate import decision_from, paired_bootstrap
 from mur.engineering import compare_pair
@@ -62,6 +66,35 @@ class FrozenSplitContracts(unittest.TestCase):
             self.assertEqual(len(loaded), 100)
             self.assertEqual(info["sha256"], man["generation_split"]["sha256"])
             self.assertFalse(any("solution" in r or "answer" in r for r in loaded))
+
+    def test_load_questions_reads_runtime_root_once(self):
+        rows = synthetic_rows()
+        payload = "".join(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n"
+                          for r in rows)
+        sources = {"test": {"id": "HuggingFaceH4/MATH-500", "revision": "r",
+                            "split": "test", "rows": 500,
+                            "sha256": hashlib.sha256(payload.encode()).hexdigest()}}
+        man = testdata.freeze_test_manifest(rows, sources)
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "data").mkdir()
+            (root / "data" / "MATH-500_test.jsonl").write_text(payload, encoding="utf-8")
+            testdata.build_test_generation_file(rows, man, root)
+            manifest_path = root / "manifest.json"
+            manifest_path.write_text(json.dumps(man), encoding="utf-8")
+
+            def fake_load(path):
+                if str(path) == "configs/sources.json":
+                    return sources
+                with open(path, encoding="utf-8") as f:
+                    return json.load(f)
+
+            with mock.patch.dict(os.environ, {"MUR_RUNTIME_ROOT": str(root)}):
+                with mock.patch("mur.run.load_json", side_effect=fake_load):
+                    loaded = runner.load_questions("test", None, str(manifest_path))
+            self.assertEqual(len(loaded), 100)
+            self.assertEqual([r["id"] for r in loaded],
+                             [q["id"] for q in man["questions"]])
 
 
 class TestAuthorizationContracts(unittest.TestCase):
