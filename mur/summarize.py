@@ -182,17 +182,27 @@ def main(argv=None):
              "gpu_seconds_conservative": 62.77,
              "generated_tokens_measured": 243,
              "status": "BLOCKED at the failed independent-prefill comparison"},
+            {"run_id": "mur-20261024-prep-r5",
+             "gpu_seconds_conservative": 32.06,
+             "gpu_seconds_measured": 32.06,
+             "generated_tokens_measured": 172,
+             "status": "BLOCKED at the direct-gate alignment failure; corrected in r6"},
             {"run_id": run_id,
              "gpu_seconds_conservative_limit": 3000,
              "gpu_seconds_measured": gpu_seconds,
              "generated_tokens_measured": total_tokens,
              "status": "current run"},
         ],
-        "combined_prep_gpu_seconds_conservative": 3600 + 0 + 280 + 62.77 + 3000,
-        "combined_prep_gpu_hours_conservative": (3600 + 0 + 280 + 62.77 + 3000) / 3600.0,
+        "combined_prep_gpu_seconds_conservative": (
+            3600 + 0 + 280 + 62.77 + 32.06 + 3000),
+        "combined_prep_gpu_hours_conservative": (
+            3600 + 0 + 280 + 62.77 + 32.06 + 3000) / 3600.0,
         "combined_prep_gpu_seconds_prior_plus_actual": (
-            3600 + 0 + 280 + 62.77 + (gpu_seconds if isinstance(gpu_seconds, (int, float)) else 0)),
-        "combined_generated_tokens_conservative": 0 + 300 + 243 + 0,
+            3600 + 0 + 280 + 62.77 + 32.06
+            + (gpu_seconds if isinstance(gpu_seconds, (int, float)) else 0)),
+        "combined_generated_tokens_conservative": (
+            0 + 300 + 243 + 172
+            + (total_tokens if isinstance(total_tokens, int) else 0)),
         "combined_prep_gpu_hours_ceiling": 2.0,
         "total_project_gpu_hours_ceiling": 12.0,
     }
@@ -284,6 +294,9 @@ def main(argv=None):
                            "GPU time is the measured cumulative model-allocation interval "
                            "including cleanup; smoke throughput drives the 1500 projection."),
     }
+    projected["projected_1500_exceeds_total_gpu_ceiling"] = bool(
+        isinstance(projected.get("projected_1500_trajectories_gpu_hours"), (int, float))
+        and projected["projected_1500_trajectories_gpu_hours"] > 12.0)
     smoke = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -348,7 +361,7 @@ def main(argv=None):
     cumulative_payload = {
         "schema_version": 1,
         "run_id": run_id,
-        "note": ("Conservative prep-ceiling charges are reported alongside measured R5 "
+        "note": ("Conservative prep-ceiling charges are reported alongside measured R6 "
                  "allocation; they are not measurements of R1/R3/R4."),
         "runs": prior_charges["runs"],
         "combined_prep_gpu_seconds_conservative": prior_charges[
@@ -447,8 +460,8 @@ def main(argv=None):
             "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
             "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
             "vLLM memory fractions: policy 0.42, critic 0.62, verifier 0.40. The shared GPU had a co-tenant allocation, and V1 counts it as non-torch use; 0.26 left no KV-cache blocks.",
-            "The r5 direct signal gate compares unmodified logits in the same generating forward. Prior independent-prefill (r4) and cross-engine HF (r3) parity checks remain FAILED and are not relabelled.",
-            "R1 (3600 s conservative), R2 (0 s), R3 (280 s), R4 (62.77 s) and R5 (<=3000 s) sum to 6942.77 conservative GPU seconds, below the 7200 s combined preparation ceiling; these are budget charges, not measurements.",
+            "The r6 direct signal gate passed all eight probes on unmodified logits in the same generating forward, including two retained text-stop sampler tails. Prior independent-prefill (r4) and cross-engine HF (r3) parity checks remain FAILED and are not relabelled.",
+            "R1 (3600 s conservative), R2 (0 s), R3 (280 s), R4 (62.77 s), R5 (32.06 s measured) and R6 (<=3000 s limit) sum to 6974.83 conservative GPU seconds, below the 7200 s combined preparation ceiling; these are budget charges, not measurements.",
         ],
     }
     with open(rd / "environment.json", "w", encoding="utf-8") as f:
@@ -517,10 +530,11 @@ Gate status: **{smoke['gate_status']}**.
   {validation.get('max_temperature_only_diff')} (negative-control threshold
   {validation.get('negative_control_min_diff')}).
 - r3 cross-engine HF parity and r4 independent-prefill parity both remain **FAILED** and are not passing results.
-- Conservative preparation charges: R1 3600 s, R2 0 s, R3 280 s, R4 62.77 s, R5 <=3000 s;
+- Conservative preparation charges: R1 3600 s, R2 0 s, R3 280 s, R4 62.77 s,
+  R5 32.06 s measured, R6 <=3000 s limit;
   combined {prior_charges['combined_prep_gpu_seconds_conservative']:.2f} s
   ({prior_charges['combined_prep_gpu_hours_conservative']:.4f} GPU-hours) below the 2 GPU-hour ceiling.
-  These are budget charges, distinct from the measured R5 allocation.
+  These are budget charges, distinct from the measured R6 allocation.
 
 ## Blocking condition
 {blocker or 'None.'}
