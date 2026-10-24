@@ -123,29 +123,57 @@ def main(argv=None):
     mur_triggers = sum(1 for t in traces if t["method"] == "mur"
                        for s in t["steps"] if s.get("triggered"))
     forced_ok = bool(forced.get("passed")) and bool(forced.get("engineering_only")) \
-        and bool(forced.get("excluded_from_scientific_smoke"))
+        and bool(forced.get("excluded_from_scientific_smoke")) \
+        and (forced.get("genuine_triggers", 0) > 0
+             or (forced.get("phase") or {}).get("phase_ok") is True)
     gpu = probe_gpu()
-    budget_evidence = cumulative or driver
+    budget_evidence = driver
     gpu_seconds = budget_evidence.get("gpu_allocated_seconds")
     total_tokens = budget_evidence.get("total_generated_tokens")
     wall_seconds = budget_evidence.get("wall_seconds")
+    reported_tokens = budget_evidence.get("reported_generated_tokens")
+    unknown_reserved_tokens = budget_evidence.get("unknown_reserved_tokens")
+    signal_probes = validation.get("probes") or []
+    signal_gate_ok = (
+        bool(validation.get("passed"))
+        and validation.get("validation_reference")
+        == "same_engine_identity_sampling_teacher_forced_prefill"
+        and validation.get("cross_engine_hf_parity") is False
+        and validation.get("probe_count") == 8
+        and validation.get("complete_nonempty_probes") is True
+        and bool(validation.get("repeated_token_probe"))
+        and len(signal_probes) == 8
+        and all(p.get("passed") is True for p in signal_probes)
+    )
+    prior_r3 = {"run_id": "mur-20261024-prep-r3",
+                "gpu_allocated_seconds_conservative": 280,
+                "generated_diagnostic_tokens_conservative": 300,
+                "status": "BLOCKED at the retired HF cross-engine gate",
+                "note": "reported separately; not part of the r4 allocation"}
     stage_budget_ok = (
-        isinstance(gpu_seconds, (int, float)) and gpu_seconds <= 3600
+        isinstance(gpu_seconds, (int, float)) and gpu_seconds <= 3000
         and isinstance(total_tokens, int) and total_tokens <= 1_000_000
         and isinstance(wall_seconds, (int, float)) and wall_seconds <= 7200
     )
+    malformed_reported = all("malformed" in r for r in rows)
+    verifier_clean = bool(rows) and all(not r.get("ambiguous") for r in rows)
     gate_checks = {
         "gpu_available": bool(gpu.get("available")),
         "source_manifest": bool(manifest) and not prep_problems,
         "dev_rows_20": len(manifest.get("dev", {}).get("manifest", {}).get("questions", [])) == 20,
         "test_rows_500": manifest.get("test", {}).get("rows") == 500,
-        "raw_logprob_validation": bool(validation.get("passed")),
+        "raw_logprob_validation": signal_gate_ok,
+        "signal_gate_8_probes": signal_gate_ok,
+        "validation_reference_recorded": validation.get("validation_reference")
+        == "same_engine_identity_sampling_teacher_forced_prefill",
+        "cross_engine_parity_not_claimed": validation.get("cross_engine_hf_parity") is False,
         "three_methods_20x3": complete,
         "complete_token_ledger": bool(traces) and ledger_ok,
         "verifier_judgments": len(rows) == len(traces) and len(traces) > 0,
         "no_test_generation": bool(traces) and all(t.get("split") == "dev" for t in traces),
         "no_runtime_errors": bool(traces) and all(t.get("error") is None for t in traces),
-        "no_invalid_judgments": bool(rows) and all(not r.get("ambiguous") and not r.get("malformed") for r in rows),
+        "verifier_no_ambiguous": verifier_clean,
+        "critic_malformed_rate_reported": malformed_reported,
         "no_budget_or_context_truncation": bool(traces) and all(
             t.get("finish") not in ("budget_stopped", "context_limit", "error")
             for t in traces),
@@ -155,8 +183,8 @@ def main(argv=None):
     passed = all(gate_checks.values())
     if not gate_checks["gpu_available"]:
         blocker = "GPU/NVML is unavailable to the managed foreground execution sandbox"
-    elif not gate_checks["raw_logprob_validation"]:
-        blocker = "raw generation-logprob validation is missing or failed"
+    elif not gate_checks["signal_gate_8_probes"]:
+        blocker = "same-engine raw generation-logprob signal gate is missing or failed"
     elif not complete:
         blocker = "the 20x3 development smoke is incomplete"
     elif not gate_checks["stage_budget_observed"]:
@@ -168,7 +196,7 @@ def main(argv=None):
     wall = run_status.get("wall_seconds", 0) or 0
     n_traj = len(traces)
     gen_tokens = sum(t["totals"]["total_output_tokens"] for t in traces)
-    per_traj_s = wall / n_traj if n_traj else None
+    per_traj_s = (wall / n_traj) if (n_traj and complete) else None
     projected = {
         "measured_trajectories": n_traj,
         "measured_generated_tokens": gen_tokens,
@@ -176,19 +204,23 @@ def main(argv=None):
         "seconds_per_trajectory": per_traj_s,
         "projected_1500_trajectories_seconds": (per_traj_s * 1500 if per_traj_s else None),
         "projected_1500_trajectories_gpu_hours": (per_traj_s * 1500 / 3600 if per_traj_s else None),
-        "projected_1500_trajectories_tokens": (gen_tokens / n_traj * 1500 if n_traj else None),
+        "projected_1500_trajectories_tokens": (gen_tokens / n_traj * 1500 if per_traj_s else None),
         "prep_gpu_hours": (gpu_seconds / 3600.0 if isinstance(gpu_seconds, (int, float))
                            else None),
         "prep_gpu_allocated_seconds": gpu_seconds,
+        "prep_reported_generated_tokens": reported_tokens,
+        "prep_unknown_reserved_tokens": unknown_reserved_tokens,
         "prep_wall_seconds": wall_seconds,
         "prep_generated_tokens": total_tokens,
-        "budget_limits": {"gpu_hours": 1, "wall_seconds": 7200,
+        "prior_runs": prior_r3,
+        "budget_limits": {"gpu_seconds": 3000, "gpu_hours": 3000 / 3600,
+                          "combined_prep_gpu_hours": 2, "wall_seconds": 7200,
                           "generated_tokens": 1_000_000, "trajectories": 60},
         "interpretation": ("No 1500-trajectory estimate is reported because the gate "
-                           "stopped before the 20x3 smoke; GPU time is the measured "
-                           "cumulative model-allocation interval." if n_traj == 0 else
-                           "GPU time is the measured cumulative model-allocation "
-                           "interval; smoke throughput drives the 1500 projection."),
+                           "stopped before a complete 20x3 smoke; GPU time is the measured "
+                           "model-allocation interval including cleanup." if not complete else
+                           "GPU time is the measured cumulative model-allocation interval "
+                           "including cleanup; smoke throughput drives the 1500 projection."),
     }
     smoke = {
         "schema_version": 1,
@@ -203,9 +235,28 @@ def main(argv=None):
         "generated_tokens_total": gen_tokens,
         "run_status": run_status,
         "evaluation_status": eval_status,
+        "validation": {
+            "passed": validation.get("passed"),
+            "validation_reference": validation.get("validation_reference"),
+            "reference_run": validation.get("reference_run"),
+            "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+            "hf_parity_status": validation.get("hf_parity_status"),
+            "probe_count": validation.get("probe_count"),
+            "complete_nonempty_probes": validation.get("complete_nonempty_probes"),
+            "repeated_token_probe": validation.get("repeated_token_probe"),
+            "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
+            "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
+            "tolerance": validation.get("tolerance"),
+            "sampler_source": validation.get("sampler_source"),
+            "generated_tokens": validation.get("generated_tokens"),
+        },
         "driver": {k: driver.get(k) for k in
-                   ("gpu_allocated_seconds", "total_generated_tokens", "wall_seconds",
-                    "peak_new_usage_mib", "min_free_mib", "phases")},
+                   ("run_commit", "gpu_allocated_seconds", "gpu_work_seconds",
+                    "total_generated_tokens", "reported_generated_tokens",
+                    "unknown_reserved_tokens", "wall_seconds",
+                    "peak_new_usage_mib", "min_free_mib", "phases",
+                    "preflight_errors")},
+        "prior_runs": prior_r3,
         "cumulative_budget": cumulative or None,
         "limitations": [
             "Development questions only; no MATH-500 test generation.",
@@ -232,6 +283,21 @@ def main(argv=None):
         "per_question": [{k: r.get(k) for k in ("qid", "method", "correct", "finish",
                                                 "total_output_tokens", "accepted_tokens",
                                                 "steps", "triggers", "malformed")} for r in rows],
+        "signal_validation": {
+            "passed": validation.get("passed"),
+            "validation_reference": validation.get("validation_reference"),
+            "reference_run": validation.get("reference_run"),
+            "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+            "probe_count": validation.get("probe_count"),
+            "repeated_token_probe": validation.get("repeated_token_probe"),
+            "max_abs_token_logprob_diff": validation.get("max_abs_token_logprob_diff"),
+            "mean_abs_token_logprob_diff": validation.get("mean_abs_token_logprob_diff"),
+            "generated_tokens": validation.get("generated_tokens"),
+            "sampler_source_sha256": (validation.get("sampler_source") or {}).get("sha256"),
+            "raw_before_penalties_and_temperature": (validation.get("sampler_source") or {}).get(
+                "raw_before_penalties_and_temperature"),
+        },
+        "prior_runs": prior_r3,
         "budget": projected,
     }
     with open(rd / "sanitized-public-metrics.json", "w", encoding="utf-8") as f:
@@ -256,12 +322,20 @@ def main(argv=None):
         "host_memory": host_memory(),
         "git_head": git_head,
         "git_branch": git_branch,
+        "actual_run_commit": driver.get("run_commit"),
+        "validation_reference": validation.get("validation_reference"),
+        "reference_run": validation.get("reference_run"),
+        "cross_engine_hf_parity": validation.get("cross_engine_hf_parity"),
+        "hf_parity_status": validation.get("hf_parity_status"),
+        "signal_gate_passed": validation.get("passed"),
+        "sampler_source": validation.get("sampler_source"),
         "cuda_visible_devices": gpu.get("cuda_visible_devices"),
         "notes": [
             "GPU state is an observed nvidia-smi snapshot, not a hardcoded claim.",
             "Per-process peak allocation must be read from the run log / nvidia-smi interval evidence.",
             "setuptools was installed offline into the project-local runtime/venv only, because Triton imports it; no global environment was changed.",
             "vLLM memory fractions: policy 0.42, critic 0.62, verifier 0.40. The shared GPU had a co-tenant allocation, and V1 counts it as non-torch use; 0.26 left no KV-cache blocks.",
+            "The r4 signal gate is same-engine raw-logprob validation; cross-engine HF parity remains FAILED from r3 and is not relabelled.",
         ],
     }
     with open(rd / "environment.json", "w", encoding="utf-8") as f:
@@ -283,8 +357,11 @@ Gate status: **{smoke['gate_status']}**.
 - vLLM 0.8.5 V1 backend that reads raw sampled-token logprobs from the generating forward pass
   (inspected `vllm/v1/sample/sampler.py`: `raw_logprobs` precedes penalties/temperature), so no extra
   prompt-rescoring call is used for `m_t`.
-- `mur.validate_logprobs` compares those raw generation logprobs against an HF BF16 teacher-forced
-  forward pass on the same token ids.
+- `mur.validate_signal` re-scores the exact saved prompt/output ids with an identity-sampling
+  teacher-forced prefill in a fresh pinned BF16 vLLM V1 process. The r3 HF cross-engine comparison
+  remains a separate FAILED diagnostic; `cross_engine_hf_parity=false`.
+- Driver bookkeeping includes cleanup time in GPU allocation, fails closed without NVML/compute
+  telemetry, refuses reused output directories, and marks unknown token reservations separately.
 - Momentum detector with `U_t = alpha*U_(t-1)+(1-alpha)*m_accepted`, bias correction, and trigger
   `m_proposal > U_(t-1)/(1-alpha**(t-1)) - log(gamma)`; first MUR step is never scaled.
 - GenPRM two-call analyze/judgment critic with an anchored initial `\\boxed{{Yes|No}}` verdict token,
@@ -302,13 +379,24 @@ Gate status: **{smoke['gate_status']}**.
 
 ## Verified
 - Source/test/dev manifest: {gate_checks['source_manifest'] and gate_checks['test_rows_500'] and gate_checks['dev_rows_20']}
-- Raw generation-logprob validation: {gate_checks['raw_logprob_validation']}
+- Same-engine raw signal gate, all eight probes: {gate_checks['signal_gate_8_probes']}
+  (validation_reference={validation.get('validation_reference')},
+  cross_engine_hf_parity={validation.get('cross_engine_hf_parity')})
 - Complete 20x3 smoke and verifier: {gate_checks['three_methods_20x3'] and gate_checks['verifier_judgments']}
 - No budget/context-truncated trajectory: {gate_checks['no_budget_or_context_truncation']}
 - Token-ledger closure: {gate_checks['complete_token_ledger']}
 - Cumulative GPU/token/wall budget evidence: {gate_checks['stage_budget_observed']}
-  (GPU {gpu_seconds}s, tokens {total_tokens}, wall {wall_seconds}s)
+  (GPU {gpu_seconds}s including cleanup, reported tokens {reported_tokens}, unknown reservations {unknown_reserved_tokens}, wall {wall_seconds}s)
 - At least one MUR triggered branch inspected or a marked engineering forced-trigger case: {gate_checks['mur_triggered_branch']}
+
+## Validation details
+- Installed sampler source: `{(validation.get('sampler_source') or {}).get('path')}`
+  SHA256 `{(validation.get('sampler_source') or {}).get('sha256')}`;
+  raw logprobs computed before penalties/temperature:
+  `{(validation.get('sampler_source') or {}).get('raw_before_penalties_and_temperature')}`.
+- r3 cross-engine HF parity remains **FAILED** and is not a passing result.
+- r3 prior allocation reported separately: 280 conservative GPU seconds and 300 conservative
+  diagnostic tokens (excluded from the r4 budget totals).
 
 ## Blocking condition
 {blocker or 'None.'}

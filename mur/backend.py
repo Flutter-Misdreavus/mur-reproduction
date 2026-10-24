@@ -23,7 +23,8 @@ class Generation:
 
 class VLLMBackend:
     def __init__(self, model_path: str, gpu_memory_utilization: float,
-                 max_model_len: int = 16384, seed: int = 42):
+                 max_model_len: int = 16384, seed: int = 42,
+                 enable_prefix_caching: bool | None = None):
         from vllm import LLM
         import vllm
         from transformers import AutoTokenizer
@@ -33,10 +34,11 @@ class VLLMBackend:
 
         self.model_path = model_path
         self.max_model_len = int(max_model_len)
+        self.enable_prefix_caching = enable_prefix_caching
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.llm = LLM(
+        llm_kwargs = dict(
             model=model_path,
             tokenizer=model_path,
             dtype="bfloat16",
@@ -49,6 +51,9 @@ class VLLMBackend:
             max_num_seqs=8,
             max_num_batched_tokens=2048,
         )
+        if enable_prefix_caching is not None:
+            llm_kwargs["enable_prefix_caching"] = enable_prefix_caching
+        self.llm = LLM(**llm_kwargs)
         from vllm.v1.engine.llm_engine import LLMEngine as V1Engine
         if not isinstance(self.llm.llm_engine, V1Engine):
             raise RuntimeError("V1 engine required: V0 reports transformed generation logprobs")
