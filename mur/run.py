@@ -10,10 +10,10 @@ import traceback
 from pathlib import Path
 
 from .control import Ledger, Momentum, select_judgment
-from .prompts import (analyze_prompt, critic_prompt, extract_answer, finalize_prompt,
+from .prompts import (analyze_prompt, critic_prompt, extract_answer, finalize_prompt, has_final_answer,
                       judgment_prompt, policy_prompt, request_seed, strip_step_prefix,
                       to_step_string)
-from .backend import VLLMBackend, judgment_from_generation
+from .backend import VLLMBackend, judgment_from_generation, generation_nll
 
 
 class BudgetExceeded(RuntimeError):
@@ -85,7 +85,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
     def policy_call(prompt, max_tokens, s, stop):
         gen = policy.generate(prompt, max_tokens=max_tokens, temperature=temperature,
                               top_p=top_p, top_k=top_k, presence_penalty=presence,
-                              seed=s, stop=stop)
+                              seed=s, stop=stop, logprobs=0)
         return gen
 
     def critic_verify_batch(candidate_texts, step_idx):
@@ -145,19 +145,20 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
             proposal_nll = None
             triggered = False
             if method == "mur":
-                sc = policy.score_nll(prompt_ids, proposal.token_ids)
-                spend("policy", "proposal_score", len(prompt_ids), sc["probe_tokens"])
+                sc = generation_nll(proposal)
                 proposal_nll = sc["mean_nll"]
                 rec["score"] = sc
                 triggered = momentum.trigger(proposal_nll)
                 rec["triggered"] = triggered
+                rec["history_before"] = momentum.history
+                rec["proposal_nll"] = proposal_nll
             if method == "per_step" or (method == "mur" and triggered):
                 cand_prompt = prompt
                 ckw = [dict(max_tokens=min(max_step_tokens, remaining),
                             temperature=temperature, top_p=top_p, top_k=top_k,
                             presence_penalty=presence,
                             seed=request_seed(seed, qid, step_idx, "candidate", ci),
-                            stop=["\nStep"]) for ci in range(int(cfg["candidates"]))]
+                            stop=["\nStep"], logprobs=0) for ci in range(int(cfg["candidates"]))]
                 cgen = policy.generate_batch([cand_prompt] * len(ckw), ckw)
                 for g in cgen:
                     spend("policy", "candidate", g.prompt_tokens, len(g.token_ids))
@@ -166,6 +167,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
                 sel, fallback = select_judgment(
                     [{"label": v["judgment"]["label"],
                       "probability": v["judgment"]["probability"]} for v in judgments])
+                rec["triggered"] = True
                 rec["candidates"] = [{"text": strip_step_prefix(g.text),
                                       "finish": g.finish_reason,
                                       "tokens": len(g.token_ids),
@@ -177,8 +179,7 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
                 accepted_ids = list(accepted.token_ids)
             if method == "mur":
                 if triggered:
-                    sc2 = policy.score_nll(prompt_ids, accepted_ids)
-                    spend("policy", "accepted_score", len(prompt_ids), sc2["probe_tokens"])
+                    sc2 = generation_nll(accepted)
                     accepted_nll = sc2["mean_nll"]
                 else:
                     accepted_nll = proposal_nll
@@ -189,8 +190,11 @@ def run_one(question: dict, method: str, cfg: dict, policy: VLLMBackend,
             rec["accepted_text"] = accepted_text
             rec["accepted_tokens"] = len(accepted_ids)
             step_records.append(rec)
-            if "the answer is" in accepted_text.lower():
+            if has_final_answer(accepted_text):
                 finish = "answer"
+                break
+            if accepted_ids[-1:] == [policy.tokenizer.eos_token_id]:
+                finish = "eos"
                 break
             if accepted_tokens >= max_accepted:
                 finish = "accepted_token_cap"
@@ -268,13 +272,13 @@ def main(argv=None):
     budget = {"generated": 0, "max_generated": 1_000_000,
               "wall_start": time.time(), "max_wall": 3300}
     policy = VLLMBackend(str(model_path(load_json("configs/sources.json")["policy"]["id"])),
-                         gpu_memory_utilization=0.29, max_model_len=16384,
+                         gpu_memory_utilization=0.26, max_model_len=16384,
                          seed=int(cfg["seed"]))
     critic = None
     if any(m in ("per_step", "mur") for m in args.methods):
         critic = VLLMBackend(
             str(model_path(load_json("configs/sources.json")["critic"]["id"])),
-            gpu_memory_utilization=0.38, max_model_len=16384, seed=int(cfg["seed"]))
+            gpu_memory_utilization=0.26, max_model_len=16384, seed=int(cfg["seed"]))
     records = []
     try:
         for q in questions:
@@ -283,6 +287,8 @@ def main(argv=None):
                     break
                 rec = run_one(q, method, cfg, policy, critic, traces, budget)
                 records.append(rec)
+                if rec["error"] is not None:
+                    raise RuntimeError("Trajectory failed; stopped stage: " + rec["error"])
                 print(f"{method} {q['id']} finish={rec['finish']} "
                       f"tokens={rec['totals']['total_output_tokens']} "
                       f"accepted={rec['accepted_tokens']}", flush=True)

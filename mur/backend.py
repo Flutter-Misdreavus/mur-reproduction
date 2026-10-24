@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Iterable
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ["VLLM_USE_V1"] = "1"
 
 
 @dataclass
@@ -23,7 +24,11 @@ class VLLMBackend:
     def __init__(self, model_path: str, gpu_memory_utilization: float,
                  max_model_len: int = 16384, seed: int = 42):
         from vllm import LLM
+        import vllm
         from transformers import AutoTokenizer
+
+        if vllm.__version__ != "0.8.5":
+            raise RuntimeError("Revalidate raw-generation logprob semantics before changing vLLM")
 
         self.model_path = model_path
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
@@ -39,7 +44,12 @@ class VLLMBackend:
             disable_log_stats=True,
             seed=seed,
             trust_remote_code=True,
+            max_num_seqs=8,
+            max_num_batched_tokens=2048,
         )
+        from vllm.v1.engine.llm_engine import LLMEngine as V1Engine
+        if not isinstance(self.llm.llm_engine, V1Engine):
+            raise RuntimeError("V1 engine required: V0 reports transformed generation logprobs")
 
     def encode(self, text: str) -> list[int]:
         return self.tokenizer(text, add_special_tokens=False).input_ids
@@ -135,36 +145,46 @@ class VLLMBackend:
         self.tokenizer = None
 
 
+def generation_nll(gen: Generation) -> dict:
+    """Read V1 raw logprobs from the generating forward pass; no rescoring call."""
+    if not gen.token_ids or len(gen.logprobs) != len(gen.token_ids):
+        raise ValueError("missing sampled-token logprobs")
+    values = []
+    for tid, entry in zip(gen.token_ids, gen.logprobs):
+        if tid not in entry:
+            raise ValueError("sampled token is absent from logprob response")
+        lp = float(entry[tid].logprob)
+        if not math.isfinite(lp) or lp > 1e-6:
+            raise ValueError("invalid raw sampled-token logprob")
+        values.append(-lp)
+    return {"mean_nll": sum(values)/len(values), "token_nll": values,
+            "tokens": len(values), "sum_nll": sum(values), "probe_tokens": 0}
+
+
 def judgment_from_generation(gen: Generation) -> dict:
-    """Locate the designated Yes/No token after the final \\boxed marker."""
-    prefix = ""
-    tokens = []
-    for tid, info in enumerate(gen.logprobs or []):
-        # vLLM SampleLogprobs is keyed by token id; the sampled token is present.
-        if not info:
-            continue
-        sampled = None
-        target = gen.token_ids[tid] if tid < len(gen.token_ids) else None
-        for tok_id, lp in info.items():
-            if tok_id == target:
-                sampled = lp
-                break
-        if sampled is None:
-            sampled = next(iter(info.values()))
-        prefix += sampled.decoded_token or ""
-        tokens.append((sampled.decoded_token or "", float(sampled.logprob)))
-        stripped = (sampled.decoded_token or "").strip()
-        if re.search(r"\\boxed\s*\{?\s*$", prefix) and stripped in ("Yes", "No"):
-            return {"label": stripped, "probability": math.exp(float(sampled.logprob)),
-                    "position": tid, "method": "boxed"}
-    # Fallback: a standalone Yes/No token after a boxed marker, or the last one.
-    for i, (tok, lp) in enumerate(tokens):
-        if tok.strip() in ("Yes", "No") and i and "boxed" in "".join(t for t, _ in tokens[:i]):
-            return {"label": tok.strip(), "probability": math.exp(lp),
-                    "position": i, "method": "boxed_fallback"}
-    for i in range(len(tokens) - 1, -1, -1):
-        tok, lp = tokens[i]
-        if tok.strip() in ("Yes", "No"):
-            return {"label": tok.strip(), "probability": math.exp(lp),
-                    "position": i, "method": "last_yes_no"}
-    return {"label": None, "probability": None, "position": None, "method": "missing"}
+    """The prompt ends in \"\\boxed\"; only its first completed brace is the verdict.
+
+    The actual standalone Yes/No token must overlap the matched label in the output.
+    Never select an unrelated later Yes/No token from explanation text.
+    """
+    missing = {"label": None, "probability": None, "position": None, "method": "missing"}
+    match = re.match(r"^\s*\{\s*(Yes|No)\s*\}", gen.text)
+    if not match:
+        return missing
+    offset = 0
+    for i, (tid, entry) in enumerate(zip(gen.token_ids, gen.logprobs)):
+        if tid not in entry:
+            return missing
+        info = entry[tid]
+        token = info.decoded_token or ""
+        end = offset + len(token)
+        if offset < match.end(1) and end > match.start(1):
+            if token.strip() != match.group(1):
+                return missing
+            lp = float(info.logprob)
+            if not math.isfinite(lp) or lp > 1e-6:
+                return missing
+            return {"label": match.group(1), "probability": math.exp(lp),
+                    "position": i, "method": "initial_boxed_verdict"}
+        offset = end
+    return missing

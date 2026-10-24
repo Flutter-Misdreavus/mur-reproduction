@@ -24,7 +24,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     rd = Path(args.run_dir)
     metrics = load(Path(args.metrics) if args.metrics else rd / "evaluation" / "metrics.json", {})
-    run_status = load(rd / "run-status.json", {})
+    run_status = load(rd / "smoke" / "run-status.json", {})
     validation = load(rd / "logprob-validation.json", {})
     manifest = load(rd / "source-manifest.json", {})
     prep_problems = load(rd / "prepare-problems.json", [])
@@ -51,7 +51,9 @@ def main(argv=None):
         "three_methods_20x3": complete,
         "complete_token_ledger": ledger_ok,
         "verifier_judgments": len(rows) == len(traces) and len(traces) > 0,
-        "no_test_generation": True,
+        "no_test_generation": bool(traces) and all(t.get("split") == "dev" for t in traces),
+        "no_runtime_errors": bool(traces) and all(t.get("error") is None for t in traces),
+        "no_invalid_judgments": bool(rows) and all(not r.get("ambiguous") and not r.get("malformed") for r in rows),
     }
     passed = all(gate_checks.values())
     wall = run_status.get("wall_seconds", 0) or 0
@@ -148,7 +150,7 @@ Gate status: **{smoke['gate_status']}**.
 ## Deviations / limitations
 - `configs/sources.json` did not pin a MATH training source. The executor pinned `EleutherAI/hendrycks_math` revision `21a5633873b6a120296cce3e2df9d5550074f4a3` and selected 20 questions with seed 42 after normalized dedup against all 500 test questions.
 - Hugging Face was not reachable directly from this worker; the public `hf-mirror.com` endpoint was used and every model file hash was checked against the pinned revision's LFS SHA256.
-- Shared GPU index 2 was used. vLLM engines were capped below the 14 GiB new-memory ceiling, with a free-memory reserve; latency is not a controlled speedup.
+- Shared GPU index 2 was used. GPU memory must be checked against the supervisor ceiling using observed per-process usage; latency is not a controlled speedup.
 - No MATH-500 test item was generated or tuned on.
 
 ## Failures

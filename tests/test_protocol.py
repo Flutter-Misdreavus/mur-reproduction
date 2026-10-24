@@ -26,7 +26,7 @@ class PromptContracts(unittest.TestCase):
         p1 = policy_prompt(t, "Q text", ["Step0: a"], 1)
         self.assertIn("Step0: a", p1)
         self.assertTrue(p1.endswith("\nStep1:"))
-        self.assertNotIn("<|im_end|>", p0)
+        self.assertIn("<|im_end|>\n<|im_start|>assistant", p0)
 
     def test_answer_and_boxed_parsing(self):
         self.assertEqual(extract_answer("work\nthe answer is $\\frac{1}{2}$"), "\\frac{1}{2}")
@@ -39,8 +39,8 @@ class PromptContracts(unittest.TestCase):
     def test_decision_strict(self):
         self.assertEqual(parse_decision("Final Decision: Yes"), ("Yes", False))
         self.assertEqual(parse_decision("final decision: no"), ("No", False))
-        self.assertEqual(parse_decision("Final Decision: Yes\nFinal Decision: No"), ("No", True))
-        self.assertEqual(parse_decision("no decision"), (None, False))
+        self.assertEqual(parse_decision("Final Decision: Yes\nFinal Decision: No"), (None, True))
+        self.assertEqual(parse_decision("no decision"), (None, True))
 
     def test_seed_deterministic_and_role_separated(self):
         a = request_seed(42, "q1", 2, "candidate", 3)

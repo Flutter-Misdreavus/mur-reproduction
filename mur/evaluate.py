@@ -52,7 +52,9 @@ def main(argv=None):
     for t in traces:
         q = dev[t["qid"]]
         prompt = verifier_prompt(q["problem"], q["answer"], t.get("final_answer", ""))
-        key = hashlib.sha256((sources["verifier"]["id"] + "\n" + prompt).encode()).hexdigest()
+        key_payload = {"model": sources["verifier"], "prompt": prompt, "temperature": 0.7,
+                       "max_tokens": 4096, "seed": request_seed(seed, t["qid"], 0, "verifier", 0)}
+        key = hashlib.sha256(json.dumps(key_payload, sort_keys=True).encode()).hexdigest()
         t["_prompt"], t["_key"] = prompt, key
         if key not in cache:
             todo.append(t)
@@ -80,7 +82,7 @@ def main(argv=None):
         rows.append({
             "qid": t["qid"], "method": t["method"], "finish": t["finish"],
             "verifier_label": label, "ambiguous": ambiguous,
-            "correct": 1 if label == "Yes" else 0,
+            "correct": int(label == "Yes" and not ambiguous and t["finish"] not in ("error", "budget_stopped")),
             "accepted_tokens": t["accepted_tokens"],
             "policy_output_tokens": t["totals"]["policy_output_tokens"],
             "critic_output_tokens": t["totals"]["critic_output_tokens"],

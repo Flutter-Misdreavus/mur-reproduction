@@ -33,9 +33,6 @@ def policy_prompt(tokenizer, question: str, trajectory: list[str], step_idx: int
         enable_thinking=False,
         add_generation_prompt=True,
     )
-    eos = tokenizer.eos_token or ""
-    if eos:
-        text = text.replace(eos, "")
     text = text.strip()
     text += "\n" + "\n".join(trajectory)
     text += f"\nStep{step_idx}:"
@@ -55,9 +52,6 @@ def finalize_prompt(tokenizer, question: str, trajectory: list[str]) -> str:
         enable_thinking=False,
         add_generation_prompt=True,
     )
-    eos = tokenizer.eos_token or ""
-    if eos:
-        text = text.replace(eos, "")
     return text.strip() + "\n" + "\n".join(trajectory) + "\n"
 
 
@@ -84,9 +78,6 @@ def analyze_prompt(tokenizer, critic: dict, step_idx: int) -> str:
         tokenize=False,
         add_generation_prompt=True,
     )
-    eos = tokenizer.eos_token or ""
-    if eos:
-        text = text.replace(eos, "")
     return text.strip() + f"<analyze>\nLet's analyze the paragraph {step_idx} step by step: "
 
 
@@ -129,23 +120,27 @@ def boxed_values(text: str) -> list[str]:
 
 def extract_answer(text: str) -> str:
     """Prefer the frozen final-answer marker; fall back to the last boxed value."""
-    low = (text or "").lower()
-    idx = low.rfind("the answer is")
-    if idx >= 0:
-        ans = text[idx + len("the answer is"):]
+    markers = list(re.finditer(r"(?i)(?<![\"'])\bthe answer is\b(?![\"'])", text or ""))
+    if markers:
+        ans = text[markers[-1].end():]
         ans = re.split(r"\nStep\s*\d+\s*:", ans, maxsplit=1)[0]
         return ans.strip().strip("$").strip().rstrip(".").strip()
     boxes = boxed_values(text or "")
     return boxes[-1] if boxes else ""
 
 
+def has_final_answer(text: str) -> bool:
+    markers = list(re.finditer(r"(?i)(?<![\"'])\bthe answer is\b(?![\"'])", text or ""))
+    return bool(markers and text[markers[-1].end():].strip())
+
+
 def parse_decision(text: str) -> tuple[str | None, bool]:
     """Return (Yes/No/None, ambiguous). Strictly targets the Final Decision field."""
     matches = re.findall(r"Final\s+Decision\s*:\s*(Yes|No)", text or "", flags=re.I)
     if not matches:
-        return None, False
+        return None, True
     labels = {m.capitalize() for m in matches}
-    return matches[-1].capitalize(), len(labels) > 1
+    return (None, True) if len(labels) > 1 else (matches[-1].capitalize(), False)
 
 
 def strip_step_prefix(step: str) -> str:
