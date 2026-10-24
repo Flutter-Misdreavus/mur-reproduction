@@ -17,4 +17,3 @@ Do not amend/rebase/force-push history. Do not stage raw datasets, weights, trac
 Sanitized environment summaries, manifests, per-question numerical metrics, and aggregate
 results belong in experiments/<run_id>/. Never include question/answer text in these summaries.
 Record all failures and truncated generations. Do not tune on MATH-500.
-

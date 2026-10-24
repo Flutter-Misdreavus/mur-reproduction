@@ -71,4 +71,3 @@ def select_judgment(judgments):
     if not judgments:
         raise ValueError("no candidates")
     return 0, True
-

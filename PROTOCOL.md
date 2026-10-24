@@ -114,4 +114,3 @@ Commit code/config before every real run. Record actual run SHA, fix SHA, curren
 and push status separately. Repository stays private during experiments.
 Tracked artifacts use portable paths; secrets, private infrastructure/account details,
 raw DSH transcripts, raw question/answer traces, data and model files stay untracked.
-

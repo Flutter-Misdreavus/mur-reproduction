@@ -21,4 +21,3 @@ license merely because the paper mentions MIT.
 Run CPU contract checks with `python3 -m unittest discover -s tests -v`.
 Model execution is remote only; environment validation and smoke must pass before the
 full benchmark is launched. Runtime evidence and infrastructure stay outside Git.
-
