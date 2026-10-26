@@ -8,20 +8,25 @@ import subprocess
 def git(*args):
     return subprocess.check_output(["git", *args])
 
+def sensitive_rules():
+    """Return byte patterns; findings must never include the matched value."""
+    return [
+        ("private key", re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
+        ("service token", re.compile(rb"(?:gh[pousr]_[A-Za-z0-9]{25,}|github_pat_[A-Za-z0-9_]{30,}|sk-[A-Za-z0-9]{20,})")),
+        ("credential assignment", re.compile(
+            rb'''(?i)\b(?:password|passwd|api_key|access_token|auth_token|client_secret)\b["']?\s*[:=]\s*["'][^"'\s]{6,}["']''')),
+        ("private absolute path", re.compile(rb"/(?:home|Users|mnt/data)/[A-Za-z0-9_.-]+")),
+        ("IPv4 address", re.compile(rb"(?<![0-9])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9])")),
+        ("SSH connection", re.compile(rb"s" + rb"sh://|[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+:")),
+    ]
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--staged", action="store_true")
     parser.add_argument("--history", action="store_true")
     args = parser.parse_args()
     findings = []
-    rules = [
-        ("private key", re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
-        ("service token", re.compile(rb"(?:gh[pousr]_[A-Za-z0-9]{25,}|github_pat_[A-Za-z0-9_]{30,}|sk-[A-Za-z0-9]{20,})")),
-        ("credential assignment", re.compile(rb"(?i)(?:password|passwd|api_key|access_token)\\s*[:=]\\s*[\\\"'][^\\\"'\\s]{6,}[\\\"']")),
-        ("private absolute path", re.compile(rb"/(?:home|Users|mnt/data)/[A-Za-z0-9_.-]+")),
-        ("IPv4 address", re.compile(rb"(?<![0-9])(?:[0-9]{1,3}\\.){3}[0-9]{1,3}(?![0-9])")),
-        ("SSH connection", re.compile(rb"s" + rb"sh://|[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+:")),
-    ]
+    rules = sensitive_rules()
     forbidden = {"runs", "runtime", ".tmp", ".orchestrator", "data", "datasets",
                  "models", "weights", ".dsh", ".codex", ".venv"}
     suffixes = {".pdf", ".jsonl", ".log", ".pem", ".key", ".safetensors", ".pt", ".pth", ".bin", ".bundle"}

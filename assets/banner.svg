@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">MUR — Independent paper reproduction</title>
+  <desc id="desc">Momentum Uncertainty guided Reasoning. Selective search with traceable evidence. A conceptual diagram shows an uncertainty gate routing a proposal through four candidates before accepting a step.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0d1729"/><stop offset="1" stop-color="#172c40"/></linearGradient>
+    <linearGradient id="accent"><stop stop-color="#68e1c5"/><stop offset="1" stop-color="#91b9ff"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#a3bfd4" stroke-opacity=".045"/></pattern>
+  </defs>
+  <rect width="1280" height="400" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="400" rx="24" fill="url(#grid)"/>
+  <path d="M48 38H1232" stroke="url(#accent)" stroke-width="3"/>
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="56" y="82" fill="#8fdccf" font-size="13" font-weight="600" letter-spacing="2.5">INDEPENDENT PAPER REPRODUCTION</text>
+    <text x="52" y="180" fill="#f4f8fc" font-size="94" font-weight="750" letter-spacing="-4">MUR</text>
+    <text x="56" y="225" fill="#dbe6f3" font-size="25">Momentum Uncertainty guided Reasoning</text>
+    <text x="56" y="265" fill="#9fb5cc" font-size="20">Selective search. Traceable evidence.</text>
+    <g fill="#1b3548" stroke="#355568">
+      <rect x="56" y="313" width="140" height="34" rx="17"/>
+      <rect x="208" y="313" width="177" height="34" rx="17"/>
+      <rect x="397" y="313" width="119" height="34" rx="17"/>
+    </g>
+    <g fill="#d5e5ef" font-size="13" text-anchor="middle">
+      <text x="126" y="335">Qwen3-1.7B</text><text x="296" y="335">MATH-500 subset</text><text x="456" y="335">No training</text>
+    </g>
+    <g fill="none" stroke="#5a7c98" stroke-width="2">
+      <path d="M756 205H820M862 205C906 205 902 121 956 121M862 205C906 205 902 177 956 177M862 205C906 205 902 233 956 233M862 205C906 205 902 289 956 289"/>
+      <path d="M989 121C1060 121 1030 205 1114 205M989 177C1060 177 1030 205 1114 205M989 233C1060 233 1030 205 1114 205M989 289C1060 289 1030 205 1114 205"/>
+    </g>
+    <path d="M862 205C906 205 902 177 956 177M989 177C1060 177 1030 205 1114 205" stroke="#68e1c5" stroke-width="3" fill="none"/>
+    <circle cx="738" cy="205" r="18" fill="#253f56" stroke="#91b9ff" stroke-width="2"/>
+    <path d="M841 178L868 205L841 232L814 205Z" fill="#3b3429" stroke="#f2bd73" stroke-width="2"/>
+    <g fill="#243c52" stroke="#68849e" stroke-width="2">
+      <rect x="954" y="105" width="36" height="32" rx="9"/>
+      <rect x="954" y="217" width="36" height="32" rx="9"/>
+      <rect x="954" y="273" width="36" height="32" rx="9"/>
+    </g>
+    <rect x="954" y="161" width="36" height="32" rx="9" fill="#1c514c" stroke="#68e1c5" stroke-width="2"/>
+    <circle cx="1135" cy="205" r="22" fill="#1c514c" stroke="#68e1c5" stroke-width="2"/>
+    <path d="M1125 205L1132 212L1146 197" stroke="#9bf1dd" stroke-width="3" fill="none"/>
+    <g font-size="14" text-anchor="middle" fill="#c1d2e4">
+      <text x="738" y="257">Proposal</text><text x="841" y="155" fill="#f2bd73">EMA gate</text>
+      <text x="972" y="78">4 candidates + PRM</text><text x="1135" y="257">Accepted step</text>
+    </g>
+    <text x="959" y="348" text-anchor="middle" fill="#9fb5cc" font-size="12">Conceptual routing · search only when triggered</text>
+  </g>
+</svg>
